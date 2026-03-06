@@ -1,0 +1,6 @@
+include:
+  - component: gitlab.com/multitechbr/commons/pipeline-components/dotnet/deployment@master
+    inputs:
+      docker-image: mcr.microsoft.com/dotnet/sdk:10.0
+      deploy-type: "helm"
+      type-testing: no-testing

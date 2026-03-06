@@ -1,0 +1,50 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:29850",
+      "sslPort": 44381
+    }
+  },
+  "profiles": {
+    "http": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5108",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"        
+      }
+    },
+    "https": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7171;http://localhost:5108",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DOTNET_ENVIRONMENT": "Development",
+        "APP_ENV": "DEV",
+        "MULTILOG_REQUEST_ENDPOINT": "https://multi-log-api.k8s-qa-multi.com.br",
+        "AWS_SECRET_MANAGER_NAME": "/adm/multipay/multipay-manual-payment-microservice-api",
+        "AWS_SECRET_MANAGER_REGION": "us-east-1",
+        "VALID_STATUS_ORDER": "CREATED,PENDING,VIEWED,RECOVERY,DENIED", //"CREATED, PENDING, VIEWED, RECOVERY, DENIED", 1,3,2,7,9
+        "ACCEPTABLE_FORMATS": ".pdf,.jpg,.png",
+        "MICROSERVICE_RECEIVABLE_REQUEST_ENDPOINT": "https://multipay-receivable-microservice-api.k8s-qa-multi.com.br",
+        "AWS_S3_BUCKET_NAME": "multi-adm-multipay-qa-s3"
+        }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

@@ -1,0 +1,79 @@
+projectName: multipay-manual-payment-microservice-api
+namespace: adm
+serviceAccount:
+  enabled: true
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::157906581678:role/multi-multipay-manual-payment-microservice-api-prod-role
+datadog:
+  enabled: true
+  env: prod
+  product: adm
+  module: multipay
+deployment:
+  enabled: true
+  labels:
+    product: adm
+    module: multipay
+  annotations:
+    ad.datadoghq.com/multipay-manual-payment-microservice-api.logs: |-
+      [{
+        "source": "csharp"
+      }]
+  containers:
+  - name: multipay-manual-payment-microservice-api
+    image:
+      registry: 722447452105.dkr.ecr.us-east-1.amazonaws.com
+      repository: multipay-manual-payment-microservice-api
+    readinessProbe:
+      httpGet:
+        path: /health
+      failureThreshold: 3
+      initialDelaySeconds: 45
+      periodSeconds: 10
+      successThreshold: 1
+      timeoutSeconds: 10
+    livenessProbe:
+      httpGet:
+        path: /health
+      failureThreshold: 3
+      initialDelaySeconds: 45
+      periodSeconds: 15
+      successThreshold: 1
+      timeoutSeconds: 10
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 50m
+      limits:
+        memory: 128Mi
+        cpu: 120m
+    ports:
+    - containerPort: 8080
+    envFrom:
+    - configMapRef:
+        name: multipay-manual-payment-microservice-api
+configMaps:
+- name: multipay-manual-payment-microservice-api
+  data:
+    ADDITIONAL_OPTS: ''
+    PREFIX: multipay-manual-payment-microservice-api
+    DD_SERVICE: multipay-manual-payment-microservice-api
+    DD_RUNTIME_METRICS_ENABLED: 'true'
+    DD_LOGS_INJECTION: 'true'
+    DD_ENV: prod
+    DD_PROFILING_ENABLED: 'false'
+    DD_APPSEC_ENABLED: 'true'
+    DD_APPSEC_SCA_ENABLED: 'true'
+    DD_IAST_ENABLED: 'true'
+hpa:
+  minReplicas: 2
+  maxReplicas: 5
+  cpuAverage: 192
+  memoryAverage: 160
+ingress:
+  enabled: true
+  annotations:
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+  ingressClassName: alb
+  hosts:
+  - host: multipay-manual-payment-microservice-api.grupomultilaser.com.br

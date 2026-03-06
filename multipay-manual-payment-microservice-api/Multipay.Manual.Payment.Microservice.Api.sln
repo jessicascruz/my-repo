@@ -1,0 +1,74 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{83C94404-52EA-4237-A833-07C31578700A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multipay.Manual.Payment.Microservice.Api.Domain", "src\Multipay.Manual.Payment.Microservice.Api.Domain\Multipay.Manual.Payment.Microservice.Api.Domain.csproj", "{2BF95330-01D2-4049-9186-CD87D02228A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multipay.Manual.Payment.Microservice.Api.Infra", "src\Multipay.Manual.Payment.Microservice.Api.Infra\Multipay.Manual.Payment.Microservice.Api.Infra.csproj", "{6C1596E5-98D9-4B00-8033-D00A9B9E2508}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multipay.Manual.Payment.Microservice.Api.App", "src\Multipay.Manual.Payment.Microservice.Api.App\Multipay.Manual.Payment.Microservice.Api.App.csproj", "{5B58350C-FFCA-4C36-BA31-6D1067C1FBE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multipay.Manual.Payment.Microservice.Api.App.Test", "test\Multipay.Manual.Payment.Microservice.Api.App.Test\Multipay.Manual.Payment.Microservice.Api.App.Test.csproj", "{D54E57D4-6256-4319-8B3E-76C8CE758747}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multipay.Manual.Payment.Microservice.Api.Domain.Test", "test\Multipay.Manual.Payment.Microservice.Api.Domain.Test\Multipay.Manual.Payment.Microservice.Api.Domain.Test.csproj", "{DDC04F45-6171-44A2-B5F1-178D07E0C057}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multipay.Manual.Payment.Microservice.Api.Infra.Test", "test\Multipay.Manual.Payment.Microservice.Api.Infra.Test\Multipay.Manual.Payment.Microservice.Api.Infra.Test.csproj", "{776A8855-2380-43E2-8A0F-3876A638AD26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multipay.Manual.Payment.Microservice.Api.Test.Mocks", "test\Multipay.Manual.Payment.Microservice.Api.Test.Mocks\Multipay.Manual.Payment.Microservice.Api.Test.Mocks.csproj", "{288E8E0A-485C-4F0A-8ED8-994A0A84EA78}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2BF95330-01D2-4049-9186-CD87D02228A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BF95330-01D2-4049-9186-CD87D02228A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BF95330-01D2-4049-9186-CD87D02228A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BF95330-01D2-4049-9186-CD87D02228A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C1596E5-98D9-4B00-8033-D00A9B9E2508}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C1596E5-98D9-4B00-8033-D00A9B9E2508}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C1596E5-98D9-4B00-8033-D00A9B9E2508}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C1596E5-98D9-4B00-8033-D00A9B9E2508}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B58350C-FFCA-4C36-BA31-6D1067C1FBE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B58350C-FFCA-4C36-BA31-6D1067C1FBE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B58350C-FFCA-4C36-BA31-6D1067C1FBE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B58350C-FFCA-4C36-BA31-6D1067C1FBE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D54E57D4-6256-4319-8B3E-76C8CE758747}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D54E57D4-6256-4319-8B3E-76C8CE758747}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D54E57D4-6256-4319-8B3E-76C8CE758747}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D54E57D4-6256-4319-8B3E-76C8CE758747}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDC04F45-6171-44A2-B5F1-178D07E0C057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDC04F45-6171-44A2-B5F1-178D07E0C057}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDC04F45-6171-44A2-B5F1-178D07E0C057}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDC04F45-6171-44A2-B5F1-178D07E0C057}.Release|Any CPU.Build.0 = Release|Any CPU
+		{776A8855-2380-43E2-8A0F-3876A638AD26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{776A8855-2380-43E2-8A0F-3876A638AD26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{776A8855-2380-43E2-8A0F-3876A638AD26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{776A8855-2380-43E2-8A0F-3876A638AD26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{288E8E0A-485C-4F0A-8ED8-994A0A84EA78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{288E8E0A-485C-4F0A-8ED8-994A0A84EA78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{288E8E0A-485C-4F0A-8ED8-994A0A84EA78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{288E8E0A-485C-4F0A-8ED8-994A0A84EA78}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2BF95330-01D2-4049-9186-CD87D02228A1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{6C1596E5-98D9-4B00-8033-D00A9B9E2508} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{5B58350C-FFCA-4C36-BA31-6D1067C1FBE3} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{D54E57D4-6256-4319-8B3E-76C8CE758747} = {83C94404-52EA-4237-A833-07C31578700A}
+		{DDC04F45-6171-44A2-B5F1-178D07E0C057} = {83C94404-52EA-4237-A833-07C31578700A}
+		{776A8855-2380-43E2-8A0F-3876A638AD26} = {83C94404-52EA-4237-A833-07C31578700A}
+		{288E8E0A-485C-4F0A-8ED8-994A0A84EA78} = {83C94404-52EA-4237-A833-07C31578700A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9338F9AE-0C2D-4537-AEC3-586033FF7EE5}
+	EndGlobalSection
+EndGlobal

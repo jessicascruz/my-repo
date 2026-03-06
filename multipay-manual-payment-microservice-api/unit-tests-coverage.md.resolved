@@ -1,0 +1,49 @@
+# Plano de Implementação: Aumento de Cobertura de Testes (Meta 60%)
+
+Este documento detalha a estratégia para elevar a cobertura de testes unitários do microserviço, começando pela classe [ManualPaymentDao](file:///c:/Users/jessica.cruz/Documents/BK/multipay-manual-payment-microservice-api/src/Multipay.Manual.Payment.Microservice.Api.Infra/Data/ManualPayment/Entities/Daos/ManualPaymentDao.cs#18-402) e expandindo para outras áreas críticas.
+
+## 🎯 Objetivo
+- Atingir **60% de cobertura global** do projeto.
+- Priorizar classes complexas e críticas.
+- Garantir 100% de cobertura nos cenários da [ManualPaymentDao](file:///c:/Users/jessica.cruz/Documents/BK/multipay-manual-payment-microservice-api/src/Multipay.Manual.Payment.Microservice.Api.Infra/Data/ManualPayment/Entities/Daos/ManualPaymentDao.cs#18-402).
+
+## 🛠️ Tecnologias e Padrões
+- **Framework**: xUnit
+- **Mocks**: NSubstitute
+- **Assertions**: FluentAssertions (ou Assert do xUnit conforme padrão atual)
+- **Database (Infra)**: InMemoryDatabase para Happy Paths, NSubstitute para Exceptions.
+- **Padrão**: Gherkin (`Given_When_Then`) e AAA (`Arrange`, `Act`, `Assert`).
+
+## 📋 Fase 1: ManualPaymentDao (Infraestrutura)
+
+### 1.1 Cenários de Sucesso (Happy Paths) - Pendentes
+- [ ] **InsertManualPaymentAsync**: Validar criação de novo Requisitante quando não existe no banco. (Já cobertos parcialmente, mas adicionar validação explícita).
+- [ ] **SelectManualPaymentByOrderIdAsync**: Validar retorno de lista vazia para OrderId inexistente.
+
+### 1.2 Cenários de Exceção e Borda
+- [ ] **InsertManualPaymentAsync**: 
+    - Lançar `InvalidOperationException` quando o [Requester](file:///c:/Users/jessica.cruz/Documents/BK/multipay-manual-payment-microservice-api/test/Multipay.Manual.Payment.Microservice.Api.Infra.Test/Data/ManualPayment/Daos/ManualPaymentDaoTest.cs#105-131) no DTO for nulo. (Linha 119)
+    - Simular falha onde o registro é inserido mas não é encontrado no select subsequente (Linha 152: Retorno de erro customizado).
+    - Simular status inválido após inserção (Linha 162).
+- [ ] **InsertPaymentApprovalAsync**:
+    - Lançar `InvalidOperationException` quando o [Requester](file:///c:/Users/jessica.cruz/Documents/BK/multipay-manual-payment-microservice-api/test/Multipay.Manual.Payment.Microservice.Api.Infra.Test/Data/ManualPayment/Daos/ManualPaymentDaoTest.cs#105-131) for nulo. (Linha 351)
+    - Testar lógica de atualização de status para `APPROVED` vs `REJECTED`.
+- [ ] **InsertReceiptAsync**:
+    - Garantir Rollback em caso de exceção.
+
+## 📋 Fase 2: ManualPaymentServices (Domínio)
+
+A classe `ManualPaymentServices` já possui 60% de cobertura, mas faltam cenários complexos de negócio:
+- [ ] Validações de extensões de arquivo permitidas.
+- [ ] Regras de negócio de "Máximo de aprovações atingido".
+- [ ] Erros ao interagir com o repositório AWS S3.
+
+## 📋 Fase 3: Outras Classes Complexas
+- [ ] `ReceivableService`
+- [ ] `ReceivableDao` (se presente)
+- [ ] Handlers e Validators.
+
+## 🚀 Execução
+1. Atualizar [ManualPaymentDaoTest.cs](file:///c:/Users/jessica.cruz/Documents/BK/multipay-manual-payment-microservice-api/test/Multipay.Manual.Payment.Microservice.Api.Infra.Test/Data/ManualPayment/Daos/ManualPaymentDaoTest.cs) com cenários de sucesso faltantes.
+2. Atualizar [ManualPaymentDaoExceptionTest.cs](file:///c:/Users/jessica.cruz/Documents/BK/multipay-manual-payment-microservice-api/test/Multipay.Manual.Payment.Microservice.Api.Infra.Test/Data/ManualPayment/Daos/ManualPaymentDaoExceptionTest.cs) com cenários de falha simulados via Mock.
+3. Executar comando de cobertura e validar progresso.

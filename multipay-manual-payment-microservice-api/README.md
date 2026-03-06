@@ -1,0 +1,45 @@
+[![Build status]()]()
+[![Quality Gate]()]()
+[![Coverage]()]()
+[![Maintainnability]()] ()
+[![Security]()] ()
+
+# {multipay-manual-payment-microservice-api}
+{DESCRIÇÃO DA APLICAÇÃO}
+
+## {ARQUITETURA}
+{DESENHO DA ARQUITETURA}
+
+## {INTEGRAÇÕES DA APLICAÇÃO(LISTAR TODAS AS INTEGRAÇÕES DA APLICAÇÃO)}
+### {INTEGRAÇÃO1}
+{EXPLICAR SOBRE INTEGRAÇÃO}
+
+### {INTEGRAÇÃO2}
+{EXPLICAR SOBRE INTEGRAÇÃO}
+
+
+## Teste Unitário
+Execute a linha de comando:
+```sh
+
+```
+
+## Swagger
+- {URL DA APLICAÇÃO}
+
+## {ENDPOINTS}
+- QA: {ENDPOINT DE QA}
+- PROD: {ENDPOINT DE PROD}
+
+Contexto: {NOME DA APLICAÇÃO}
+
+## {RODAR A APLICAÇÃO}
+Execute a linha de comando:
+``` sh
+
+```
+
+
+## {MATRIZ DE RESILIÊNCIA}
+{COLOCAR O DESENHO DA MATRIZ DE RESILIÊNCIA (Ex essa abaixo)}
+
