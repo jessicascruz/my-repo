@@ -124,7 +124,7 @@ public class ManualPaymentServices(
         if (manualPaymentResponse is null)
             return new(null, selectError);
 
-        if (manualPaymentResponse.Requester.Id == paymentApprovalRequest.RequesterId)
+        if(manualPaymentResponse.Requester.Id == paymentApprovalRequest.RequesterId)
             return new(null, new ErrorResult
             {
                 Error = true,
@@ -136,21 +136,21 @@ public class ManualPaymentServices(
                .Any(a => a.RequesterId == manualPaymentResponse.Requester.Id);
 
         if (approvalDupicated is true)
-            return new(null, new ErrorResult
-            {
-                Error = true,
-                StatusCode = ErrorCode.BadRequest,
-                Message = $"User {paymentApprovalRequest.RequesterId} has already approved this payment."
-            });
+                return new(null, new ErrorResult
+                {
+                    Error = true,
+                    StatusCode = ErrorCode.BadRequest,
+                    Message = $"User {paymentApprovalRequest.RequesterId} has already approved this payment."
+                });
 
 
         if (manualPaymentResponse.Approvals.Count >= Constant.MINIMUN_APPROVALS)
-            return new(null, new ErrorResult
-            {
-                Error = true,
-                StatusCode = ErrorCode.UnprocessableEntity,
-                Message = "This payment has already reached the required number of approvals."
-            });
+                return new(null, new ErrorResult
+                {
+                    Error = true,
+                    StatusCode = ErrorCode.UnprocessableEntity,
+                    Message = "This payment has already reached the required number of approvals."
+                });
 
 
         var paymentApprovalId = Guid.NewGuid();
@@ -169,12 +169,12 @@ public class ManualPaymentServices(
         if (response?.Approvals.Count == Constant.MINIMUN_APPROVALS)
         {
             var (manualPayments, error) = await _manualPaymentRepository.SelectManualPaymentByOrderIdAsync(response.OrderId);
-            if (error?.Error == true)
+            if (insertError?.Error == true)
                 return new(null, error);
 
             var (order, orderError) = await _receivableService.GetReceivableOrderByIdAsync(response.OrderId);
 
-            if (orderError?.Error == true)
+            if (insertError?.Error == true)
                 return new(null, orderError);
 
             var paymentRejected = manualPayments.Any(a => a.Status.Id == (int)ManualPaymentStatusEnum.REJECTED);
@@ -195,10 +195,10 @@ public class ManualPaymentServices(
                 if (Math.Round(amountPayments) >= amountOrder)
                 {
                     await _receivableService.UpdateStatusAsync(response.OrderId, new()
-                    {
-                        Event = ManualEventEnum.MANUAL_CONFIRMED.GetDescription(),
-                        SubEvent = ManualEventEnum.MANUAL_CONFIRMED.GetDescription()
-                    });
+                   {
+                       Event = ManualEventEnum.MANUAL_CONFIRMED.GetDescription(),
+                       SubEvent = ManualEventEnum.MANUAL_CONFIRMED.GetDescription()
+                   });
                 }
 
             }

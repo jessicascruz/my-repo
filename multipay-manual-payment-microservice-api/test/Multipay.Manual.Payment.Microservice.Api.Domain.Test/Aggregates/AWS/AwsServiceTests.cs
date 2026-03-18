@@ -18,8 +18,6 @@ public class AwsServiceTests
         _awsService = new AwsService(_mockAwsRepository);
     }
 
-    #region Success Scenarios
-
     [Fact]
     public async Task Given_ValidSecretAndRegion_When_SelectAsyncIsCalled_Then_ShouldReturnSecretsDictionary()
     {
@@ -58,10 +56,6 @@ public class AwsServiceTests
         Assert.Equivalent(new ErrorResult(), result.Item2);
     }
 
-    #endregion
-
-    #region Error Scenarios
-
     [Fact]
     public async Task Given_ErrorFromRepository_When_UploadFileToS3AsyncIsCalled_Then_ShouldReturnErrorResult()
     {
@@ -82,5 +76,4 @@ public class AwsServiceTests
         Assert.Equal(expectedError.Message, result.Item2.Message);
     }
 
-    #endregion
 }

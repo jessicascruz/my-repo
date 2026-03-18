@@ -13,8 +13,6 @@ public class EnumExtensionsTest
         SecondValue = 2
     }
 
-    #region GetDescription
-
     [Fact]
     public void Given_EnumWithDescription_When_GetDescription_Then_ReturnDescription()
     {
@@ -40,10 +38,6 @@ public class EnumExtensionsTest
         // Assert
         Assert.Equal("SecondValue", result);
     }
-
-    #endregion
-
-    #region IsValidEnumValue (string)
 
     [Fact]
     public void Given_ValidEnumName_When_IsValidEnumValueString_Then_ReturnTrue()
@@ -85,10 +79,6 @@ public class EnumExtensionsTest
         Assert.True(result);
     }
 
-    #endregion
-
-    #region IsValidEnumValue (int)
-
     [Fact]
     public void Given_ValidEnumInt_When_IsValidEnumValueInt_Then_ReturnTrue()
     {
@@ -108,10 +98,6 @@ public class EnumExtensionsTest
         // Assert
         Assert.False(result);
     }
-
-    #endregion
-
-    #region GetEnumIdOrDefault
 
     [Fact]
     public void Given_ValidEnumName_When_GetEnumIdOrDefault_Then_ReturnCorrectId()
@@ -143,5 +129,4 @@ public class EnumExtensionsTest
         Assert.Equal(2, result);
     }
 
-    #endregion
 }

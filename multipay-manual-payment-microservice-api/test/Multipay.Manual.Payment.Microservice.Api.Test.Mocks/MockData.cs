@@ -354,66 +354,6 @@ namespace Multipay.Manual.Payment.Microservice.Api.Test.Mocks
             Key = "manual-payment/recibo.pdf",
         };
 
-        //public static ManualPaymentDto GetMockManualPaymentDto() 
-        //{
-        //    var manualPaymentId = Guid.NewGuid();
-        //    var requesterId = Guid.NewGuid().ToString();
-
-        //    return new ManualPaymentDto
-        //    {
-        //        // Propriedades Próprias
-        //        Id = manualPaymentId,
-        //        OrderId = Guid.NewGuid(),
-        //        Amount = 1250.75,
-        //        Reason = "Pagamento de fornecedor externo",
-        //        CreatedAt = DateTime.UtcNow.AddDays(-1),
-        //        UpdatedAt = DateTime.UtcNow,
-        //        ApprovedAt = DateTime.UtcNow,
-
-        //        // Relacionamento: Status
-        //        StatusId = (int)ManualPaymentStatusEnum.APPROVED,
-        //        Status = new PaymentStatusDto
-        //        {
-        //            Id = (int)ManualPaymentStatusEnum.APPROVED,
-        //            Description = "APPROVED"
-        //        },
-
-        //        // Relacionamento: Requester
-        //        RequesterId = requesterId,
-        //        Requester = new RequesterDto
-        //        {
-        //            Id = requesterId,
-        //            Name = "Sistema Automatizado",
-        //            Email = "sistema@multipay.com"
-        //        },
-
-        //        // Relacionamento: Receipts (Lista)
-        //        Receipts = new List<PaymentReceiptDto>
-        //    {
-        //        new()
-        //        {
-        //            Id = Guid.NewGuid(),
-        //            ManualPaymentId = manualPaymentId,
-        //            DocumentName = "nota_fiscal_001.pdf",
-        //            CreatedAt = DateTime.UtcNow
-        //        }
-        //    },
-
-        //        // Relacionamento: Approvals (Lista)
-        //        Approvals = new List<PaymentApprovalDto>
-        //    {
-        //        new()
-        //        {
-        //            Id = Guid.NewGuid(),
-        //            ManualPaymentId = manualPaymentId,
-        //            IsApproved = true,
-        //            RequesterId = requesterId,
-        //            RejectionReason = null
-        //        }
-        //    }
-        //    };
-        //}
-
         public static ManualPaymentDto GetMockManualPaymentDto(Guid? orderId = null)
         {
             var manualPaymentId = Guid.NewGuid();

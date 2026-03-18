@@ -1,0 +1,118 @@
+## Para acessar todos os parametros possiveis acesso o link do values.yaml default:
+## https://gitlab.com/multitechbr/application-lifecycle-management-alm/helm/multiapps/-/blob/feat/1.0.0-RC/values.yaml?ref_type=heads
+## XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+projectName: multipay-admin-site-web
+namespace: adm
+
+serviceAccount:
+  enabled: true
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::722447452105:role/multi-multipay-admin-site-web-prod-role
+
+datadog:
+  enabled: true
+  env: prod
+  team: 'backoffice'
+  squad: 'backoffice'
+  product: 'adm'
+  module: 'multipay'
+  annotations:
+    ad.datadoghq.com/multipay-admin-site-web.logs_config_processing_enabled: 'true'
+    ad.datadoghq.com/multipay-admin-site-web.logs: >-
+      [{
+        "source": "nodejs",
+        "auto_multi_line_detection": true
+      }]
+
+deployment:
+  enabled: true
+  replicas: 1
+  labels:
+    product: adm
+    module: multipay
+  containers:
+    - name: multipay-admin-site-web
+      image:
+        registry: '722447452105.dkr.ecr.us-east-1.amazonaws.com'
+        repository: 'multipay-admin-site-web'
+      readinessProbe:
+        httpGet:
+          path: /health
+        failureThreshold: 3
+        initialDelaySeconds: 45
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 10
+      livenessProbe:
+        httpGet:
+          path: /health
+        failureThreshold: 3
+        initialDelaySeconds: 45
+        periodSeconds: 15
+        successThreshold: 1
+        timeoutSeconds: 10
+      resources:
+        requests:
+          memory: '163Mi'
+          cpu: '13m'
+        limits:
+          memory: '326Mi'
+          cpu: '32m'
+      ports:
+        - containerPort: 8080
+      envFrom:
+        - configMapRef:
+            name: multipay-admin-site-web
+
+configMaps:
+  - name: multipay-admin-site-web
+    data:
+      ADDITIONAL_OPTS: ' '
+      PREFIX: multipay-admin-site-web
+      DD_SERVICE: multipay-admin-site-web
+      DD_RUNTIME_METRICS_ENABLED: 'true'
+      DD_LOGS_INJECTION: 'true'
+      DD_ENV: 'prod'
+      NEXT_PUBLIC_DD_ENV: 'prod'
+      DD_PROFILING_ENABLED: 'false'
+      DD_APPSEC_ENABLED: 'true'
+      DD_APPSEC_SCA_ENABLED: 'true'
+      DD_IAST_ENABLED: 'true'
+      NEXT_PUBLIC_REACT_APP_API_BASE_URL: 'https://multipay-gateway-api.k8s-multi.com.br/'
+      NEXT_PUBLIC_NO_IMAGE: 'https://d1xe7vrw66n69y.cloudfront.net/imagem/produtos/no_image.svg'
+      NEXT_PUBLIC_NO_IMAGE_DOMAIN: 'https://d3cdqxtfxtbqmp.cloudfront.net'
+      NEXT_PUBLIC_IMAGE_DOMAIN: 'https://d3cdqxtfxtbqmp.cloudfront.net'
+      REACT_AUTH_CLIENT_ID: 'multipay'
+      AUTH_ISSUER: 'https://sso.grupomulti.com.br/auth/realms/multi'
+      NEXTAUTH_SECRET: 'multipay'
+      GTM_ID: 'GTM-M8WMQZ4D'
+      NEXTAUTH_URL: 'https://multipay.grupomulti.com.br'
+
+hpa:
+  minReplicas: 2
+  maxReplicas: 10
+  cpuAverage: 160
+  memoryAverage: 160
+
+ingress:
+  enabled: true
+  annotations:
+    alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/group.name: adm-private
+    alb.ingress.kubernetes.io/backend-protocol: 'HTTP'
+  ingressClassName: alb
+  hosts:
+    - host: multipay-admin-site-web.k8s-multi.com.br
+      paths:
+        - path: '/'
+          pathType: Prefix
+          serviceName: multipay-admin-site-web-service
+          portNumber: 80
+    - host: multipay.grupomulti.com.br
+      paths:
+        - path: '/'
+          pathType: Prefix
+          serviceName: multipay-admin-site-web-service
+          portNumber: 80

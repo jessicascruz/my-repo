@@ -28,7 +28,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DOTNET_ENVIRONMENT": "Development",
-        "APP_ENV": "DEV",
+        "APP_ENV": "QA",
         "MULTILOG_REQUEST_ENDPOINT": "https://multi-log-api.k8s-qa-multi.com.br",
         "AWS_SECRET_MANAGER_NAME": "/adm/multipay/multipay-manual-payment-microservice-api",
         "AWS_SECRET_MANAGER_REGION": "us-east-1",

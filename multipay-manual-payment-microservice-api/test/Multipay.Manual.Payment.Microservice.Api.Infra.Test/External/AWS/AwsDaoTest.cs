@@ -82,12 +82,6 @@ public class AwsDaoTest
         var result = await _dao.UploadFileToS3Async(fileBytes, fileName);
 
         // Assert
-        // O Mapper de ContentType falha e lança exceção ou retorna erro? 
-        // No AwsDao, line 60-70 não verifica o retorno de GetContentType!
-        // GetContentType retorna uma tupla (string?, ErrorResult?)
-        // Mas o AwsDao ignora o erro e prossegue com putRequest.
-
-        // Assert
         Assert.NotNull(result.Item1); // Ele ainda "sucesso" porque não valida o retorno de GetContentType
     }
     [Fact]

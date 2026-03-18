@@ -83,7 +83,6 @@ namespace Multipay.Manual.Payment.Microservice.Api.Domain.Test.Aggregates.Multil
         // Assert
         Assert.Equal(token.AccessToken, result);
 
-        // Verify repository and cache interactions
         await _mockMultilogRepository.Received(1).LoginAsync(Arg.Any<Login>());
         _mockMemoryCacheHandler.Received(1).SetValue(
             Constant.APP_MULTILOG_CACHE_TOKEN_KEY,
@@ -126,4 +125,3 @@ namespace Multipay.Manual.Payment.Microservice.Api.Domain.Test.Aggregates.Multil
     }
 }
 }
-

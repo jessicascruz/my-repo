@@ -1,4 +1,4 @@
-using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Request;
+﻿using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Request;
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Response;
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.Multipay.Entities.Request;
 using Multipay.Manual.Payment.Microservice.Api.Infra.Data.ManualPayment.Entities.Dtos;
@@ -31,7 +31,7 @@ public static class PaymentReceiptExtensions
     }
 
 
-    public static List<PaymentReceiptResponse> ToDomain(this List<PaymentReceiptDto>? paymentReceiptDtoList) => paymentReceiptDtoList?.Select(ToDomain).ToList() ?? new List<PaymentReceiptResponse>();
+    public static List<PaymentReceiptResponse> ToDomain(this List<PaymentReceiptDto> paymentReceiptDtoList) => paymentReceiptDtoList.Select(ToDomain).ToList() ?? new List<PaymentReceiptResponse>();
    
     public static List<PaymentReceiptDto> FromDomain(this List<PaymentReceiptRequest> paymentReceiptList)
     {
@@ -53,7 +53,6 @@ public static class PaymentReceiptExtensions
     }
 
 }
-
 
 
 

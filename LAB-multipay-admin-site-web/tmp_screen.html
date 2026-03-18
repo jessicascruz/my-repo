@@ -1,0 +1,467 @@
+<!DOCTYPE html><html lang="pt-br"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Multipay - Painel de Pagamentos Manuais Unificado</title>
+<script>!function(){var e,t,n;function Y(){try{return window.self===window.top}catch(e){return!1}}function r(){setTimeout((function(){var e={type:"focus",token:w.token,title:document.title,url:document.URL,focused:document.hasFocus(),useragent:navigator.userAgent,pid:w.pid,pn:w.pn};null!=B&&B.readyState==WebSocket.OPEN&&B.send(JSON.stringify(e))}),0)}function a(){var e={type:"notification",token:w.token,title:document.title,url:document.URL,focused:document.hasFocus(),timeout:w.sendNotificationsInterval,useragent:navigator.appVersion.length>navigator.userAgent.length?navigator.appVersion:navigator.userAgent,pid:w.pid,pn:w.pn};B.send(JSON.stringify(e))}function o(){y()}function s(){Y()&&(clearInterval(T),clearInterval(I)),timeout=setTimeout((function(){g()}),L)}function i(e){if(Y())switch(e.data.substring(0,1)){case"r":window.location=e.data.substring(1);break;case"b":document.body.innerHTML=e.data.substring(1);break;case"w":var t="true"==e.data.substring(1).toLowerCase();O!=t&&t&&v(),O=t;break;case"x":!function(e){try{const t=JSON.parse(e),n=b.get(t.requestId);if(n){b.delete(t.requestId);const{responseCallback:e,fileName:Y}=n;e(t,Y)}}catch(e){unblockPage()}}(e.data.substring(1))}}function u(e){var t=document.createElement("a");return t.href=e,t.href}function d(e){if(!e)return!1;if("password"==e.type)return!0;if(e instanceof HTMLInputElement){var t=window.getComputedStyle(e);if(t){var n=t.getPropertyValue("-webkit-text-security");return["disc","circle","square"].includes(n)}}return!1}function c(e,t=!1){if(d(e)&&!F)if(F=!0,Y()){var n={type:"password_input_focus",focus:!0,token:w.token};B.send(JSON.stringify(n))}else window.top.postMessage({message:"iframePasswordInputFocused",name:e.name,type:"password"},"*")}function M(e,t=!1){var n=e&&e.name?e.name:"<unnamed>";if(d(e)&&F)if(F=!1,Y()){var r={type:"password_input_focus",focus:!1,token:w.token};B.send(JSON.stringify(r))}else window.top.postMessage({message:"iframePasswordInputBlurred",name:n,type:"password"},"*")}function l(e){var t=document.activeElement;t&&t!=document.body?document.querySelector&&(t=document.querySelector(":focus")):t=null;for(var n=0;n<e.length;++n){let o=e[n];var Y=d(o),r=Y&&o.hasAttribute("autofocus"),a=Y&&t&&o.isEqualNode(t);(r||a)&&c(o),o.tmInputEventListenerAttached||(o.addEventListener("focus",(function(e){c(e.target)}),!0),o.addEventListener("blur",(function(e){M(e.target)}),!0),o.tmInputEventListenerAttached=!0)}}function f(){l(document.getElementsByTagName("input"));var e=new MutationObserver((function(e){e&&e.forEach((function(e){e&&e.addedNodes&&0!=e.addedNodes.length&&(window.NodeList&&!NodeList.prototype.forEach&&(NodeList.prototype.forEach=Array.prototype.forEach),e.addedNodes.forEach((function(e){if(e.tagName){var t=[];"input"==e.tagName.toLowerCase()?t.push(e):t=e.getElementsByTagName("input"),t.length&&l(t)}})))}))}));e.observe(document,{childList:!0,subtree:!0}),window.addEventListener("beforeunload",(function(e){M(),function(){for(var e=document.getElementsByTagName("input"),t=0;t<e.length;++t){let n=e[t];n.removeEventListener("focus",c),n.removeEventListener("blur",M),delete n.tmInputEventListenerAttached}}()}))}function D(){var e;Y()&&(w.iup&&(e={type:"connect",token:w.token,title:document.title,url:document.URL,focused:document.hasFocus(),useragent:navigator.userAgent,pid:w.pid,pn:w.pn},null!=B&&B.readyState==WebSocket.OPEN&&B.send(JSON.stringify(e))),h()&&(v(),y(),function(){function e(e){return e.baseURI&&e.baseURI.startsWith("https://web.whatsapp.com/")}function t(e){const t=e.dataTransfer.files;t.length>0&&Array.from(t).forEach((e=>{N(e)}))}document.querySelectorAll("div").forEach((n=>{e(n)&&n.addEventListener("drop",t,{passive:!0})}));var n=new MutationObserver((function(e){e&&(Array.from(document.querySelectorAll(".message-in, .message-out")).reduce(((e,t)=>{var n=t.querySelector("button[type=button], div[role=button]");return n&&e.push(n),e}),[]).forEach((e=>{const t="modified";e.hasAttribute(t)||(e.setAttribute(t,""),e.onclick=t=>{t.verified||(t.preventDefault(),t.stopPropagation(),new Promise((function(t,n){!function(e,t,n){try{const n=e.parentElement,Y=n[Object.keys(n).find((e=>e.includes("__reactProps")))].children.props.msg,r=Y.mediaData,a=crypto.randomUUID();b.set(a,{responseCallback:e=>t(!e.block)}),B.send(JSON.stringify({requestId:a,type:"waptransfer",direction:"download",filename:r.__x_filename,filesize:r.__x_size,filetype:r.__x_mimetype,filehash:Y.__x_encFilehash,url:document.URL,process:w.pn,content:""}))}catch{n()}}(e,t,(()=>setTimeout((()=>n()),1)))})).then((e=>{t.verified=e,t.verified&&t.target.dispatchEvent(t)}),(()=>{})))})})),e.forEach((function(e){e&&("childList"!==e.type||e.addedNodes.length<=0||e.addedNodes.forEach((function(e){if(e&&e.nodeType==Node.ELEMENT_NODE){e.querySelectorAll("input").forEach((e=>{!function(e){const t="modified";"file"!==e.type||e.hasAttribute(t)||(e.setAttribute(t,""),e.addEventListener("change",(e=>{Array.from(e.target.files).forEach((e=>{N(e)}))})))}(e)}));var t=document.querySelectorAll("div[id=main] header div")[2];if(t){var n=t.querySelectorAll("div")[1],Y=t.querySelectorAll("div")[2];k=(n?n.innerText:"")+":"+(Y?Y.innerText:"")}document.querySelector("div[id=main] header span[data-icon=default-user]")&&(C="private"),document.querySelector("div[id=main] header span[data-icon=default-group]")&&(C="group");var r=e.querySelectorAll(".message-in, .message-out");r||E("msgNodes is empty"),e.matches(".message-in, .message-out")&&(r=Array.prototype.slice.call(r)).push(e),r&&0!=r.length?r.forEach((function(e){if(e)if(!e.classList||e.classList.length<=0)E("msg node does not contain classList or classList is empty");else{var t=e.classList.contains("message-in"),n=e.querySelector(".copyable-text"),Y=e.querySelector(".selectable-text"),r=new Date,a=null;if(n&&n.attributes["data-pre-plain-text"]){var o=n.attributes["data-pre-plain-text"].textContent,s=/\[(\d{1,2}):(\d{1,2})[ ]{0,1}([p|a]\.?\s?m\.?)?,\s(.+)]\s(.*):/i[Symbol.match](o);if(!s||6!=s.length)return void E("no matches for string: "+o);if(s[3]&&s[3].length>1&&"p"==s[3].toLowerCase().slice(0,1)&&(s[1]=parseInt(s[1])+12),dateParts=/(\d{1,4})[.-\\/](\d{1,4})[.-\\/](\d{1,4})/[Symbol.match](s[4]),!dateParts||4!=dateParts.length)return void E("no matches for string: "+s[4]);if(E(s[4]+_),!(r=date.parse(s[4],_)||function(e,t,n){var Y=[[e,t,n].join("-"),[e,n,t].join("-"),[t,e,n].join("-"),[t,n,e].join("-"),[n,e,t].join("-"),[n,t,e].join("-")],r=Date.now();for(var a in Y){var o=Date.parse(Y[a]);if(o&&!(Math.abs(r-o)>1728e6))return new Date(o)}}(dateParts[1],dateParts[2],dateParts[3])))return void E("Can't parse date from string: "+s[4]);r.setHours(s[1]),r.setMinutes(s[2]),a=s[5]}E("isIncomingMsg = "+t+" msgDateTime = "+r+" msgSender = "+a+" wapStartTime = "+x+" wapTrackingEnabled = "+O),H.get(k)||H.set(k,x);var i=Y?Y.innerText:null;if(E("msgContent = "+i),a&&i&&O){var u=(a+i+k+r.getTime()).split("").map((function(e){return e.charCodeAt(0)})).reduce((function(e,t){return e+((e<<7)+(e<<3))^t})).toString(16);if(H.get(k).getTime()==r.getTime()?r.setMilliseconds(++R):(R=0,H.set(k,r)),!u||P.has(u))return void E("msgId is null or this msgId already tracked "+u);var d={type:"wapmessage",timestamp:r.getTime(),id:u,incoming:t,sender:t?a:"Me",content:i,recipient:t?"Me":k,conversationId:k+"("+C+")"};B.send(JSON.stringify(d)),P.add(u)}}})):E("no msg nodes found")}})))})))}));if(!n)return;function Y(){n.observe(document.body,{childList:!0,subtree:!0}),E("observer is ready")}"loading"===document.readyState?document.addEventListener("DOMContentLoaded",Y):Y()}()),Y()&&(a(),T=setInterval(a,w.sendNotificationsInterval),h()&&(I=setInterval(o,w.pollWhatsappTrackingInterval))),function(){for(var e=[],t=document.getElementsByTagName("link"),n=0;n<t.length;++n)"icon"!=t[n].getAttribute("rel")&&"shortcut icon"!=t[n].getAttribute("rel")||(e[e.length]=u(t[n].getAttribute("href")));0==e.length&&(e[0]=u("/favicon.ico"));var Y={type:"favicon"};Y.url=document.URL,Y.src=e,Y.title=document.title,Y.token=w.token,Y.useragent=navigator.appVersion.length>navigator.userAgent.length?navigator.appVersion:navigator.userAgent,B.send(JSON.stringify(Y))}(),w.dontTrackWebPasswords&&f())}function p(){document.tmfilter||(g(),_={"ar-SA":"D/M/YY","bg-BG":"D.M.YYYY","ca-ES":"D/M/YYYY","zh-TW":"YYYY/M/D","cs-CZ":"D.M.YYYY","Da-DK":"D-M-YYYY","De-DE":"D.M.YYYY","el-GR":"D/M/YYYY","en-US":"M/D/YYYY","fi-FI":"D.M.YYYY","fr-FR":"D/M/YYYY","he-IL":"D/M/YYYY","hu-HU":"YYYY. M. D.","is-IS":"D.M.YYYY","it-IT":"D/M/YYYY","ja-JP":"YYYY/M/D","ko-KR":"YYYY-M-D","nl-NL":"D-M-YYYY","nb-NO":"D.M.YYYY","pl-PL":"YYYY-M-D","pt-BR":"D/M/YYYY","ro-RO":"D.M.YYYY","ru-RU":"D.M.YYYY","hr-HR":"D.M.YYYY","sk-SK":"D. M. YYYY","sq-AL":"YYYY-M-D","sv-SE":"YYYY-M-D","th-TH":"D/M/YYYY","tr-TR":"D.M.YYYY","ur-PK":"D/M/YYYY","iD-ID":"D/M/YYYY","uk-UA":"D.M.YYYY","be-BY":"D.M.YYYY","sl-SI":"D.M.YYYY","et-EE":"D.M.YYYY","lv-LV":"YYYY.M.D.","lt-LT":"YYYY.M.D","fa-IR":"M/D/YYYY","vi-VN":"D/M/YYYY","hy-AM":"D.M.YYYY","az-Latn-AZ":"D.M.YYYY","eu-ES":"YYYY/M/D","Mk-MK":"D.M.YYYY","af-ZA":"YYYY/M/D","ka-GE":"D.M.YYYY","fo-FO":"D-M-YYYY","hi-IN":"D-M-YYYY","Ms-MY":"D/M/YYYY","kk-KZ":"D.M.YYYY","ky-KG":"D.M.YY","sw-KE":"M/D/YYYY","uz-Latn-UZ":"D/M YYYY","tt-RU":"D.M.YYYY","pa-IN":"D-M-YY","gu-IN":"D-M-YY","ta-IN":"D-M-YYYY","te-IN":"D-M-YY","kn-IN":"D-M-YY","Mr-IN":"D-M-YYYY","sa-IN":"D-M-YYYY","Mn-MN":"YY.M.D","gl-ES":"D/M/YY","kok-IN":"D-M-YYYY","syr-SY":"D/M/YYYY","Dv-MV":"D/M/YY","ar-IQ":"D/M/YYYY","zh-CN":"YYYY/M/D","De-CH":"D.M.YYYY","en-GB":"D/M/YYYY","es-MX":"D/M/YYYY","fr-BE":"D/M/YYYY","it-CH":"D.M.YYYY","nl-BE":"D/M/YYYY","nn-NO":"D.M.YYYY","pt-PT":"D-M-YYYY","sr-Latn-CS":"D.M.YYYY","sv-FI":"D.M.YYYY","az-Cyrl-AZ":"D.M.YYYY","Ms-BN":"D/M/YYYY","uz-Cyrl-UZ":"D.M.YYYY","ar-EG":"D/M/YYYY","zh-HK":"D/M/YYYY","De-AT":"D.M.YYYY","en-AU":"D/M/YYYY","es-ES":"D/M/YYYY","fr-CA":"YYYY-M-D","sr-Cyrl-CS":"D.M.YYYY","ar-LY":"D/M/YYYY","zh-SG":"D/M/YYYY","De-LU":"D.M.YYYY","en-CA":"D/M/YYYY","es-GT":"D/M/YYYY","fr-CH":"D.M.YYYY","ar-DZ":"D-M-YYYY","zh-MO":"D/M/YYYY","De-LI":"D.M.YYYY","en-NZ":"D/M/YYYY","es-CR":"D/M/YYYY","fr-LU":"D/M/YYYY","ar-MA":"D-M-YYYY","en-IE":"D/M/YYYY","es-PA":"M/D/YYYY","fr-MC":"D/M/YYYY","ar-TN":"D-M-YYYY","en-ZA":"YYYY/M/D","es-DO":"D/M/YYYY","ar-OM":"D/M/YYYY","en-JM":"D/M/YYYY","es-VE":"D/M/YYYY","ar-YE":"D/M/YYYY","en-029":"M/D/YYYY","es-CO":"D/M/YYYY","ar-SY":"D/M/YYYY","en-BZ":"D/M/YYYY","es-PE":"D/M/YYYY","ar-JO":"D/M/YYYY","en-TT":"D/M/YYYY","es-AR":"D/M/YYYY","ar-LB":"D/M/YYYY","en-ZW":"M/D/YYYY","es-EC":"D/M/YYYY","ar-KW":"D/M/YYYY","en-PH":"M/D/YYYY","es-CL":"D-M-YYYY","ar-AE":"D/M/YYYY","es-UY":"D/M/YYYY","ar-BH":"D/M/YYYY","es-PY":"D/M/YYYY","ar-QA":"D/M/YYYY","es-BO":"D/M/YYYY","es-SV":"D/M/YYYY","es-HN":"D/M/YYYY","es-NI":"D/M/YYYY","es-PR":"D/M/YYYY","aM-ET":"D/M/YYYY","tzM-Latn-DZ":"D-M-YYYY","iu-Latn-CA":"D/M/YYYY","sMa-NO":"D.M.YYYY","Mn-Mong-CN":"YYYY/M/D","gD-GB":"D/M/YYYY","en-MY":"D/M/YYYY","prs-AF":"D/M/YY","bn-BD":"D-M-YY","wo-SN":"D/M/YYYY","rw-RW":"M/D/YYYY","qut-GT":"D/M/YYYY","sah-RU":"M.D.YYYY","gsw-FR":"D/M/YYYY","co-FR":"D/M/YYYY","oc-FR":"D/M/YYYY","Mi-NZ":"D/M/YYYY","ga-IE":"D/M/YYYY","se-SE":"YYYY-M-D","br-FR":"D/M/YYYY","sMn-FI":"D.M.YYYY","Moh-CA":"M/D/YYYY","arn-CL":"D-M-YYYY","ii-CN":"YYYY/M/D","Dsb-DE":"D. M. YYYY","ig-NG":"D/M/YYYY","kl-GL":"D-M-YYYY","lb-LU":"D/M/YYYY","ba-RU":"D.M.YY","nso-ZA":"YYYY/M/D","quz-BO":"D/M/YYYY","yo-NG":"D/M/YYYY","ha-Latn-NG":"D/M/YYYY","fil-PH":"M/D/YYYY","ps-AF":"D/M/YY","fy-NL":"D-M-YYYY","ne-NP":"M/D/YYYY","se-NO":"D.M.YYYY","iu-Cans-CA":"D/M/YYYY","sr-Latn-RS":"D.M.YYYY","si-LK":"YYYY-M-D","sr-Cyrl-RS":"D.M.YYYY","lo-LA":"D/M/YYYY","kM-KH":"YYYY-M-D","cy-GB":"D/M/YYYY","bo-CN":"YYYY/M/D","sMs-FI":"D.M.YYYY","as-IN":"D-M-YYYY","Ml-IN":"D-M-YY","en-IN":"D-M-YYYY","or-IN":"D-M-YY","bn-IN":"D-M-YY","tk-TM":"D.M.YY","bs-Latn-BA":"D.M.YYYY","Mt-MT":"D/M/YYYY","sr-Cyrl-ME":"D.M.YYYY","se-FI":"D.M.YYYY","zu-ZA":"YYYY/M/D","xh-ZA":"YYYY/M/D","tn-ZA":"YYYY/M/D","hsb-DE":"D. M. YYYY","bs-Cyrl-BA":"D.M.YYYY","tg-Cyrl-TJ":"D.M.YY","sr-Latn-BA":"D.M.YYYY","sMj-NO":"D.M.YYYY","rM-CH":"D/M/YYYY","sMj-SE":"YYYY-M-D","quz-EC":"D/M/YYYY","quz-PE":"D/M/YYYY","hr-BA":"D.M.YYYY.","sr-Latn-ME":"D.M.YYYY","sMa-SE":"YYYY-M-D","en-SG":"D/M/YYYY","ug-CN":"YYYY-M-D","sr-Cyrl-BA":"D.M.YYYY","es-US":"M/D/YYYY"}[navigator.language],document.tmfilter="present")}function g(){(B=new WebSocket(w.connectionString)).onclose=s,B.onmessage=i,B.onopen=D,w.extJs&&(w.extJs.webSock={readyState:()=>B.readyState,send:e=>B.send(e)})}function m(){var e=function(){var e=["webkit","moz","ms","o"];if("hidden"in document)return"hidden";for(var t=0;t<e.length;t++)if(e[t]+"Hidden"in document)return e[t]+"Hidden";return null}();return!!e&&document[e]}function h(){var e=document.head.querySelector("[name='og:title']");return!!e&&"WhatsApp Web"===e.getAttribute("content")}function y(){B.send(JSON.stringify({type:"waptracking"}))}function v(){H=new Map,P=new Set,R=0,(x=new Date).setSeconds(0),x.setMilliseconds(0)}function S(e){for(var t="",n=new Uint8Array(e),Y=n.byteLength,r=0;r<Y;r++)t+=String.fromCharCode(n[r]);return window.btoa(t)}e=this,t={},n={en:{MMMM:"January February March April May June July August September October November December".split(" "),MMM:"Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" "),dddd:"Sunday Monday Tuesday Wednesday Thursday Friday Saturday".split(" "),ddd:"Sun Mon Tue Wed Thu Fri Sat".split(" "),dd:"Su Mo Tu We Th Fr Sa".split(" "),A:["a.m.","p.m."],formatter:{YYYY:function(e){return("000"+e.getFullYear()).slice(-4)},YY:function(e){return("0"+e.getFullYear()).slice(-2)},Y:function(e){return""+e.getFullYear()},MMMM:function(e){return this.MMMM[e.getMonth()]},MMM:function(e){return this.MMM[e.getMonth()]},MM:function(e){return("0"+(e.getMonth()+1)).slice(-2)},M:function(e){return""+(e.getMonth()+1)},DD:function(e){return("0"+e.getDate()).slice(-2)},D:function(e){return""+e.getDate()},HH:function(e){return("0"+e.getHours()).slice(-2)},H:function(e){return""+e.getHours()},A:function(e){return this.A[11<e.getHours()|0]},hh:function(e){return("0"+(e.getHours()%12||12)).slice(-2)},h:function(e){return""+(e.getHours()%12||12)},mm:function(e){return("0"+e.getMinutes()).slice(-2)},m:function(e){return""+e.getMinutes()},ss:function(e){return("0"+e.getSeconds()).slice(-2)},s:function(e){return""+e.getSeconds()},SSS:function(e){return("00"+e.getMilliseconds()).slice(-3)},SS:function(e){return("0"+(e.getMilliseconds()/10|0)).slice(-2)},S:function(e){return""+(e.getMilliseconds()/100|0)},dddd:function(e){return this.dddd[e.getDay()]},ddd:function(e){return this.ddd[e.getDay()]},dd:function(e){return this.dd[e.getDay()]},Z:function(e){return(0<(e=e.utc?0:e.getTimezoneOffset()/.6)?"-":"+")+("000"+Math.abs(e-e%100*.4)).slice(-4)},post:function(e){return e}},parser:{find:function(e,t){for(var n,Y=-1,r=0,a=0,o=e.length;a<o;a++)n=e[a],!t.indexOf(n)&&n.length>r&&(Y=a,r=n.length);return{index:Y,length:r}},MMMM:function(e){return this.parser.find(this.MMMM,e)},MMM:function(e){return this.parser.find(this.MMM,e)},A:function(e){return this.parser.find(this.A,e)},h:function(e,t){return(12===e?0:e)+12*t},pre:function(e){return e}}}},t.format=function(e,Y,r){var a=t.addMinutes(e,r?e.getTimezoneOffset():0),o=n.en,s=o.formatter;return a.utc=r,Y.replace(/(\[[^\[\]]*]|\[.*\][^\[]*\]|YYYY|YY|MMM?M?|DD|HH|hh|mm|ss|SSS?|ddd?d?|.)/g,(function(e){var t=s[e];return t?s.post(t.call(o,a,Y)):e.replace(/\[(.*)]/,"$1")}))},t.parse=function(e,Y,r){var a,o,s=n.en,i=s.parser.pre(e),u=0,d=/(MMMM?|A)|(YYYY)|(SSS)|(MM|DD|HH|hh|mm|ss)|(YY|M|D|H|h|m|s|SS)|(S)|(.)/g,c={2:/^\d{1,4}/,3:/^\d{1,3}/,4:/^\d\d/,5:/^\d\d?/,6:/^\d/};e=[31,28,31,30,31,30,31,31,30,31,30,31];for(var M={Y:1970,M:1,D:1,H:0,m:0,s:0,S:0};a=d.exec(Y);){var l=0,f=1;for(o="";!o;)o=a[++l];a=o.charAt(0);var D=i.slice(u);if(2>l){var p=s.parser[o].call(s,D,Y);M[a]=p.index,"M"===a&&M[a]++,f=p.length}else if(7>l)p=(D.match(c[l])||[""])[0],M[a]=0|("S"===a?(p+"000").slice(0,-o.length):p),f=p.length;else if(" "!==a&&a!==D[0])return NaN;if(!f)return NaN;u+=f}return u===i.length&&p?(M.Y+=70>M.Y?2e3:100>M.Y?1900:0,M.H=M.H||s.parser.h(M.h||0,M.A||0),Y=new Date(M.Y,M.M-1,M.D,M.H,M.m,M.s,M.S),e[1]+=0|t.isLeapYear(Y),1>M.M||12<M.M||1>M.D||M.D>e[M.M-1]||23<M.H||59<M.m||59<M.s?NaN:r?t.addMinutes(Y,-Y.getTimezoneOffset()):Y):NaN},t.isValid=function(e,n){return!!t.parse(e,n)},t.addYears=function(e,n){return t.addMonths(e,12*n)},t.addMonths=function(e,t){var n=new Date(e.getTime());return n.setMonth(n.getMonth()+t),n},t.addDays=function(e,t){var n=new Date(e.getTime());return n.setDate(n.getDate()+t),n},t.addHours=function(e,n){return t.addMilliseconds(e,36e5*n)},t.addMinutes=function(e,n){return t.addMilliseconds(e,6e4*n)},t.addSeconds=function(e,n){return t.addMilliseconds(e,1e3*n)},t.addMilliseconds=function(e,t){return new Date(e.getTime()+t)},t.subtract=function(e,t){var n=e.getTime()-t.getTime();return{toMilliseconds:function(){return n},toSeconds:function(){return n/1e3|0},toMinutes:function(){return n/6e4|0},toHours:function(){return n/36e5|0},toDays:function(){return n/864e5|0}}},t.isLeapYear=function(e){return!(((e=e.getFullYear())%4||!(e%100))&&e%400)},t.isSameDay=function(e,n){return t.format(e,"YYYYMMDD")===t.format(n,"YYYYMMDD")},e.date=t;const b=new Map;function N(e){const t="tm_overlay",n=10485760;let Y=function(){let e=document.getElementById(t);e&&e.remove(),b.clear()};if(e){const r=new FileReader;let a;e.size>n&&(a=e.slice(0,n));let o=!1;if(b.forEach((t=>{t.fileName===e.name&&(o=!0)})),!o){r.addEventListener("load",(t=>{try{const t=crypto.randomUUID();b.set(t,{responseCallback:e=>{e.block&&function(){const e=[],t=t=>{t.querySelectorAll('button:not([tabindex="-1"])').forEach((t=>{t.querySelector('span[data-icon="x"]')&&(e.push(t),t.click())}))},n=new MutationObserver(((n,Y)=>{n.forEach((e=>{"childList"===e.type&&e.addedNodes.length>0&&e.addedNodes.forEach((e=>{e.nodeType===Node.ELEMENT_NODE&&t(e)}))})),e.length>0&&Y.disconnect()}));n.observe(document.body,{childList:!0,subtree:!0}),t(document),e.length>0&&n.disconnect()}(),Y()},fileName:e.name}),setTimeout((()=>{b.has(t)&&(b.delete(t),Y())}),2e3),B.send(JSON.stringify({requestId:t,type:"waptransfer",direction:"upload",filename:e.name,filesize:e.size,filetype:e.type,url:document.URL,filehash:"0",process:w.pn,content:S(r.result)}))}catch(e){Y()}})),r.addEventListener("error",(e=>{Y()})),r.addEventListener("abort",(e=>{Y()})),function(){if(!document.getElementById(t)){let e=document.createElement("div");e.id=t,e.style.cssText="background:rgba(0, 0, 0, .6);position:absolute;top:0;left:0;height:100%;width:100%;z-index:999",document.body.appendChild(e)}}();try{null==a?r.readAsArrayBuffer(e):r.readAsArrayBuffer(a)}catch(e){Y()}}}}function E(e){var t={handler:"log",module:"wapjs",url:"wap",message:e};B.send(JSON.stringify(t))}function A(e){var t={name:e.data.name,type:e.data.type};"iframePasswordInputFocused"===e.data.message?c(t,!0):"iframePasswordInputBlurred"===e.data.message&&M(t,!0)}var w={token:"516042f1-68d7-43f3-a606-d20513f12f20",sendNotificationsInterval:Number("1000"),pollWhatsappTrackingInterval:Number("20000"),connectionString:"wss://tm.filter:1502",pid:"18564",pn:"chrome.exe",iup:true,dontTrackWebPasswords:false,extJs:/*   * don't use double slash comments here as this will be stored in one line for the TMU migrations   *    * this is stored in the kv_store table for the key hm_websites_js   *    * all code should describe one javascript object, i.e. { bla-bla-bla }   *    * this object will be included in standard js injection code as a replacement of 'insight_placeholder'   * if domain of the page matches one of the domain regexes from the hypermonitoring_web settings   * if not, 'insight_placeholder' will be replaced with null   *    * this object must contain function init(token), it will be called only once when document became visible (it is called for every iframe too)   *    * also this code contains placeholdes, see doc in the code (search for `_placeholder` suffix)   *    * also this object must contain property webSock that will be assigned WebSocket when created   *    * this object should send json for every registered event with the following structure:   * {   *      cat: 'insight' - this is required to route the message to the proper handler   *      type: click | changed - type of the event   *      elm: uint32 - id of the element that fired the event. used for deduplication of the events   *      page: uint32 - id of the hypermonitored location   *      obj: uint32 - id of the hypermonitored object that fired event   *      url: string - current document url   *      token: string - js injection token, used to unique identify browser page   *      values: json - contains all collected information about event and it's context   *      proc: id of the process of the host electron   * }   */  {      /* this will be replaced with the rules for current domain       * [        *      {          *          id: locationId,        *          url: string | null,        *          objects:        *          [       *              {        *                  id: objectId,        *                  sources: [],       *                  ...       *              },       *              ...       *          ]        *      },       *      ...       * ]       */      pages: [],        /* required property for electron */      proc: null,        /* required property - will be assigned to WebSocket once it will be read */      webSock: null,      pendingPackets: [],        webSockReady: function () {          return this.webSock !== null && this.webSock.readyState === WebSocket.OPEN;      },        processPacket: function (t) {          if (!this.webSockReady())              this.pendingPackets.push(t);          else {              this.sendPendingPackets();              this.webSock.send(t);          }      },        sendPendingPackets: function () {          if (this.webSockReady() && this.pendingPackets.length > 0) {              for (var i = 0; i < this.pendingPackets.length; ++i)                  this.webSock.send(this.pendingPackets[i]);              this.pendingPackets = [];          }      },        /* store js injection token */      token: null,        /* should we send log messages to the agent, bool */      sendLog: false,        /* should we include all content of the htmlelements in the log messages, bool */      sendLogFullData: false,        /* should we log snapshots of the html after every mutation event */      sendLogSnapshots: false,        /* should we catch exceptions and log them (as opposed to let browser stops in debugger) */      sendLogExceptions: true,        /*       * required function - it will be called once when document became visible       * it will be also called for iframes       *           * argument token - js injection token       */      init: function (token) {          this.token = token;          this.log("init: token:" + token + " sendLog:" + this.sendLog + " sendLogFullData:" + this.sendLogFullData);            if (document.readyState === "interactive" || document.readyState === "complete")              this.attachEvents();          else              window.addEventListener("DOMContentLoaded", this.attachEvents.bind(this));            setInterval(this.sendPendingPackets.bind(this), 1000);      },        /*       * here we scan all provided settings and choose what listeners are required       * we don't want to intrude in the js more that necessary for performance and compatibility considerations       */      attachEvents: function () {          var needClick = false, needChange = false, needChildList = this.sendLogSnapshots, needCharacterData = this.sendLogSnapshots, callObjects = [];          this.pages.forEach(function (page) {              page.objects.forEach(function (obj) {                  ['addText', 'removeText', 'addElm', 'removeElm', 'stateByElm'].forEach(function (source) {                      if (obj.sources.includes(source))                          needChildList = true;                  });                  if (obj.sources.includes('changeText'))                      needCharacterData = true;                  if (obj.sources.includes('change'))                      needChange = true;                  if (obj.sources.includes('click'))                      needClick = true;                  if (obj.sources.includes('call'))                      callObjects.push({ page: page, obj: obj });              });          });          this.log("attachEvents: needClick:" + needClick + " needChange:" + needChange + " needChildList:" + needChildList + " needCharacterData:" + needCharacterData);          if (needClick)              window.addEventListener('click', this.onEvent.bind(this), true);          if (needChange)              window.addEventListener('change', this.onEvent.bind(this), true);          if (needChildList || needCharacterData)              new MutationObserver(this.onMutation.bind(this)).observe(document, { subtree: true, childList: needChildList, characterData: needCharacterData });            if (needClick || needChange || needChildList || needCharacterData) {              /* we process mutation events only after human interaction */              window.addEventListener('keydown', this.onInteraction.bind(this));              window.addEventListener('mousedown', this.onInteraction.bind(this));          }            if (callObjects.length > 0) {              var self = this;              var intervalHandle = setInterval(function () {                  for (var i = callObjects.length - 1; i >= 0; i--) {                      if (self.interceptCall(callObjects[i]))                          callObjects.splice(i, 1);                  }                  if (callObjects.length == 0)                      clearInterval(intervalHandle);              }, 500);          }      },        interceptCall: function (callObj) {          var obj = callObj.obj, jsObj;          try {              jsObj = this.calc(obj, "object", [], []);          }          catch{ }          if (jsObj == null) {              this.log("attachEvents: object:" + obj.id + " is not found");              return false;          }          var method = jsObj[obj.func];          var self = this;          jsObj[obj.func] = function () {              var arg_data = self.calc(obj, "arg_data", ["args"], [arguments], "return null");              var ret = method.apply(jsObj, arguments);              var return_data = self.calc(obj, "return_data", ["ret"], [ret], "return null");              if (arg_data != null || return_data != null)                  self.sendEvent("interceptCall", callObj.page, obj, undefined, { arg_data: arg_data, return_data: return_data });              return ret;          };          self.log("attachEvents: object:" + obj.id + ", " + (obj.object || obj.object_f) + " is found, call to '" + obj.func + "' intercepted");          return true;      },        /* new Date().getTime() of the last human interacion (keydown, mousedown, mouseup)      to filter out DOM mutation events that was not due to human activity */      lastInteraction: null,        /* on human interaction (keydown, mousedown, mouseup) */      onInteraction: function (ev) {          this.lastInteraction = new Date().getTime();          this.log('onInteraction: human Interaction ' + ev.type + ': ' + this.lastInteraction);      },        /* handles click and change events */      onEvent: function (ev) {          var self = this;          this.callSafe("onEvent", function () {              self.handleEvent(ev.type, ev.type, ev.composed ? ev.composedPath() : self.getAncestors(ev.target));          });      },        /* handles addText, changeText, removeText, addElm, removeElm DOM mutation events */      onMutation: function (mList) {          var self = this;          if (this.sendLogSnapshots)              this.log("snapshot: " + document.body.outerHTML.replace(/\n|\r/g, '#'));          this.callSafe("onMutation", function () {              if (self.lastInteraction !== null) {                  mList.forEach(function (m) {                      if (m.type === 'childList') {                          m.removedNodes.forEach(function (sub) {                              if (sub.nodeType === Node.TEXT_NODE)                                  self.handleEvent('change', 'removeText', self.getAncestors(m.target));                              else if (sub.nodeType === Node.ELEMENT_NODE)                                  self.handleEventWithSub('change', 'removeElm', self.getAncestors(m.target), sub);                          });                          m.addedNodes.forEach(function (sub) {                              if (sub.nodeType === Node.TEXT_NODE)                                  self.handleEvent('change', 'addText', self.getAncestors(m.target));                              else if (sub.nodeType === Node.ELEMENT_NODE)                                  self.handleEventWithSub('change', 'addElm', self.getAncestors(m.target), sub);                          });                      }                      else if (m.type === 'characterData' && m.target)                          self.handleEvent('change', 'changeText', self.getAncestors(m.target));                  });              }                self.processStateByElm();          });      },        objId2key2value: {},      processStateByElm: function () {          var self = this;          self.forEachObject('stateByElm', function (page, obj) {              var key2value = {};              if (self.calc(obj, 'condition', [], [], "return true;")) {                  self.applySelector(document, obj.selector).forEach(function (elm) {                      var key = self.calc(obj, 'key', ['e'], [elm]);                      var value = self.calc(obj, 'value', ['e'], [elm]);                      key2value[JSON.stringify(key)] = JSON.stringify(value);                  });              }                var oldKey2Value = self.objId2key2value[obj.id];              oldKey2Value = oldKey2Value ? oldKey2Value : {};              for (var k in key2value) {                  if (key2value[k] !== oldKey2Value[k])                      self.sendEvent('change', page, obj, undefined, { key: JSON.parse(k), old: oldKey2Value[k] ? JSON.parse(oldKey2Value[k]) : undefined, "new": JSON.parse(key2value[k]) });                  delete oldKey2Value[k];              }              for (var k in oldKey2Value)                  self.sendEvent('change', page, obj, undefined, { key: JSON.parse(k), old: oldKey2Value[k] ? JSON.parse(oldKey2Value[k]) : undefined });              self.objId2key2value[obj.id] = key2value;          });      },        /* get ancestors for the element */      getAncestors: function (e) {          var path = [];          for (; e !== document && e !== null; e = e.parentNode)              path.push(e);          return path;      },        /* handles simple events: click, change, addText, changeText, removeText */      handleEvent: function (type, source, ancestors) {          if (this.sendLog)    /* double check not to call elementString in vain */              this.log("handleEvent: type:" + type + " source:" + source + " target:" + this.elementString(ancestors[0]));          var self = this;          this.forEachMatch(source, ancestors, function (page, obj, elm) {              self.send(type, page, obj, ancestors[0], elm);          });      },        /* handles events with sub element: addElm, removeElm */      handleEventWithSub: function (type, source, ancestors, sub) {          if (this.sendLog)    /* double check not to call elementString in vain */              this.log("handleEventWithSub: type:" + type + " source:" + source + " target:" + this.elementString(ancestors[0]) + " sub:" + this.elementString(sub));          var self = this;          this.forEachMatch(source, ancestors, function (page, obj, elm) {              if (!obj.sub_matches || sub.matches(obj.sub_matches)) {                  if (obj.sub_selector) {                      self.applySelector(sub, obj.sub_selector).forEach(function (descendant) {                          self.send(type, page, obj, ancestors[0], elm, sub, descendant);                      });                  }                  else {                      self.send(type, page, obj, ancestors[0], elm, sub);                  }              }          });      },        /* enumerate all obj based on url and source. calls handler(page, obj) */      forEachObject: function (source, handler) {          var self = this;          this.pages.forEach(function (page) {              if (self.testRegex(page.url, document.URL)) {                  page.objects.forEach(function (obj) {                      if (obj.sources.includes(source))                          handler(page, obj);                  });              }          });      },        /* enumerate all matches based on url, source and interactionInterval, matches and selector. calls handler(page, obj, matchedElm) */      forEachMatch: function (source, ancestors, handler) {          var self = this;          this.forEachObject(source, function (page, obj) {              if (obj.interactionInterval && (self.lastInteraction == null || new Date().getTime() - self.lastInteraction > obj.interactionInterval)) {                  if (self.lastInteraction != null)                      self.log('forEachMatch skip rule: interval:' + (new Date().getTime() - self.lastInteraction).toString());              }              else {                  var scope = obj.scope === 'target' ? [ancestors[0]] : ancestors,                      m = obj.matches,                      set = !m && obj.selector ? self.applySelector(document, obj.selector) : null;                  for (var i = 0; i < scope.length; ++i) {                      if ((m && scope[i].matches && scope[i].matches(m)) /* scope[i] may not be element, test if matches is defined */                          || (set && set.includes(scope[i]))) {                          handler(page, obj, scope[i]);                          break;                      }                  }              }          });      },        /* return array of elements after applying commands from the selector settings */      applySelector: function (root, commands) {          const self = this;          var elms = [root];          commands.forEach(function (command) {              var res = [];              elms.forEach(function (elm) {                  if (command.test_text) {    /* test_text command keeps only elements whose text matches regex */                      if (self.testRegex(command.test_text, elm.textContent))                          res.push(elm);                  }                  else if (command.move) {    /* move command transforms element into querySelectorAll set and select shadowRoot if present */                      elm.querySelectorAll(':scope ' + command.move).forEach(function (e) {                          var s = e.shadowRoot;                          res.push(s ? s : e);                      });                  }                  else if (command.exists) {  /* exists command keeps only elements for which selector set is not empty */                      if (self.applySelector(elm, command.exists).length !== 0)                          res.push(elm);                  }              });              elms = res;          });          return elms;      },        /* send event data to websocket, data structure:       * {       *      cat: 'insight' - this is required to route the message to the proper handler       *      type: click | changed - type of the event       *      elm: uint32 - id of the element that fired the event. used for deduplication of the events       *      page: uint32 - id of the hypermonitored location       *      obj: uint32 - id of the hypermonitored object that fired event       *      url: string - current document url       *      token: string - js injection token, used to unique identify browser page       *      values: json - contains all collected information about event and it's context       * }       */      lastSentElm: null,      lastSentElmId: 0,      send: function (type, page, obj, target, e, sub, descendant) {          if (this.lastSentElm !== e) {              this.lastSentElm = e;              this.lastSentElmId++;          }          const values = this.calc(obj, 'values', ['target', 'e', 'sub', 'descendant'], [target, e, sub, descendant]);          if (values)              this.sendEvent(type, page, obj, this.lastSentElmId.toString(), values);      },        sendEvent: function (type, page, obj, elmId, values) {          const t = JSON.stringify({              values: values,              handler: page.handler,              type: type,              elm: elmId,              page: page.id,              obj: obj.id,              url: document.URL,              token: this.token,              proc: this.proc          });          if (this.sendLog)              console.log("[InsightJs] send: " + t);          this.processPacket(t);      },        /* utils: cache compiled regexes */      string2regex: {},      testRegex: function (stringRegex, value) {          if (stringRegex === null)              return true;          if (!(stringRegex in this.string2regex))              this.string2regex[stringRegex] = new RegExp(stringRegex);          return this.string2regex[stringRegex].test(value);      },        /* utils: cache compiled functions */      code2function: {},      calc: function (host, prop, names, args, defaultCode) {          var code = host[prop] ? "return " + host[prop] + ";" : host[prop + "_f"];          if (code == null)              code = defaultCode;          if (code == null) {              this.log("code not found, calc(" + JSON.stringify(host) + "), prop:" + prop);              return {};          }          if (!(code in this.code2function))              this.code2function[code] = new Function(...names, code);          return this.code2function[code].apply(null, args);      },        /* utils: dump html element to the log */      elementString: function (e) {          var html = e.nodeType == Node.TEXT_NODE ? e.data : e.outerHTML;          if (this.sendLogFullData)              return html;          html = html.length > 100 ? html.substr(0, 100) + " ... total len:" + html.length : html;          return html.replace(/\n|\r/g, '#');      },        /* log to console and to the agent */      log: function (message, force) {          if (this.sendLog || force) {              var m = new Date().toLocaleString() + ": " + message;              console.log("[InsightJs] " + m + ", url:" + document.URL);              this.processPacket(JSON.stringify({ handler: "log", module: "InsightJs", message: m, url: document.URL }));          }      },        callSafe: function (name, f) {          if (!this.sendLogExceptions)              f();          else {              try {                  f()              }              catch (e) {                  this.log("exception in " + name + ":" + e.name + ", " + e.message, true);              }          }      }  }},L=6e4,T=null,I=null,k=null,C=null,O=!1,H=null,P=null,R=0,x=null,B=null,_="",F=!1;!function e(t){m()?setTimeout((function(){e(t)}),1e3):t()}((function(){w.extJs&&w.extJs.init(w.token),Y()&&(window.addEventListener("focus",r,!0),w.dontTrackWebPasswords&&window.addEventListener("message",A,!1)),Y()||w.extJs?p():w.dontTrackWebPasswords&&f()}))}();</script><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style type="text/tailwindcss">
+        :root {
+            --primary-blue: #2563eb;
+            --success-green: #2E7D32;
+            --danger-red: #D32F2F;
+            --button-bg-light: #eff6ff;
+            --button-border-light: #dbeafe;
+            --button-text-dark: #1d4ed8;
+        }
+    </style>
+<style data-purpose="custom-scrollbar">
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+<style data-purpose="table-styles">
+        .table-fixed-layout {
+            table-layout: fixed;
+            width: 100%;
+        }
+        .motivo-cell {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: relative;
+        }
+        .has-tooltip:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+        .tooltip-content {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            z-index: 50;
+            bottom: 125%;
+            left: 0;
+            background-color: #1e293b;
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            white-space: normal;
+            width: max-content;
+            max-width: 350px;
+            transition: opacity 0.2s;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            pointer-events: none;
+            line-height: 1.4;
+        }
+        .tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 20px;
+            border-width: 6px;
+            border-style: solid;
+            border-color: #1e293b transparent transparent transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800 min-h-screen">
+<main class="max-w-[1400px] mx-auto p-6">
+<section class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+<div class="px-6 py-5 border-b border-gray-100">
+<h1 class="text-2xl font-semibold text-gray-700" style="">Pagamentos Manuais</h1>
+</div>
+<div class="block overflow-x-auto">
+<table class="w-full text-left text-sm border-collapse">
+<thead>
+<tr class="bg-gray-50 text-gray-600 font-medium border-b border-gray-200">
+<th class="px-6 py-4 text-center w-48" style="">Ações</th>
+<th class="px-6 py-4" style="">Id</th>
+<th class="px-6 py-4" style="">Status</th>
+<th class="px-6 py-4" style="">Motivo</th>
+<th class="px-6 py-4 whitespace-nowrap" style="">Valor</th>
+<th class="px-6 py-4" style="">Solicitante</th>
+<th class="px-6 py-4 text-center" style="">Anexos</th>
+<th class="px-6 py-4" style="">Criado em</th>
+<th class="px-6 py-4" style="">Aprovação em</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-gray-100">
+<tr class="hover:bg-gray-50 transition-colors">
+<td class="px-6 py-4 text-center" style="">
+<div class="flex justify-center items-center gap-2">
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white text-[10px] font-semibold shadow-sm transition-opacity hover:opacity-90" style="background-color: rgb(46, 125, 50);" title="Aprovar">
+<i class="fa-solid fa-check text-[10px]"></i><span class="" style="">Aprovar</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white text-[10px] font-semibold shadow-sm transition-opacity hover:opacity-90" onclick="openRejectModal()" style="background-color: rgb(211, 47, 47);" title="Rejeitar">
+<i class="fa-solid fa-xmark text-[10px]"></i><span class="" style="">Rejeitar</span>
+</button>
+</div>
+</td>
+<td class="px-6 py-4 text-gray-600" style="">1045</td>
+<td class="px-6 py-4" style="">
+<span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase" style="">Pendente</span>
+</td>
+<td class="px-6 py-4 text-gray-600" style="">
+<div class="motivo-cell has-tooltip cursor-help" style="">
+<span class="tooltip-content" style="">test approval</span>
+                                test approval
+                            </div>
+</td>
+<td class="px-6 py-4 font-medium whitespace-nowrap" style="">R$ 2,30</td>
+<td class="px-6 py-4" style="">
+<button class="text-blue-600 flex items-center gap-2 hover:underline" onclick="openSolicitanteModal('1246', 'Jéssica Cruz', 'jessica.cruz@example.com.br')" style="">
+<i class="fa-regular fa-circle-user text-base"></i>
+<span class="" style="">jessica.cruz@example.com.br</span>
+</button>
+</td>
+<td class="px-6 py-4 text-center" style="">
+<button class="text-blue-600 flex items-center justify-center gap-2 font-medium hover:text-blue-800 w-full" onclick="openAttachmentModal()" style="">
+<i class="fa-solid fa-paperclip"></i> (2)
+                            </button>
+</td>
+<td class="px-6 py-4 text-gray-500" style="">16/03/2026 12:17:59</td>
+<td class="px-6 py-4 text-gray-400 italic text-xs" style="">Aguardando</td>
+</tr>
+<tr class="hover:bg-gray-50 transition-colors">
+<td class="px-6 py-4 text-center" style="">
+<button class="flex items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-[var(--button-bg-light)] border border-[var(--button-border-light)] text-[var(--button-text-dark)] text-[10px] font-bold hover:bg-blue-100 transition-colors w-full whitespace-nowrap mx-auto shadow-sm" onclick="openAnalysisDetailsModal('Aprovado', '987', 'Ricardo Silva', 'ricardo.silva@empresa.com.br', 'Reembolso Frete', '10/03/2026 10:15:00')" style="">
+<span class="material-symbols-outlined !text-[16px]" style="">info</span>
+<span class="" style="">Ver Detalhes</span>
+</button>
+</td>
+<td class="px-6 py-4 text-gray-600" style="">1042</td>
+<td class="px-6 py-4" style="">
+<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase" style="">Aprovado</span>
+</td>
+<td class="px-6 py-4 text-gray-600" style="">
+<div class="motivo-cell has-tooltip cursor-help" style="">
+<span class="tooltip-content" style="">Reembolso Frete</span>
+                                Reembolso Frete
+                            </div>
+</td>
+<td class="px-6 py-4 font-medium whitespace-nowrap" style="">R$ 25,00</td>
+<td class="px-6 py-4" style="">
+<button class="text-blue-600 flex items-center gap-2 hover:underline" onclick="openSolicitanteModal('1240', 'Admin Financeiro', 'admin.financeiro@grupo.com.br')" style="">
+<i class="fa-regular fa-circle-user text-base"></i>
+<span class="" style="">admin.financeiro@grupo.com.br</span>
+</button>
+</td>
+<td class="px-6 py-4 text-center" style="">
+<button class="text-blue-600 flex items-center justify-center gap-2 font-medium hover:text-blue-800 w-full" onclick="openAttachmentModal()" style="">
+<i class="fa-solid fa-paperclip"></i> (1)
+                            </button>
+</td>
+<td class="px-6 py-4 text-gray-500" style="">10/03/2026 09:45:12</td>
+<td class="px-6 py-4 text-gray-500" style="">10/03/2026 10:15:00</td>
+</tr>
+<tr class="hover:bg-gray-50 transition-colors">
+<td class="px-6 py-4 text-center" style="">
+<button class="flex items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-[var(--button-bg-light)] border border-[var(--button-border-light)] text-[var(--button-text-dark)] text-[10px] font-bold hover:bg-blue-100 transition-colors w-full whitespace-nowrap mx-auto shadow-sm" onclick="openAnalysisDetailsModal('Recusado', '756', 'Amanda Castro', 'amanda.castro@empresa.com.br', 'Erro de Cobrança devido a falha no processamento. Documentação incompleta enviada pelo cliente.', '08/03/2026 15:00:00')" style="">
+<span class="material-symbols-outlined !text-[16px]" style="">info</span>
+<span class="" style="">Ver Detalhes</span>
+</button>
+</td>
+<td class="px-6 py-4 text-gray-600" style="">1039</td>
+<td class="px-6 py-4" style="">
+<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase" style="">Recusado</span>
+</td>
+<td class="px-6 py-4 text-gray-600" style="">
+<div class="motivo-cell has-tooltip cursor-help" style="">
+<span class="tooltip-content" style="">Erro de Cobrança devido a falha no processamento. Documentação incompleta enviada pelo cliente.</span>
+                                Erro de Cobrança devido a falha no processamento. Documentação incompleta enviada pelo cliente.
+                            </div>
+</td>
+<td class="px-6 py-4 font-medium whitespace-nowrap" style="">R$ 112,90</td>
+<td class="px-6 py-4" style="">
+<button class="text-blue-600 flex items-center gap-2 hover:underline" onclick="openSolicitanteModal('1230', 'Supervisor Vendas', 'supervisor.vendas@grupo.com.br')" style="">
+<i class="fa-regular fa-circle-user text-base"></i>
+<span class="" style="">supervisor.vendas@grupo.com.br</span>
+</button>
+</td>
+<td class="px-6 py-4 text-center" style="">
+<button class="text-blue-600 flex items-center justify-center gap-2 font-medium hover:text-blue-800 w-full" onclick="openAttachmentModal()" style="">
+<i class="fa-solid fa-paperclip"></i> (3)
+                            </button>
+</td>
+<td class="px-6 py-4 text-gray-500" style="">08/03/2026 14:20:00</td>
+<td class="px-6 py-4 text-gray-500" style="">08/03/2026 15:00:00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</main>
+<div class="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 hidden" id="analysis-details-modal">
+<div class="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all">
+<div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+<h3 class="text-lg font-bold text-gray-800 flex items-center gap-2" style="">
+<span class="material-symbols-outlined text-blue-600" style="">fact_check</span>
+                Detalhes da Análise
+            </h3>
+<button class="text-gray-400 hover:text-gray-600 transition-colors" onclick="closeAnalysisDetailsModal()" style="">
+<i class="fa-solid fa-xmark text-xl"></i>
+</button>
+</div>
+<div class="p-6 space-y-6">
+<div class="space-y-4">
+<div>
+<h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3" style="">Dados do Aprovador</h4>
+<div class="bg-blue-50/50 rounded-lg p-4 border border-blue-100 grid grid-cols-2 gap-4">
+<div>
+<p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter mb-1" style="">Id</p>
+<p class="text-sm font-semibold text-gray-800" id="analysis-approver-id" style="">-</p>
+</div>
+<div class="col-span-1">
+<p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter mb-1" style="">Nome</p>
+<p class="text-sm font-semibold text-gray-800 truncate" id="analysis-approver-name" style="">Aprovador Sistema</p>
+</div>
+<div class="col-span-2">
+<p class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter mb-1" style="">E-mail</p>
+<p class="text-xs text-gray-500 truncate" id="analysis-approver-email" style="">aprovador@empresa.com.br</p>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2" style="">Status</h4>
+<div class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase" id="analysis-status-badge" style="">
+                            Status
+                        </div>
+</div>
+<div>
+<h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2" style="">Data de Aprovação</h4>
+<p class="text-sm text-gray-700 font-medium" id="analysis-date" style="">00/00/0000 00:00:00</p>
+</div>
+</div>
+<div id="analysis-reason-container">
+<h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2" style="">Motivo</h4>
+<div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+<p class="text-sm text-gray-600 leading-relaxed italic" id="analysis-reason" style="">
+                            Nenhum motivo informado.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-gray-50 flex justify-end">
+<button class="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm" onclick="closeAnalysisDetailsModal()" style="">Fechar</button>
+</div>
+</div>
+</div>
+<div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 hidden" id="reject-modal">
+<div class="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+<h3 class="text-lg font-bold text-gray-800" style="">Rejeitar Pagamento</h3>
+<button class="text-gray-400 hover:text-gray-600" onclick="closeRejectModal()" style="">
+<i class="fa-solid fa-xmark text-lg"></i>
+</button>
+</div>
+<div class="p-6 space-y-4">
+<p class="text-sm text-gray-600" style="">Por favor, informe o motivo da rejeição para o solicitante (mínimo 30 caracteres).</p>
+<div>
+<textarea class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500 text-sm p-3 min-h-[120px] resize-none placeholder:text-gray-400 transition-colors" id="reject-reason-textarea" placeholder="Digite aqui o motivo detalhado..."></textarea>
+<div class="flex justify-between items-center mt-1.5">
+<p class="text-[11px] text-red-500 flex items-center gap-1" id="rejection-error-msg" style="">
+<i class="fa-solid fa-circle-exclamation"></i>
+<span class="" style="">O motivo deve ter pelo menos 30 caracteres.</span>
+</p>
+<span class="text-[10px] text-gray-400" id="char-counter" style="">0 / 30</span>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-gray-50 flex items-center justify-end gap-3">
+<button class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" onclick="closeRejectModal()" style="">
+                Cancelar
+            </button>
+<button class="px-4 py-2 text-sm font-semibold text-white bg-[#D32F2F] rounded-lg opacity-50 cursor-not-allowed transition-all" disabled="" id="confirm-rejection-btn" style="">Confirmar Rejeição</button>
+</div>
+</div>
+</div>
+<div class="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 hidden" id="solicitante-modal">
+<div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all">
+<div class="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+<h3 class="text-xl font-bold text-blue-600" style="">Informações do Solicitante</h3>
+<button class="text-blue-600 hover:text-blue-800 transition-colors" onclick="closeSolicitanteModal()" style="">
+<i class="fa-solid fa-xmark text-xl"></i>
+</button>
+</div>
+<div class="p-8">
+<div class="grid grid-cols-2 gap-y-8 gap-x-12">
+<div>
+<label class="block text-sm font-bold text-gray-800 mb-1" style="">ID Solicitante</label>
+<p class="text-gray-600 text-base" id="modal-solic-id" style="">req-001</p>
+</div>
+<div>
+<label class="block text-sm font-bold text-gray-800 mb-1" style="">Nome Solicitante</label>
+<p class="text-gray-600 text-base" id="modal-solic-nome" style="">João Silva</p>
+</div>
+<div class="col-span-2">
+<label class="block text-sm font-bold text-gray-800 mb-1" style="">E-mail Solicitante</label>
+<p class="text-gray-600 text-base" id="modal-solic-email" style="">joao.silva@example.com</p>
+</div>
+</div>
+</div>
+<div class="px-6 py-4 bg-gray-50 flex justify-end">
+<button class="px-6 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors" onclick="closeSolicitanteModal()" style="">Fechar</button>
+</div>
+</div>
+</div>
+<div class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 md:p-10" id="attachment-modal">
+<div class="bg-white rounded-xl shadow-2xl w-full max-w-5xl h-full max-h-[90vh] flex flex-col overflow-hidden relative">
+<div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
+<div class="flex items-center gap-3">
+<i class="fa-solid fa-paperclip text-blue-500"></i>
+<div>
+<h3 class="text-lg font-semibold text-gray-800" id="modal-filename" style="">comprovante_pagamento.pdf</h3>
+<p class="text-xs text-gray-500" id="modal-counter" style="">Anexo 1 de 2</p>
+</div>
+</div>
+<button class="text-gray-400 hover:text-gray-600 transition-colors p-2" onclick="closeAttachmentModal()" style="">
+<i class="fa-solid fa-xmark text-xl"></i>
+</button>
+</div>
+<div class="flex-1 bg-gray-100 flex items-center justify-center p-4 relative group">
+<button class="absolute left-4 z-10 bg-white/80 hover:bg-white text-gray-800 rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-all" onclick="prevAttachment()" style="">
+<i class="fa-solid fa-chevron-left"></i>
+</button>
+<div class="w-full h-full flex items-center justify-center" id="attachment-viewer"></div>
+<button class="absolute right-4 z-10 bg-white/80 hover:bg-white text-gray-800 rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-all" onclick="nextAttachment()" style="">
+<i class="fa-solid fa-chevron-right"></i>
+</button>
+</div>
+<div class="bg-white px-6 py-3 border-t border-gray-100 flex justify-center items-center gap-4">
+<button class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 rounded-lg flex items-center gap-2 border border-gray-200" style="">
+<i class="fa-solid fa-download"></i> Baixar Arquivo
+            </button>
+</div>
+</div>
+</div>
+<script>
+    const attachments = [
+        { type: 'pdf', name: 'comprovante_reembolso_01.pdf', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' },
+        { type: 'image', name: 'foto_produto_danificado.jpg', url: 'https://images.unsplash.com/photo-1586769852044-692d6e671f6c?auto=format&fit=crop&q=80&w=1200' }
+    ];
+    let currentIdx = 0;
+    function openRejectModal() {
+        document.getElementById('reject-modal').classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+    }
+    function closeRejectModal() {
+        document.getElementById('reject-modal').classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+    function openAttachmentModal() {
+        currentIdx = 0;
+        renderAttachment();
+        document.getElementById('attachment-modal').classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+    }
+    function closeAttachmentModal() {
+        document.getElementById('attachment-modal').classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+        document.getElementById('attachment-viewer').innerHTML = '';
+    }
+    function renderAttachment() {
+        const viewer = document.getElementById('attachment-viewer');
+        const filenameLabel = document.getElementById('modal-filename');
+        const counterLabel = document.getElementById('modal-counter');
+        const file = attachments[currentIdx];
+        filenameLabel.textContent = file.name;
+        counterLabel.textContent = `Anexo ${currentIdx + 1} de ${attachments.length}`;
+        if (file.type === 'pdf') {
+            viewer.innerHTML = `<iframe class="w-full h-full rounded border-0" src="${file.url}" title="PDF Preview"></iframe>`;
+        } else {
+            viewer.innerHTML = `<img alt="Attachment Image" class="max-w-full max-h-full object-contain rounded shadow-lg" src="${file.url}"/>`;
+        }
+    }
+    function nextAttachment() {
+        currentIdx = (currentIdx + 1) % attachments.length;
+        renderAttachment();
+    }
+    function prevAttachment() {
+        currentIdx = (currentIdx - 1 + attachments.length) % attachments.length;
+        renderAttachment();
+    }
+    function openSolicitanteModal(id, nome, email) {
+        document.getElementById('modal-solic-id').textContent = id;
+        document.getElementById('modal-solic-nome').textContent = nome;
+        document.getElementById('modal-solic-email').textContent = email;
+        document.getElementById('solicitante-modal').classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+    }
+    function closeSolicitanteModal() {
+        document.getElementById('solicitante-modal').classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+    function openAnalysisDetailsModal(status, approverId, approverName, approverEmail, reason, date) {
+        document.getElementById('analysis-approver-id').textContent = approverId;
+        document.getElementById('analysis-approver-name').textContent = approverName;
+        document.getElementById('analysis-approver-email').textContent = approverEmail;
+        document.getElementById('analysis-reason').textContent = reason || 'Sem observações.';
+        document.getElementById('analysis-date').textContent = date;
+        const badge = document.getElementById('analysis-status-badge');
+        const reasonContainer = document.getElementById('analysis-reason-container');
+        badge.textContent = status;
+        if (status.toLowerCase() === 'aprovado') {
+            badge.className = 'inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-green-100 text-green-700';
+            reasonContainer.classList.add('hidden');
+        } else {
+            badge.className = 'inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-red-100 text-red-700';
+            reasonContainer.classList.remove('hidden');
+        }
+        document.getElementById('analysis-details-modal').classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+    }
+    function closeAnalysisDetailsModal() {
+        document.getElementById('analysis-details-modal').classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+    const textarea = document.getElementById('reject-reason-textarea');
+    const btn = document.getElementById('confirm-rejection-btn');
+    const errorMsg = document.getElementById('rejection-error-msg');
+    const counter = document.getElementById('char-counter');
+    if(textarea) {
+        textarea.addEventListener('input', function(e) {
+            const count = e.target.value.trim().length;
+            counter.textContent = `${count} / 30`;
+            if (count >= 30) {
+                textarea.classList.remove('border-red-500');
+                textarea.classList.add('border-gray-300');
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                btn.disabled = false;
+                errorMsg.classList.add('hidden');
+            } else {
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+                btn.disabled = true;
+                errorMsg.classList.remove('hidden');
+            }
+        });
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeAttachmentModal();
+            closeRejectModal();
+            closeSolicitanteModal();
+            closeAnalysisDetailsModal();
+        }
+    });
+</script>
+
+</body></html>

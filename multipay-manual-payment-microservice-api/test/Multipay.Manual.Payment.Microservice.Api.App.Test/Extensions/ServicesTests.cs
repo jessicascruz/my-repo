@@ -14,6 +14,8 @@ using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.AWS.Entities;
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Request;
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Response;
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.Receivable.Entities;
+using Microsoft.Extensions.Configuration;
+using Multipay.Manual.Payment.Microservice.Api.Infra.External.Receivable.Entities.Dao;
 
 namespace Multipay.Manual.Payment.Microservice.Api.App.Test.Extensions;
 
@@ -46,7 +48,6 @@ public class ServicesTests
         var services = new ServiceCollection();
 
         // Act
-        // Como AddHttpClient é privado no código original mas chamado por AddApplication:
         services.AddApplication();
 
         // Assert
@@ -57,10 +58,10 @@ public class ServicesTests
     [Fact]
     public void Given_ManualPaymentEntities_When_PropertiesAreAccessed_Then_ValuesAreSetCorrectly()
     {
-        // Arrange & Act
+        // Arrange e Act
         var orderId = Guid.NewGuid();
         var manualPaymentId = Guid.NewGuid();
-        
+
         var request = new ManualPaymentRequest
         {
             OrderId = orderId,
@@ -82,7 +83,7 @@ public class ServicesTests
             Requester = new RequesterResponse { Id = "USER01", Name = "John Doe", Email = "john@test.com" }
         };
 
-        // Assert - Testando mais de 80% das propriedades
+        // Assert 
         Assert.Equal(orderId, request.OrderId);
         Assert.Equal("REF123", request.Reference);
         Assert.Equal("SUB456", request.SubReference);
@@ -135,10 +136,28 @@ public class ServicesTests
     [Fact]
     public void Given_S3UploadResult_When_KeyIsSet_Then_ValueIsPersisted()
     {
-        // Arrange & Act
+        // Arrange e Act
         var result = new S3UploadResult { Key = "manual-payment/test.pdf" };
 
         // Assert
         Assert.Equal("manual-payment/test.pdf", result.Key);
+    }
+
+    [Fact]
+    public void Given_ServiceCollection_When_AddCustomServicesIsCalled_Then_ShouldRegisterApplicationDomainAndInfraServices()
+    {
+        // Arrange
+        var services = new ServiceCollection();
+        var configuration = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?>()).Build();
+
+        // Act
+        services.AddCustomServices(configuration);
+
+        // Assert
+        Assert.Contains(services, x => x.ServiceType == typeof(IReceivableService));
+        Assert.Contains(services, x => x.ServiceType == typeof(IMemoryCacheHandler));
+        Assert.Contains(services, x => x.ServiceType == typeof(IRequest));
+        Assert.Contains(services, x => x.ServiceType == typeof(IRequestWithoutLog));
+        Assert.Contains(services, x => x.ServiceType == typeof(IReceivableDao));
     }
 }

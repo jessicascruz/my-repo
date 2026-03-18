@@ -205,10 +205,11 @@ namespace Multipay.Manual.Payment.Microservice.Api.Domain.Test.SeedWork
                 null,
                 (state, exception) => state);
 
-            // Act & Assert
+            // Act  
             var exception = Record.Exception(() =>
                 _formatter.Write(logEntry, null, _textWriter));
 
+            // Assert
             Assert.Null(exception);
         }
 
@@ -224,7 +225,7 @@ namespace Multipay.Manual.Payment.Microservice.Api.Domain.Test.SeedWork
                 null,
                 (state, exception) => state);
 
-            // Act & Assert
+            // Act e Assert
             Assert.Throws<NullReferenceException>(() =>
                 _formatter.Write(logEntry, _scopeProvider, null));
         }
@@ -270,9 +271,8 @@ namespace Multipay.Manual.Payment.Microservice.Api.Domain.Test.SeedWork
 
             // Assert
             var jsonOutput = _textWriter.ToString();
-            // JSON não indentado não deve conter quebras de linha ou espaços extras
             Assert.DoesNotContain("\n  ", jsonOutput);
-            // Deve conter apenas uma linha
+            
             var lines = jsonOutput.Split('\n');
             Assert.Equal(1, lines.Count(line => !string.IsNullOrWhiteSpace(line)));
         }

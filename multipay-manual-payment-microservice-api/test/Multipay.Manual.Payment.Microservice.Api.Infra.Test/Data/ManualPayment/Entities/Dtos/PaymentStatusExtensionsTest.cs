@@ -13,7 +13,7 @@ namespace Multipay.Manual.Payment.Microservice.Api.Infra.Test.Data.ManualPayment
             // Arrange
             var response = new PaymentStatusResponse
             {
-                Id = 1, // Note: FromDomain doesn't map Id based on your extension code
+                Id = 1, 
                 Description = "PENDING"
             };
 
@@ -22,7 +22,6 @@ namespace Multipay.Manual.Payment.Microservice.Api.Infra.Test.Data.ManualPayment
 
             // Assert
             Assert.Equal(response.Description, dto.Description);
-            // Verificando se as propriedades default de auditoria do DTO são inicializadas
             Assert.True(dto.CreatedAt <= DateTime.UtcNow);
         }
 

@@ -1,0 +1,5 @@
+include:
+  - component: gitlab.com/multitechbr/commons/pipeline-components/nodejs/helm@master
+    inputs:
+      testing-type: simple
+      docker-image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/node:20.17

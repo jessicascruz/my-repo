@@ -15,8 +15,6 @@ public class ObjectValidatorCollectionTest
         public string Name { get; set; } = string.Empty;
     }
 
-    #region Collection branches
-
     [Fact]
     public void Given_NullObject_When_AllPropertiesAreFilled_Then_ReturnFalse()
     {
@@ -89,5 +87,4 @@ public class ObjectValidatorCollectionTest
         Assert.True(result);
     }
 
-    #endregion
 }

@@ -140,7 +140,7 @@ public class ManualPaymentDaoTest
         // Assert
         Assert.NotNull(result.Item1);
         Assert.Equal(requesterId, result.Item1.Requester?.Id);
-        // O DAO não atualiza o nome do requisitante se ele já existir, de acordo com as linhas 123-127
+        
         Assert.Equal("Existing", result.Item1.Requester?.Name);
     }
 
@@ -293,7 +293,7 @@ public class ManualPaymentDaoTest
     {
         // Arrange
         var paymentId = Guid.NewGuid();
-        // Adicionar o pagamento para evitar erro de inconsistência se o DB validasse FK
+        
         _context.ManualPayments.Add(new ManualPaymentDto { Id = paymentId, OrderId = Guid.NewGuid(), StatusId = 1, Amount = 1 });
         await _context.SaveChangesAsync();
 
@@ -319,7 +319,7 @@ public class ManualPaymentDaoTest
     [Fact]
     public async Task GivenException_WhenInsertReceiptAsyncFails_ThenReturnError()
     {
-        // Arrange - Simulando erro enviando objeto que viola constraint (nulo em campo obrigatório)
+        // Arrange 
         var request = new PaymentReceiptRequest { Id = Guid.NewGuid(), DocumentName = null! };
 
         // Act

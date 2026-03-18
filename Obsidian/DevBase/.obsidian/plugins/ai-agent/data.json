@@ -1,0 +1,16 @@
+{
+  "provider": "google",
+  "model": "gemini-2.5-flash",
+  "googleApiKey": "",
+  "baseUrl": "",
+  "temperature": "Default",
+  "thinkingLevel": "Default",
+  "maxOutputTokens": "Default",
+  "rules": "",
+  "chatsFolder": "Chats",
+  "maxHistoryTurns": 2,
+  "generateChatName": true,
+  "readImages": true,
+  "reviewChanges": true,
+  "debug": false
+}

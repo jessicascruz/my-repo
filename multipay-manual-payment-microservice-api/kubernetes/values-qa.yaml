@@ -7,8 +7,8 @@ serviceAccount:
 datadog:
   enabled: true
   env: qa
-  product: adm
-  module: multipay
+  product: "adm"
+  module: "multipay"
 deployment:
   enabled: true
   labels:
@@ -65,15 +65,27 @@ configMaps:
     DD_APPSEC_ENABLED: 'true'
     DD_APPSEC_SCA_ENABLED: 'true'
     DD_IAST_ENABLED: 'true'
+    APP_ENV: 'QA'
+    AWS_SECRET_MANAGER_NAME: '/adm/multipay/multipay-manual-payment-microservice-api'
+    AWS_SECRET_MANAGER_REGION: 'us-east-1'
+    AWS_S3_BUCKET_NAME: 'multi-adm-multipay-qa-s3'
+    MULTILOG_REQUEST_ENDPOINT: 'https://multi-log-api.k8s-qa-multi.com.br'
+    VALID_STATUS_ORDER: 'CREATED, PENDING, VIEWED, RECOVERY, DENIED'
+    ACCEPTABLE_FORMATS: '.pdf,.jpg,.png'
+    MICROSERVICE_RECEIVABLE_REQUEST_ENDPOINT: 'https://multipay-receivable-microservice-api.k8s-qa-multi.com.br'
+
 hpa:
   minReplicas: 1
-  maxReplicas: 1
+  maxReplicas: 10
   cpuAverage: 192
   memoryAverage: 160
 ingress:
   enabled: true
   annotations:
     alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/group.name: adm-private
   ingressClassName: alb
   hosts:
-  - host: multipay-manual-payment-microservice-api.qa.grupomultilaser.com.br
+  - host: multipay-manual-payment-microservice-api.k8s-qa-multi.com.br

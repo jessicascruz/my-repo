@@ -17,7 +17,6 @@ public class ReceivableMapperTest
             Id = Guid.NewGuid(),
             Status = "APPROVED",
             Amount = 100.0
-            // Outros campos estão comentados no Mapper original
         };
 
         // Act

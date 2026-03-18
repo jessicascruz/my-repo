@@ -55,7 +55,7 @@ deployment:
 configMaps:
 - name: multipay-manual-payment-microservice-api
   data:
-    ADDITIONAL_OPTS: ''
+    ADDITIONAL_OPTS: ' '
     PREFIX: multipay-manual-payment-microservice-api
     DD_SERVICE: multipay-manual-payment-microservice-api
     DD_RUNTIME_METRICS_ENABLED: 'true'
@@ -65,6 +65,14 @@ configMaps:
     DD_APPSEC_ENABLED: 'true'
     DD_APPSEC_SCA_ENABLED: 'true'
     DD_IAST_ENABLED: 'true'
+    APP_ENV: 'PROD'
+    AWS_SECRET_MANAGER_NAME: '/adm/multipay/multipay-manual-payment-microservice-api'
+    AWS_SECRET_MANAGER_REGION: 'sa-east-1'
+    AWS_S3_BUCKET_NAME: 'multi-adm-multipay-prod-s3'
+    MULTILOG_REQUEST_ENDPOINT: 'https://multi-log-api.k8s-multi.com.br'
+    VALID_STATUS_ORDER: 'CREATED, PENDING, VIEWED, RECOVERY, DENIED'
+    ACCEPTABLE_FORMATS: '.pdf,.jpg,.png'
+    MICROSERVICE_RECEIVABLE_REQUEST_ENDPOINT: 'https://multipay-receivable-microservice-api.k8s-multi.com.br'
 hpa:
   minReplicas: 2
   maxReplicas: 5
@@ -74,6 +82,9 @@ ingress:
   enabled: true
   annotations:
     alb.ingress.kubernetes.io/healthcheck-path: /health
+    alb.ingress.kubernetes.io/scheme: internal
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/group.name: adm-private
   ingressClassName: alb
   hosts:
-  - host: multipay-manual-payment-microservice-api.grupomultilaser.com.br
+  - host: multipay-manual-payment-microservice-api.k8s-multi.com.br

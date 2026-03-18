@@ -42,8 +42,6 @@ public class ManualPaymentServicesTest
             _mockAwsRepository);
     }
 
-    #region Success Scenarios
-
     [Fact]
     public async Task Given_ValidOrderId_When_SelectManualPaymentByOrderIdAsyncIsCalled_Then_ShouldReturnList()
     {
@@ -120,10 +118,6 @@ public class ManualPaymentServicesTest
         Assert.NotNull(result.Item1);
         Assert.Equivalent(new ErrorResult(), result.Item2);
     }
-
-    #endregion
-
-    #region Error Scenarios
 
     [Fact]
     public async Task Given_InvalidFilesCount_When_CreatePaymentManualAsyncIsCalled_Then_ShouldReturnBadRequest()
@@ -540,5 +534,4 @@ public class ManualPaymentServicesTest
         Assert.True(result.Item2.Error);
     }
 
-    #endregion
 }

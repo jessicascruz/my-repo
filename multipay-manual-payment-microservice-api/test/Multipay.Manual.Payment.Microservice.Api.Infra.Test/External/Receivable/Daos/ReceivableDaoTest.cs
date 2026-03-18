@@ -159,7 +159,7 @@ public class ReceivableDaoTest
     {
         // Arrange
         var filter = new FilterDto { OrderId = Guid.NewGuid() };
-        // Use status code 0 that will not parse to ErrorCode
+        
         var responseMessage = new HttpResponseMessage((System.Net.HttpStatusCode)0)
         {
             Content = new StringContent("Unknown Error")

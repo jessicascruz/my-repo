@@ -11,46 +11,8 @@ public static class ReceivableMapper
         return new ReceivableResponse
         {
             Id = dto.Id,
-            //ReferenceId = dto.ReferenceId,
-            //ConditionId = dto.ConditionId,
-            //SubReferenceId = dto.SubReferenceId,
-            //CreatedAt = dto.CreatedAt,
-            //UpdatedAt = dto.UpdatedAt,
-            //PaymentLink = dto.PaymentLink,
             Status = dto.Status,
-            //SystemId = dto.SystemId,
-            //Company = dto.Company.ToDomain(),
             Amount = dto.Amount,
-            //Discount = dto.Discount,
-            //ExpirationTime = dto.ExpirationTime,
-            //CallbackUrl = dto.CallbackUrl,
-            //Payments = dto.Payments?.ToDomain(),
-            //Refunds = dto.Refunds?.ToDomain(),
-            //PaymentMethods = dto.PaymentMethods,
-            //Items = dto.Items.ToDomain(),
-            //BusinessPartner = new BusinessPartner
-            //{
-            //    DeliveryAddress = new Address
-            //    {
-            //        City = dto.BusinessPartner.DeliveryAddress.City,
-            //        Complement = dto.BusinessPartner.DeliveryAddress.Complement,
-            //        Neighbourhood = dto.BusinessPartner.DeliveryAddress.Neighbourhood,
-            //        Number = dto.BusinessPartner.DeliveryAddress.Number,
-            //        PostalCode = dto.BusinessPartner.DeliveryAddress.PostalCode,
-            //        State = dto.BusinessPartner.DeliveryAddress.State,
-            //        Street = dto.BusinessPartner.DeliveryAddress.Street,
-            //    },
-            //    DocumentNumber = dto.BusinessPartner.DocumentNumber,
-            //    DocumentType = dto.BusinessPartner.DocumentType,
-            //    Email = dto.BusinessPartner.Email,
-            //    FirstName = dto.BusinessPartner.FirstName,
-            //    Id = dto.BusinessPartner.Id,
-            //    LastName = dto.BusinessPartner.LastName,
-            //    Name = dto.BusinessPartner.Name,
-            //    PhoneNumber = dto.BusinessPartner.PhoneNumber,
-            //    BillingEmail = dto.BusinessPartner.BillingEmail,
-            //    BillingPhoneNumber = dto.BusinessPartner.BillingPhoneNumber
-            //}
         };
     }
 

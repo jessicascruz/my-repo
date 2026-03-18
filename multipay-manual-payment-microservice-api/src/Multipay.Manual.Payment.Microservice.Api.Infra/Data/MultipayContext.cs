@@ -9,7 +9,7 @@ public sealed class MultipayContext(EnvironmentKey environmentKey, DbContextOpti
 {
     public DbSet<OrderDto> Order { get; set; }
     public DbSet<ManualPaymentDto> ManualPayments { get; set; }
-    public DbSet<PaymentApprovalDto> PaymentApprovals { get; set; }
+    public DbSet<PaymentApprovalDto> PaymentApprovals { get; set; }    
     public DbSet<PaymentReceiptDto> PaymentReceipts { get; set; }
     public DbSet<PaymentStatusDto> PaymentStatus { get; set; }
     public DbSet<RequesterDto> Requesters { get; set; }
@@ -27,13 +27,12 @@ public sealed class MultipayContext(EnvironmentKey environmentKey, DbContextOpti
         {
             dbContextOptionsBuilder
                 .UseInMemoryDatabase($"test_db_{Guid.NewGuid()}")
-                .ConfigureWarnings(x => x.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.InMemoryEventId.TransactionIgnoredWarning))
                 .EnableDetailedErrors();
         }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
+    {      
 
         modelBuilder.Entity<ManualPaymentDto>(entity =>
         {
@@ -59,8 +58,7 @@ public sealed class MultipayContext(EnvironmentKey environmentKey, DbContextOpti
                   .HasForeignKey(r => r.ManualPaymentId);
         });
 
-        modelBuilder.Entity<PaymentReceiptDto>(entity =>
-        {
+        modelBuilder.Entity<PaymentReceiptDto>(entity => {
 
             entity.HasKey(x => x.Id);
 

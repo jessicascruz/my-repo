@@ -7,10 +7,6 @@ using Multipay.Manual.Payment.Microservice.Api.Infra.Data.ManualPayment.Entities
 using Multipay.Manual.Payment.Microservice.Api.Infra.Data.Multipay.Entities.Dtos;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
-using Xunit;
-using System.Linq.Expressions;
-using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Response;
-using Multipay.Manual.Payment.Microservice.Api.Domain.Enums;
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Request;
 
 namespace Multipay.Manual.Payment.Microservice.Api.Infra.Test.Data.ManualPayment.Entities.Daos;
@@ -27,7 +23,6 @@ public class ManualPaymentDaoExceptionTest
         _mockLogger = Substitute.For<ILogger<ManualPaymentDao>>();
         _dao = new ManualPaymentDao(_mockLogger, _mockContext);
 
-        // Simple mock of DatabaseFacade to allow transaction calls
         var mockDb = Substitute.For<Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade>(Substitute.For<DbContext>());
         _mockContext.Database.Returns(mockDb);
     }

@@ -47,7 +47,7 @@ namespace Multipay.Manual.Payment.Microservice.Api.Infra.Test.Data.ManualPayment
                 }
             };
 
-            // Act & Assert
+            // Act e Assert
             Assert.Equal(id, manualPaymentDto.Id);
             Assert.Equal(orderId, manualPaymentDto.OrderId);
             Assert.Equal(1500.50, manualPaymentDto.Amount);
@@ -58,13 +58,13 @@ namespace Multipay.Manual.Payment.Microservice.Api.Infra.Test.Data.ManualPayment
             Assert.Equal("user_01", manualPaymentDto.RequesterId);
             Assert.Equal(1, manualPaymentDto.StatusId);
 
-            // Assert Relational Entities (Requester & Status)
+            // Assert 
             Assert.NotNull(manualPaymentDto.Requester);
             Assert.Equal("João Silva", manualPaymentDto.Requester.Name);
             Assert.NotNull(manualPaymentDto.Status);
             Assert.Equal("Aprovado", manualPaymentDto.Status.Description);
 
-            // Assert Lists (Approvals & Receipts)
+            // Assert 
             Assert.Single(manualPaymentDto.Approvals);
             Assert.Equal(approvalId, manualPaymentDto.Approvals[0].Id);
             Assert.True(manualPaymentDto.Approvals[0].IsApproved);
@@ -93,7 +93,7 @@ namespace Multipay.Manual.Payment.Microservice.Api.Infra.Test.Data.ManualPayment
                 ManualPayment = new ManualPaymentDto { Id = manualPaymentId }
             };
 
-            // Act & Assert
+            // Act e Assert
             Assert.Equal(approvalId, approvalDto.Id);
             Assert.Equal(manualPaymentId, approvalDto.ManualPaymentId);
             Assert.False(approvalDto.IsApproved);
@@ -115,7 +115,7 @@ namespace Multipay.Manual.Payment.Microservice.Api.Infra.Test.Data.ManualPayment
                 UpdatedAt = now
             };
 
-            // Act & Assert
+            // Act e Assert
             Assert.Equal(2, statusDto.Id);
             Assert.Equal("Pendente", statusDto.Description);
             Assert.Equal(now, statusDto.CreatedAt);
@@ -139,7 +139,7 @@ namespace Multipay.Manual.Payment.Microservice.Api.Infra.Test.Data.ManualPayment
                 ManualPayment = new ManualPaymentDto { Id = manualPaymentId }
             };
 
-            // Act & Assert
+            // Act e Assert
             Assert.Equal(receiptId, receiptDto.Id);
             Assert.Equal(manualPaymentId, receiptDto.ManualPaymentId);
             Assert.Equal("nota_fiscal.png", receiptDto.DocumentName);

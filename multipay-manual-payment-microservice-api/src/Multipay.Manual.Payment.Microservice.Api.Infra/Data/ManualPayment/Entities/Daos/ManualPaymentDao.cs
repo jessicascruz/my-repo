@@ -189,6 +189,8 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
         }
         catch (Exception e)
         {
+            await transaction.RollbackAsync();
+
             _logger.LogError(JsonConvert.SerializeObject(e));
             return Tuple.Create<ManualPaymentDto?, ErrorResult>(null, new()
             {
@@ -248,7 +250,6 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
 
     public async Task<Tuple<ManualPaymentResponse?, ErrorResult>> SelectByIdAsync(Guid manualPaymentId)
     {
-        await using var transaction = await _multipayContext.Database.BeginTransactionAsync();
         try
         {
             var payment = await _multipayContext.ManualPayments
@@ -313,7 +314,6 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
                     }
                 );
             }
-            await transaction.CommitAsync();
             return new(payment, new ErrorResult());
         }
         catch (Exception ex)

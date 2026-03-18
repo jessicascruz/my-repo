@@ -95,7 +95,7 @@ namespace Multipay.Manual.Payment.Microservice.Api.Infra.Test.Data.ManualPayment
             Assert.Equal(request.Reason, dto.Reason);
             Assert.Equal(request.Requester.Id, dto.RequesterId);
             Assert.NotNull(dto.Approvals);
-            // Verifica se o mapeamento de requester de 1º grau ocorreu
+            
             Assert.Equal(request.Requester.Id, dto.Requester?.Id);
         }
 
@@ -106,7 +106,7 @@ namespace Multipay.Manual.Payment.Microservice.Api.Infra.Test.Data.ManualPayment
             var dto = new ManualPaymentDto
             {
                 Id = Guid.NewGuid(),
-                Requester = null, // Testando a nulidade do operador ?.
+                Requester = null, 
                 Status = new PaymentStatusDto { Description = "OK" }
             };
 
@@ -118,25 +118,26 @@ namespace Multipay.Manual.Payment.Microservice.Api.Infra.Test.Data.ManualPayment
         }
 
         [Fact]
-        public void GivenManualPaymentDtoWithNullCollections_WhenConvertToDomain_ThenCollectionsShouldBeEmptyOrNull()
+        public void GivenManualPaymentDtoWithNullCollections_WhenConvertToDomain_ThenCollectionsShouldBeEmpty()
         {
             // Arrange
             var dto = new ManualPaymentDto
             {
                 Id = Guid.NewGuid(),
-                Receipts = null!,
-                Approvals = null!,
-                Status = new PaymentStatusDto { Description = "Pending" }
+                Receipts = new List<PaymentReceiptDto>(), 
+                Approvals = new List<PaymentApprovalDto>(),
+                Status = new PaymentStatusDto { Description = "Pending" },
+                Requester = new RequesterDto { Id = "1", Name = "Test" }
             };
 
             // Act
             var response = dto.ToDomain();
 
             // Assert
-            // Verifica se o domínio inicializa as listas como vazias ou permite null, dependendo da sua regra de negócio.
-            // Assumindo que o domínio prefere listas vazias para evitar NullReference posterior:
-            Assert.True(response.Receipts == null || !response.Receipts.Any());
-            Assert.True(response.Approvals == null || !response.Approvals.Any());
+            Assert.NotNull(response.Receipts);
+            Assert.Empty(response.Receipts);
+            Assert.NotNull(response.Approvals);
+            Assert.Empty(response.Approvals);
         }
     }
 }

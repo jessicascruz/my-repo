@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Multipay.Manual.Payment.Microservice.Api.App.Middleware;
-using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.AWS;
+﻿using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.AWS;
 using Multipay.Manual.Payment.Microservice.Api.Domain.SeedWork;
-using Newtonsoft.Json;
+using Multipay.Manual.Payment.Microservice.Api.Domain.SeedWork.HTTP;
+using System.Text.Json;
+//using Newtonsoft.Json;
 
 namespace Multipay.Manual.Payment.Microservice.Api.App.Extensions;
 public static class ApplicationBuilderExtensions
@@ -72,8 +71,6 @@ public static class ApplicationBuilderExtensions
 
         FillEnvironmentKeys(environmentKey, configuration);
         await FillSecretManagerInformation(environmentKey, app, configuration);
-        //if (!environmentKey.IsValid())
-        //    throw new NotImplementedException($"Some environment variables are not configured: {JsonConvert.SerializeObject(environmentKey)}");
         ValidateConfigurationBeforeStart(environmentKey, app.ApplicationServices);
 
     }
@@ -105,7 +102,6 @@ public static class ApplicationBuilderExtensions
     private static void ValidateConfigurationBeforeStart(EnvironmentKey environmentKey, IServiceProvider serviceProvider)
     {
         if (!environmentKey.IsValid())
-            throw new Exception(JsonConvert.SerializeObject(new { ErrorMessage = "Some environment variables are not configured", DetailedError = environmentKey }));
-
+            throw new Exception(SafeLogHelper.SanitizeResponseBody(JsonSerializer.Serialize(new { ErrorMessage = "Some environment variables are not configured", DetailedError = environmentKey })));
     }
 }
