@@ -3,18 +3,26 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, IconButton, Typograp
 import CloseIcon from '@mui/icons-material/Close';
 import { User } from '../../../types/payment';
 
-interface Props {
+interface RequesterModalProps {
   open: boolean;
   onClose: () => void;
   user: User | null;
 }
 
-export function RequesterModal({ open, onClose, user }: Props) {
+export function RequesterModal({ open, onClose, user }: RequesterModalProps) {
   if (!user) return null;
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth PaperProps={{ sx: { borderRadius: 3, boxShadow: 24, overflow: 'hidden', maxWidth: 'md' } }}>
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3, py: 2.5, borderBottom: 1, borderColor: 'grey.100', m: 0 }}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      aria-labelledby="requester-dialog-title"
+      aria-describedby="requester-dialog-description"
+      maxWidth="md"
+      fullWidth
+      PaperProps={{ sx: { borderRadius: 3, boxShadow: 6, overflow: 'hidden', maxWidth: 'md' } }}
+    >
+      <DialogTitle id="requester-dialog-title" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3, py: 2.5, borderBottom: 1, borderColor: 'grey.100', m: 0 }}>
         <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
           Informações do Solicitante
         </Typography>
@@ -22,7 +30,7 @@ export function RequesterModal({ open, onClose, user }: Props) {
           <CloseIcon fontSize="small" />
         </IconButton>
       </DialogTitle>
-      <DialogContent sx={{ p: 4 }}>
+      <DialogContent id="requester-dialog-description" sx={{ p: 4 }}>
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', rowGap: 4, columnGap: 6 }}>
           <Box>
             <Typography component="label" sx={{ display: 'block', fontSize: '0.875rem', fontWeight: 'bold', color: 'text.primary', mb: 0.5 }}>ID Solicitante</Typography>
@@ -43,14 +51,12 @@ export function RequesterModal({ open, onClose, user }: Props) {
           onClick={onClose}
           variant="contained"
           sx={{ 
-            bgcolor: 'primary.main', 
-            color: 'white', 
+            color: 'primary.contrastText', 
             borderRadius: 2, 
             px: 3, 
             py: 1, 
             fontWeight: 500, 
             textTransform: 'none',
-            '&:hover': { bgcolor: 'primary.dark' } 
           }}
         >
           Fechar

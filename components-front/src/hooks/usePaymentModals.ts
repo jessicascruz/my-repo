@@ -1,7 +1,22 @@
 import { useState } from 'react';
 import { PaymentRequest, User, Attachment } from '../types/payment';
 
-export function usePaymentModals() {
+interface UsePaymentModalsReturn {
+  modals: {
+    approve: { open: boolean; close: () => void; handleOpen: (payment: PaymentRequest) => void };
+    reject: { open: boolean; close: () => void; handleOpen: (payment: PaymentRequest) => void };
+    details: { open: boolean; close: () => void; handleOpen: (payment: PaymentRequest) => void };
+    requester: { open: boolean; close: () => void; handleOpen: (user: User) => void };
+    attachments: { open: boolean; close: () => void; handleOpen: (attachments: Attachment[]) => void };
+  };
+  selectedData: {
+    payment: PaymentRequest | null;
+    user: User | null;
+    attachments: Attachment[];
+  };
+}
+
+export function useManualPaymentModals(): UsePaymentModalsReturn {
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
   const [approveModalOpen, setApproveModalOpen] = useState(false);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);

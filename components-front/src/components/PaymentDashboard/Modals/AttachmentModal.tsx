@@ -7,13 +7,13 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DownloadIcon from '@mui/icons-material/Download';
 import { Attachment } from '../../../types/payment';
 
-interface Props {
+interface AttachmentModalProps {
   open: boolean;
   onClose: () => void;
   attachments: Attachment[];
 }
 
-export function AttachmentModal({ open, onClose, attachments }: Props) {
+export function AttachmentModal({ open, onClose, attachments }: AttachmentModalProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   if (!open || attachments.length === 0) return null;
@@ -32,6 +32,8 @@ export function AttachmentModal({ open, onClose, attachments }: Props) {
     <Dialog 
       open={open} 
       onClose={onClose} 
+      aria-labelledby="attachment-dialog-title"
+      aria-describedby="attachment-dialog-description"
       maxWidth="lg" 
       fullWidth 
       PaperProps={{ 
@@ -45,10 +47,10 @@ export function AttachmentModal({ open, onClose, attachments }: Props) {
         } 
       }}
     >
-      <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3, py: 2, borderBottom: 1, borderColor: 'grey.100', bgcolor: 'background.paper', m: 0 }}>
+      <DialogTitle id="attachment-dialog-title" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 3, py: 2, borderBottom: 1, borderColor: 'grey.100', bgcolor: 'background.paper', m: 0 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <AttachFileIcon sx={{ color: 'primary.main' }} />
-          <Box>
+          <Box id="attachment-dialog-description">
             <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary', lineHeight: 1.2 }}>
               {currentFile.name}
             </Typography>

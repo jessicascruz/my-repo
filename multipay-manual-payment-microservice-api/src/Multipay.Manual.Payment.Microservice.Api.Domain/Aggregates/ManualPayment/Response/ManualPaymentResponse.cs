@@ -1,4 +1,4 @@
-﻿namespace Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Response;
+namespace Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Response;
 
 public class ManualPaymentResponse
 {
@@ -16,9 +16,9 @@ public class ManualPaymentResponse
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
-   
+
     public RequesterResponse Requester { get; set; } = new();
-    
+
     public PaymentStatusResponse Status { get; set; } = new PaymentStatusResponse();
 
     public List<PaymentApprovalResponse> Approvals { get; set; } = new List<PaymentApprovalResponse>();
