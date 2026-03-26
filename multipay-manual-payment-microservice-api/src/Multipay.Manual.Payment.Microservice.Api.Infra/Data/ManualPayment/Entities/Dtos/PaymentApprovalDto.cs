@@ -16,7 +16,7 @@ public class PaymentApprovalDto
 
     public string? RejectionReason { get; set; }
 
-    public RequesterDto? Requester { get; set; }
+    public RequesterDto Requester { get; set; } = null!;
 
     public ManualPaymentDto ManualPayment { get; set; } = null!;
 }

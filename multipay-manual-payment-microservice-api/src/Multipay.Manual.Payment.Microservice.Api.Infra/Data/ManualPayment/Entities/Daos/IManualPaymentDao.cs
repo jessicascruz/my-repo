@@ -1,4 +1,4 @@
-﻿using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Request;
+using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Request;
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Response;
 using Multipay.Manual.Payment.Microservice.Api.Domain.SeedWork.ErrorResult;
 using Multipay.Manual.Payment.Microservice.Api.Infra.Data.ManualPayment.Entities.Dtos;
@@ -12,4 +12,5 @@ public interface IManualPaymentDao
     Task<Tuple<PaymentReceiptDto?, ErrorResult>> InsertReceiptAsync(PaymentReceiptRequest receipt);
     Task<Tuple<ManualPaymentResponse?, ErrorResult>> SelectByIdAsync(Guid manualPaymentId);
     Task<Tuple<PaymentApprovalDto, ErrorResult>> InsertPaymentApprovalAsync(Guid paymentApprovalId, PaymentApprovalDto paymentApprovalDto);
+    Task<Tuple<ManualPaymentDto?, ErrorResult>> UpdateStatusToCanceledAsync(Guid manualPaymentId, PaymentStatusDto paymentStatusDto);
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment;
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Request;
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Response;
@@ -92,4 +92,22 @@ public class ManualPaymentRepository(IManualPaymentDao manualPaymentDao) : IManu
         return new(paymentApprovalResult.ToDomain(), new ErrorResult());
     }
 
+    public async Task<Tuple<ManualPaymentResponse?, ErrorResult>> UpdateStatusToCanceledAsync(Guid manualPaymentId, PaymentStatusRequest paymentStatusRequest)
+    {
+         var paymentStatusDto = new PaymentStatusDto
+         {
+            Id = paymentStatusRequest.Id,
+            Description = paymentStatusRequest.Description
+         };
+
+        var (paymentManualResult, error) =
+            await _manualPaymentDao.UpdateStatusToCanceledAsync(
+                manualPaymentId,
+                paymentStatusDto);
+
+        if (paymentManualResult is null || error?.Error == true)
+            return new(null, error);
+
+        return new(paymentManualResult.ToDomain(), new ErrorResult());
     }
+}

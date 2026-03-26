@@ -4,6 +4,7 @@ namespace Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayme
 
 public class ManualPaymentRequest
 {
+    public Guid Id { get; set; } = Guid.Empty;
     public Guid OrderId { get; set; }
     public string Reference { get; set; } = string.Empty;
     public string SubReference { get; set; } = string.Empty;
@@ -13,4 +14,3 @@ public class ManualPaymentRequest
     public List<PaymentApprovalResponse> Approvals { get; set; } = null!;
 
 }
-

@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment;
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Request;
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Response;
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.Multipay.Entities;
+using Multipay.Manual.Payment.Microservice.Api.Domain.Enums;
 using Multipay.Manual.Payment.Microservice.Api.Domain.SeedWork;
 using Multipay.Manual.Payment.Microservice.Api.Domain.SeedWork.Contexts;
 using Multipay.Manual.Payment.Microservice.Api.Domain.SeedWork.ErrorResult;
@@ -22,6 +23,7 @@ public static class EndpointsExtensions
         endpointRouteBuilder.MapGet("/v1/manual-payment/{orderId}", SelectManualPaymentByOrderIdAsync);
         endpointRouteBuilder.MapPost("/v1/manual-payment", CreateManualPayment).DisableAntiforgery();
         endpointRouteBuilder.MapPost("/v1/manual-payment/approval/{manualPaymentId}", CreatePaymentApprovalByIdAsync).DisableAntiforgery();
+        endpointRouteBuilder.MapPatch("/v1/manual-payment/cancel/{manualPaymentId}", CancelManualPayment).DisableAntiforgery();
 
     }
 
@@ -165,7 +167,44 @@ public static class EndpointsExtensions
             return GenerateErrorResult(error);
 
         return Results.Created($"/manual-payment/approval/{result!.Id}", result);
-    
+
+    }
+
+    [SwaggerOperation(
+     Summary = "CancelManualPayment - Cancels a manual payment.",
+     Description = "This endpoint is responsible for cancelling a manual payment that is still pending approval.",
+     OperationId = "CancelManualPayment",
+     Tags = ["PaymentManual"])]
+    [HttpPatch]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public static async Task<IResult> CancelManualPayment(
+    [FromServices] IManualPaymentService manualPaymentService,
+    [FromServices] ILogContext logContext,
+    [FromBody] PaymentStatusRequest cancelPayload,
+    [FromRoute] Guid manualPaymentId)
+    {
+        logContext.CauserId = Constant.MULTILOG_CAUSER_NAME;
+        logContext.CauserName = Constant.MULTILOG_CAUSER_NAME;
+
+        var errors = ValidateRequester(cancelPayload.Requester);
+        if (errors.Any())
+        {
+            return GenerateErrorResult(new ErrorResult
+            {
+                Error = true,
+                StatusCode = ErrorCode.BadRequest,
+                Message = string.Join("Manual payment is already canceled.", errors)
+            });
+        }
+
+        var (result, error) = await manualPaymentService.CancelManualPaymentAsync(manualPaymentId, cancelPayload);
+
+        if (error?.Error == true)
+            return GenerateErrorResult(error);
+
+        return Results.Ok(result);
     }
 
     private static List<string> ValidateRequester(RequesterRequest requester)

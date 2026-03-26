@@ -11,6 +11,7 @@ using Multipay.Manual.Payment.Microservice.Api.Domain.SeedWork;
 using Multipay.Manual.Payment.Microservice.Api.Domain.SeedWork.Enums;
 using Multipay.Manual.Payment.Microservice.Api.Domain.SeedWork.ErrorResult;
 using Multipay.Manual.Payment.Microservice.Api.Domain.SeedWork.HTTP;
+using MultipayRequester = Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.Multipay.Entities.Request.RequesterRequest;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment;
@@ -40,16 +41,12 @@ public class ManualPaymentServices(
 
     public async Task<Tuple<ManualPaymentResponse?, ErrorResult>> CreatePaymentManualAsync(ManualPaymentRequest manualPaymentRequest, IFormFileCollection files)
     {
-        var isOrderComplete = await ValidatePaymentApprovalAsync(manualPaymentRequest);
 
-        if (isOrderComplete is true)
-            return new(null, new ErrorResult
-            {
-                Error = true,
-                StatusCode = ErrorCode.BadRequest,
-                Message = "The payment for this order is already complete."
-            });
-
+        var isOrderComplete = false;
+      
+        var validation = await ValidatePaymentApprovalAsync(manualPaymentRequest.OrderId, manualPaymentRequest.Requester, isApprovalAction: true, manualPaymentId: manualPaymentRequest.Id);
+        isOrderComplete = validation.Item1;
+      
         var fileValidationError = ValidateFiles(files);
         if (fileValidationError is not null)
             return new(null, fileValidationError);
@@ -63,7 +60,7 @@ public class ManualPaymentServices(
 
         if (orderValidationError is not null)
             return new(null, orderValidationError);
-
+            
         var manualPaymentId = Guid.NewGuid();
 
         var uploadedDocuments = new List<string>();
@@ -130,10 +127,23 @@ public class ManualPaymentServices(
     {
         var (manualPaymentResponse, selectError) = await _manualPaymentRepository.SelectByIdAsync(paymentApprovalRequest.ManualPaymentId);
 
+        var isOrderComplete = false;
+        if (manualPaymentResponse != null)
+        {
+            var validation = await ValidatePaymentApprovalAsync(manualPaymentResponse.OrderId, paymentApprovalRequest.Requester, isApprovalAction: true, manualPaymentId: manualPaymentResponse.Id);
+            isOrderComplete = validation.Item1;
+        }
+
+        var result = new ErrorResult();
+        if (isOrderComplete == true)
+        {
+            result.Message = "The payment for this order is complete.";
+        }
+
         if (manualPaymentResponse is null)
             return new(null, selectError);
 
-        if(manualPaymentResponse.Requester.Id == paymentApprovalRequest.RequesterId)
+        if (manualPaymentResponse.Requester.Id == paymentApprovalRequest.RequesterId)
             return new(null, new ErrorResult
             {
                 Error = true,
@@ -145,12 +155,12 @@ public class ManualPaymentServices(
                .Any(a => a.RequesterId == paymentApprovalRequest.RequesterId);
 
         if (approvalDupicated is true)
-                return new(null, new ErrorResult
-                {
-                    Error = true,
-                    StatusCode = ErrorCode.BadRequest,
-                    Message = $"User {paymentApprovalRequest.RequesterId} has already approved this payment."
-                });
+            return new(null, new ErrorResult
+            {
+                Error = true,
+                StatusCode = ErrorCode.BadRequest,
+                Message = $"User {paymentApprovalRequest.RequesterId} has already approved this payment."
+            });
 
 
         var paymentApprovalId = Guid.NewGuid();
@@ -166,53 +176,90 @@ public class ManualPaymentServices(
 
         var (response, Error) = await _manualPaymentRepository.SelectByIdAsync(paymentApprovalRequest.ManualPaymentId);
 
-        var isOrderComplete = false;
-        if (response != null)
-        {
-            var isOrderComplete = await ValidatePaymentApprovalAsync(response);
-        }
-
-        var result = new ErrorResult();
-        if (isOrderComplete == true)
-        {
-            result.Message = "The payment for this order is complete.";
-        }
-
         return new(response, result);
     }
 
-
-    private async Task<bool> ValidatePaymentApprovalAsync(ManualPaymentResponse manualPayment)
+    public async Task<Tuple<ManualPaymentResponse?, ErrorResult>> CancelManualPaymentAsync(Guid manualPaymentId, PaymentStatusRequest paymentStatusRequest)
     {
-        if (manualPayment?.Approvals != null && manualPayment.Approvals.Any())
-        {
-            // get all manual payments by order id
-            var (manualPaymentsResponse, error) = await _manualPaymentRepository.SelectManualPaymentByOrderIdAsync(manualPayment.OrderId);
-            if (error?.Error == true)
-                return false;
+        var (manualPayment, error) = await _manualPaymentRepository.SelectByIdAsync(manualPaymentId);
 
-            // get order by order id
-            var (order, orderError) = await _receivableService.GetReceivableOrderByIdAsync(manualPayment.OrderId);
-            if (orderError?.Error == true)
-                return false;
+        if (manualPayment is null)
+            return new(null, error);
 
-            var amountPayments = (manualPaymentsResponse ?? new List<ManualPaymentResponse>())
-                .Where(p => p.Status.Id != (int)ManualPaymentStatusEnum.REJECTED && p.Approvals.Any(a => a.IsApproved))
-                .Sum(p => p.Amount);
-
-            if (Math.Round(amountPayments) >= order?.Amount)
+        if (manualPayment.Requester.Id != paymentStatusRequest.Requester.Id)
+            return new(null, new ErrorResult
             {
-                await _receivableService.UpdateStatusAsync(manualPayment.OrderId, new()
-                {
-                    Event = ManualEventEnum.MANUAL_CONFIRMED.GetDescription(),
-                    SubEvent = ManualEventEnum.MANUAL_CONFIRMED.GetDescription()
+                Error = true,
+                StatusCode = ErrorCode.BadRequest,
+                Message = "Only the requester who created the payment can cancel it."
+            });
+
+        if (manualPayment.Status.Id != (int)ManualPaymentStatusEnum.PENDING_APPROVAL)
+            return new(null, new ErrorResult
+            {
+                Error = true,
+                StatusCode = ErrorCode.BadRequest,
+                Message = "This payment has already been analyzed and cannot be cancelled."
+            });
+
+        var (updatedPayment, updateError) = await _manualPaymentRepository.UpdateStatusToCanceledAsync(manualPaymentId, paymentStatusRequest);
+
+        if (updateError.Error)
+            return new(null, updateError);
+
+            return new(updatedPayment, updateError);       
+    }
+
+
+    private async Task<Tuple<bool, ErrorResult>> ValidatePaymentApprovalAsync(Guid orderId, RequesterRequest? requester, bool isApprovalAction = false, double newAmount = 0, Guid? manualPaymentId = null)
+    {
+        var (manualPaymentsResponse, error) = await _manualPaymentRepository.SelectManualPaymentByOrderIdAsync(orderId);
+        if (error?.Error == true)
+            return new(false, error);
+
+        var (order, orderError) = await _receivableService.GetReceivableOrderByIdAsync(orderId);
+        if (orderError?.Error == true || order == null)
+            return new(false, orderError ?? BuildInternalError("Error retrieving order data."));
+
+        var amountPayments = (manualPaymentsResponse ?? new List<ManualPaymentResponse>())
+            .Where(p => p.Status.Id == (int)ManualPaymentStatusEnum.PENDING_APPROVAL ||
+                        p.Status.Id == (int)ManualPaymentStatusEnum.APPROVED)
+            .Sum(p => p.Amount);
+
+        if (!isApprovalAction)
+        {
+            if (Math.Round(amountPayments, 2) >= Math.Round(order.Amount, 2))
+            {
+                return new(false, BuildBadRequest("The payment for this order is already complete."));
+            }
+
+            if (Math.Round(amountPayments + newAmount, 2) > Math.Round(order.Amount, 2))
+            {
+                return new(false, BuildBadRequest("The total payment amount must not exceed the order amount."));
+            }
+        }
+        else
+        {
+            if (Math.Round(amountPayments, 2) >= Math.Round(order.Amount, 2))
+            {
+                await _receivableService.UpdateStatusAsync(orderId, new() { 
+                    Event = ManualEventEnum.MULTIPAY_MANUAL_CONFIRMED.GetDescription(), 
+                    SubEvent = ManualEventEnum.MULTIPAY_MANUAL_CONFIRMED.GetDescription(),
+                    MethodId = null,
+                    AcquirerId = null,
+                    Requester = requester == null ? null : new MultipayRequester
+                    {
+                        Id = requester.Id,
+                        Name = requester.Name,
+                        Email = requester.Email
+                    }
                 });
 
-                return true;
+                return new(true, new ErrorResult());
             }
         }
 
-        return false;
+        return new(false, new ErrorResult());
     }
 
 
@@ -351,7 +398,6 @@ public class ManualPaymentServices(
 
         return null;
     }
-
 }
 
 

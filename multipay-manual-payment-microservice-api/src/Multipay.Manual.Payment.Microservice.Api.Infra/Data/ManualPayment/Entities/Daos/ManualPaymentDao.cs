@@ -1,4 +1,4 @@
-﻿using CSharpFunctionalExtensions;
+using CSharpFunctionalExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Request;
@@ -18,11 +18,11 @@ namespace Multipay.Manual.Payment.Microservice.Api.Infra.Data.ManualPayment.Enti
 public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext multipayContext) : IManualPaymentDao
 {
     private readonly ILogger<ManualPaymentDao> _logger = logger;
-    private readonly IMultipayContext _multipayContext = multipayContext;  
+    private readonly IMultipayContext _multipayContext = multipayContext;
 
-    public async Task<Tuple<List<ManualPaymentDto>?, ErrorResult>> SelectManualPaymentByOrderIdAsync(Guid orderId) 
+    public async Task<Tuple<List<ManualPaymentDto>?, ErrorResult>> SelectManualPaymentByOrderIdAsync(Guid orderId)
     {
-        await using var transaction = 
+        await using var transaction =
             await _multipayContext.Database.BeginTransactionAsync();
         try
         {
@@ -59,7 +59,7 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
                     .Select(rp => new PaymentReceiptDto
                     {
                         Id = rp.Id,
-                        DocumentName = rp.DocumentName,                        
+                        DocumentName = rp.DocumentName,
                         ManualPaymentId = rp.ManualPaymentId,
                         CreatedAt = DateTime.UtcNow
                     })
@@ -73,6 +73,12 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
                         RequesterId = a.RequesterId,
                         RejectionReason = a.RejectionReason,
                         ManualPaymentId = a.ManualPaymentId,
+                        Requester = new RequesterDto
+                        {
+                            Id = a.Requester!.Id,
+                            Name = a.Requester.Name,
+                            Email = a.Requester.Email
+                        }
                     })
                     .ToList()
                 })
@@ -99,11 +105,11 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
 
     public async Task<Tuple<ManualPaymentDto?, ErrorResult>> InsertManualPaymentAsync(Guid manualPaymentId, ManualPaymentDto manualPaymentDto)
     {
-        await using var transaction = 
+        await using var transaction =
             await _multipayContext.Database.BeginTransactionAsync();
         try
-        {   
-            var manualPayment = new ManualPaymentDto 
+        {
+            var manualPayment = new ManualPaymentDto
             {
                 Id = manualPaymentId,
                 OrderId = manualPaymentDto.OrderId,
@@ -115,24 +121,24 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
                 UpdatedAt = DateTime.UtcNow,
                 RequesterId = manualPaymentDto.RequesterId,
             };
-                        
+
             var requesterDto = manualPaymentDto.Requester ?? throw new InvalidOperationException("Requester is required.");
-                        
+
             var requester = await _multipayContext.Requesters.FirstOrDefaultAsync(x => x.Id == requesterDto.Id);
 
             if (requester == null || requester.Id == default)
-            {                
+            {
                 requester = requesterDto;
-                _multipayContext.Requesters.Add(requester);                
+                _multipayContext.Requesters.Add(requester);
             }
-                        
+
             manualPayment.RequesterId = requester.Id;
             manualPayment.Requester = null;
 
             var result = await _multipayContext.ManualPayments.AddAsync(manualPayment);
             await _multipayContext.SaveChangesAsync();
 
-            
+
             if (result is null || result.Entity is null)
                 return Tuple.Create<ManualPaymentDto?, ErrorResult>(null, new()
                 {
@@ -140,14 +146,14 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
                     StatusCode = ErrorCode.InternalServerError,
                     Message = $"Failed to insert manual payment {JsonConvert.SerializeObject(manualPaymentDto)}"
                 });
-                        
-            var insertedPayment = await  _multipayContext.ManualPayments
+
+            var insertedPayment = await _multipayContext.ManualPayments
                 .AsNoTracking()
                 .Include(x => x.Status)
                 .Include(x => x.Requester)
                 .Include(x => x.Receipts)
                 .FirstOrDefaultAsync(x => x.Id == manualPayment.Id);
-         
+
 
             if (insertedPayment is null)
             {
@@ -158,7 +164,7 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
                     Message = "ManualPayment was inserted, but not found in the select statement."
                 });
             }
-                        
+
             if (insertedPayment.StatusId != (int)ManualPaymentStatusEnum.PENDING_APPROVAL)
             {
                 return Tuple.Create<ManualPaymentDto?, ErrorResult>(null, new ErrorResult
@@ -168,7 +174,7 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
                     Message = "Invalid status after creating the ManualPayment."
                 });
             }
-            
+
             var resultDto = new ManualPaymentDto
             {
                 Id = insertedPayment.Id,
@@ -208,7 +214,7 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
         try
         {
             var entity = new PaymentReceiptDto
-            {       
+            {
                 Id = receipt.Id,
                 ManualPaymentId = receipt.ManualPaymentId,
                 DocumentName = receipt.DocumentName,
@@ -295,7 +301,13 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
                             IsApproved = a.IsApproved,
                             RequesterId = a.RequesterId,
                             RejectionReason = a.RejectionReason,
-                            CreatedAt = DateTime.UtcNow
+                            CreatedAt = DateTime.UtcNow,
+                            Requester = new RequesterResponse
+                            {
+                                Id = a.Requester!.Id,
+                                Name = a.Requester.Name,
+                                Email = a.Requester.Email
+                            }
                         })
                         .ToList()
 
@@ -318,7 +330,7 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex,$"Error selecting manual payment by Id {manualPaymentId}");
+            _logger.LogError(ex, $"Error selecting manual payment by Id {manualPaymentId}");
 
             return new(
                 null,
@@ -369,13 +381,13 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
                 return Tuple.Create<PaymentApprovalDto, ErrorResult>(null, new()
                 {
                     Error = true,
-                    StatusCode = ErrorCode.NotFound, 
+                    StatusCode = ErrorCode.NotFound,
                     Message = "Payment approval failed."
                 });
-            } 
+            }
 
             manualPayment.StatusId = paymentApprovalDto.IsApproved ? (int)ManualPaymentStatusEnum.APPROVED : (int)ManualPaymentStatusEnum.REJECTED;
-            manualPayment.ApprovedAt = DateTime.UtcNow; 
+            manualPayment.ApprovedAt = DateTime.UtcNow;
 
             await _multipayContext.PaymentApprovals.AddAsync(paymentApproval);
 
@@ -398,5 +410,60 @@ public class ManualPaymentDao(ILogger<ManualPaymentDao> logger, IMultipayContext
             });
         }
     }
-}
 
+    public async Task<Tuple<ManualPaymentDto?, ErrorResult>> UpdateStatusToCanceledAsync(Guid manualPaymentId, PaymentStatusDto paymentStatusDto)
+    {
+
+        try
+        {
+            var manualPayment = await _multipayContext.ManualPayments
+                .FirstOrDefaultAsync(x => x.Id == manualPaymentId);
+
+            if (manualPayment == null)
+            {
+                return new(null, new ErrorResult
+                {
+                    Error = true,
+                    StatusCode = ErrorCode.NotFound,
+                    Message = "Manual payment not found."
+                });
+            }
+
+            if (paymentStatusDto.Id != (int)ManualPaymentStatusEnum.CANCELED)
+            {
+                return new(null, new ErrorResult
+                {
+                    Error = true,
+                    StatusCode = ErrorCode.InternalServerError,
+                    Message = "Invalid status to cancelled."
+                });
+            }
+
+            manualPayment.StatusId = paymentStatusDto.Id;
+            manualPayment.UpdatedAt = DateTime.UtcNow;
+
+            await _multipayContext.SaveChangesAsync();
+
+            manualPayment = await _multipayContext.ManualPayments
+                .Include(x => x.Status)
+                .Include(x => x.Receipts)
+                .Include(x => x.Approvals)
+                .Include(x => x.Requester)
+                .FirstOrDefaultAsync(x => x.Id == manualPaymentId);
+
+            return new(manualPayment, new ErrorResult());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating status for manual payment {ManualPaymentId}", manualPaymentId);
+            return new(null, new ErrorResult
+            {
+                Error = true,
+                Message = "Error updating manual payment status.",
+                StatusCode = ErrorCode.InternalServerError
+            });
+        }
+    }
+
+
+}

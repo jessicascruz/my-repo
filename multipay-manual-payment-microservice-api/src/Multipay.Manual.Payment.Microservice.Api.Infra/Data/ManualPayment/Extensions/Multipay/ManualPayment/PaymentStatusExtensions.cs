@@ -1,4 +1,5 @@
-﻿using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Response;
+using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Request;
+using Multipay.Manual.Payment.Microservice.Api.Domain.Aggregates.ManualPayment.Response;
 using Multipay.Manual.Payment.Microservice.Api.Infra.Data.ManualPayment.Entities.Dtos;
 
 namespace Multipay.Manual.Payment.Microservice.Api.Infra.Data.ManualPayment.Extensions.Multipay.ManualPayment;
@@ -10,6 +11,15 @@ public static class PaymentStatusExtensions
         return new()
         {
             Description = paymentStatusResponse.Description,
+        };
+    }
+
+    public static PaymentStatusDto FromDomain(this PaymentStatusRequest paymentStatusRequest)
+    {
+        return new()
+        {
+            Id = paymentStatusRequest.Id,
+            Description = paymentStatusRequest.Description,
         };
     }
 
