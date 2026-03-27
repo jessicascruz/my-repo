@@ -502,3 +502,22 @@ WHERE [Id] = '019C051D-677B-70E3-8F5B-A13CE8F0FD4A'
 
 
 ```
+
+
+
+```
+
+SELECT [Id]
+      ,[StatusId]
+      ,[ReferenceId]
+      ,[SubReferenceId]
+      ,[RequesterId]
+      ,[Amount]
+      ,[ExpirationTime]
+      ,[CreatedAt]
+      ,[UpdatedAt]
+  FROM [DB_MULTIPAY].[Multipay].[Order]
+  WHERE Id = '01973645-f4ec-7e4d-9b88-00467d862e93'
+
+
+```

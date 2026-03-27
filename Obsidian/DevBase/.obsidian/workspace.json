@@ -13,26 +13,44 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Sprints/Sprint 8 - EXTERNAL RECEIVABLE (XR).md",
+                "file": "2026-03-27.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Sprint 8 - EXTERNAL RECEIVABLE (XR)"
+              "title": "2026-03-27"
             }
           },
           {
-            "id": "6475e33bade5aeab",
+            "id": "ab1f3f76985d34cb",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "2026-03-26.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "Nova aba"
+              "title": "2026-03-26"
+            }
+          },
+          {
+            "id": "f74d53de6b26f976",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Scripts/Manual Payment.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Manual Payment"
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -89,7 +107,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 224.5
   },
   "right": {
     "id": "6f31ab33f274a53b",
@@ -221,44 +239,44 @@
       "terminal:Open terminal": false
     }
   },
-  "active": "a8dac9fd78cd5078",
+  "active": "f74d53de6b26f976",
   "lastOpenFiles": [
+    "2026-03-26.md",
+    "_inbox/2026-03-19  -  Quinta-feira.md",
+    "_inbox/2026-03-18 - Quarta-feira.md",
+    "_inbox/2026-03-17.md",
+    "Sprints/Sprint 8 - EXTERNAL RECEIVABLE (XR).md",
+    "2026-03-27.md",
+    "Sprint.md",
+    "_inbox/2026-03-25.md",
+    "README.md",
+    "_inbox/2026-03-24.md",
+    "_inbox/2026-03-23.md",
+    "IA & Automação/Prompts/Skill - Performance Front-end.md",
+    "IA & Automação/Prompts/Skill - app-performance-analyzer.md",
+    "IA & Automação/Prompts/Skill - Code Reviewer.md",
     "Scripts/query-inclusão-cidades.sql",
     "Scripts/query-consulta-id-e-cidade.sql",
-    "Sprints/Sprint 8 - EXTERNAL RECEIVABLE (XR).md",
-    "README.md",
     "Tarefas",
-    "2026-03-18 - Quarta-feira.md",
-    "Sem título.md",
     "Scripts/Manual Payment.md",
     "Script para testar código Manual Payment.md",
     "Diário Técnico/18-03 - Quarta-feira.md",
-    "2026-03-24.md",
     "IA & Automação/Experimentos/GEMS - Instruções para Análise de Código.md",
     "IA & Automação/Experimentos/Modelo de Documentação para Reconstrução por IA.md",
     "IA & Automação/Prompts/Skill - dotnet-ddd-multipay.md",
-    "2026-03-19  -  Quinta-feira.md",
-    "2026-03-23.md",
-    "IA & Automação/Prompts/Skill - Code Reviewer.md",
     "IA & Automação/Experimentos/Gem de Gerenciamento de tarefas.md",
     "Sprints",
     "_templates/diario.md",
-    "_inbox/2026-03-17.md",
     "_templates/erro.md",
     "_templates/prompt-ia.md",
     "Bem-vindo.md",
     "Erros & Soluções/Download de arquivo usando Blob e Fetch.md",
-    "copilot/copilot-conversations/ajude_a_organizar_minhas_tarefas@20260317_104004.md",
     "copilot/copilot-conversations",
-    "Chats/chat-2026-03-17T13-39-34-457Z.md",
-    "Chats/chat-2026-03-17T13-39-33-938Z.md",
-    "Chats/chat-2026-03-17T13-39-33-169Z.md",
     "Scripts",
     "Sem título.canvas",
     "Chats",
     "copilot/copilot-custom-prompts",
     "copilot",
-    "_inbox",
-    "Sem título.base"
+    "_inbox"
   ]
 }

@@ -48,3 +48,9 @@ Criar app que ao inserir minha tarefa com data de inicio e fim, e ele me dá met
 ### 18/03 - reunião 2
 - domínio é o não funcional, mais tarefa - racional
 - Funcionais - 
+
+---
+## DÚVIDAS
+
+1. Precisa seguir os padrões ou pode ter uma identificação nossa?
+2. 
