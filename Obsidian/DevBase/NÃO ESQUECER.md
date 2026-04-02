@@ -1,0 +1,2 @@
+- [ ] Criar scripts de banco de dados para deploy de **manual payment**
+- [ ] 

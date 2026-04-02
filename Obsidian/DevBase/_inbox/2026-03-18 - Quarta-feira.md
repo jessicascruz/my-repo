@@ -138,12 +138,12 @@ Trabalhar sob pressão sem parar frita os neurônios e causa erros bobos de sint
  - [ ] Colocar loading no botão ao invés da tela/modal
 
 
- - [ ] Na documentação, acima de Desconto criar regras de pagamento manual
- - [ ] Usar levantamento de requisitos
+ - [x] Na documentação, acima de Desconto criar regras de pagamento manual
+ - [x] Usar levantamento de requisitos
  - [ ] Mudar fluxo na documentação draw.io
- - [ ] Conferir fluxo de validações
- - [ ] Conferir cancelamento no front
- - [ ] Conferir modal de confirmação
+ - [x] Conferir fluxo de validações
+ - [x] Conferir cancelamento no front
+ - [x] Conferir modal de confirmação
 
 ---
 

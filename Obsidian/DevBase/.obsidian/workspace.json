@@ -4,53 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "a2a0e331a9669192",
+        "id": "ad0b9e18b672ed74",
         "type": "tabs",
         "children": [
           {
-            "id": "cdbbc00497c41493",
+            "id": "59284587cb25b21e",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "2026-03-27.md",
+                "file": "2026-04-02 - Quinta-feira.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-03-27"
-            }
-          },
-          {
-            "id": "ab1f3f76985d34cb",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "2026-03-26.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "2026-03-26"
-            }
-          },
-          {
-            "id": "f74d53de6b26f976",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Scripts/Manual Payment.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Manual Payment"
+              "title": "2026-04-02 - Quinta-feira"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -107,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 224.5
+    "width": 268.5
   },
   "right": {
     "id": "6f31ab33f274a53b",
@@ -239,41 +210,42 @@
       "terminal:Open terminal": false
     }
   },
-  "active": "f74d53de6b26f976",
+  "active": "59284587cb25b21e",
   "lastOpenFiles": [
-    "2026-03-26.md",
+    "_inbox/2026-03-25.md",
+    "_inbox/2026-03-24.md",
+    "_inbox/2026-03-23.md",
     "_inbox/2026-03-19  -  Quinta-feira.md",
     "_inbox/2026-03-18 - Quarta-feira.md",
     "_inbox/2026-03-17.md",
+    "2026-04-02 - Quinta-feira.md",
+    "_inbox/2026-03-26.md",
+    "_inbox/2026-03-27.md",
+    "NÃO ESQUECER.md",
     "Sprints/Sprint 8 - EXTERNAL RECEIVABLE (XR).md",
-    "2026-03-27.md",
-    "Sprint.md",
-    "_inbox/2026-03-25.md",
+    "2026-04-02.md",
+    "_inbox/2026-04-01 - Quarta-feira.md",
+    "_inbox/2026-03-31 - Terça-feira.md",
     "README.md",
-    "_inbox/2026-03-24.md",
-    "_inbox/2026-03-23.md",
+    "_inbox/2026-03-30 - Segunda-feira.md",
+    "2026-03-31.md",
+    "Manual.PaymentStatus.md",
+    "Arquiteturas & Decisões/Layout Flexível com Sidebar e Cards.md",
+    "Sprints/Pasted image 20260330171520.png",
+    "Scripts/Manual Payment.md",
+    "Sprints/Fluxo de Pagamento Manual.md",
+    "Sem título.canvas",
+    "Sprint.md",
     "IA & Automação/Prompts/Skill - Performance Front-end.md",
     "IA & Automação/Prompts/Skill - app-performance-analyzer.md",
     "IA & Automação/Prompts/Skill - Code Reviewer.md",
     "Scripts/query-inclusão-cidades.sql",
     "Scripts/query-consulta-id-e-cidade.sql",
     "Tarefas",
-    "Scripts/Manual Payment.md",
     "Script para testar código Manual Payment.md",
-    "Diário Técnico/18-03 - Quarta-feira.md",
-    "IA & Automação/Experimentos/GEMS - Instruções para Análise de Código.md",
-    "IA & Automação/Experimentos/Modelo de Documentação para Reconstrução por IA.md",
-    "IA & Automação/Prompts/Skill - dotnet-ddd-multipay.md",
-    "IA & Automação/Experimentos/Gem de Gerenciamento de tarefas.md",
     "Sprints",
-    "_templates/diario.md",
-    "_templates/erro.md",
-    "_templates/prompt-ia.md",
-    "Bem-vindo.md",
-    "Erros & Soluções/Download de arquivo usando Blob e Fetch.md",
     "copilot/copilot-conversations",
     "Scripts",
-    "Sem título.canvas",
     "Chats",
     "copilot/copilot-custom-prompts",
     "copilot",
