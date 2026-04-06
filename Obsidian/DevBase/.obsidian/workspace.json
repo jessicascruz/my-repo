@@ -4,24 +4,39 @@
     "type": "split",
     "children": [
       {
-        "id": "ad0b9e18b672ed74",
+        "id": "c71f9fc30bcd2e3c",
         "type": "tabs",
         "children": [
           {
-            "id": "59284587cb25b21e",
+            "id": "7fcba46dd14475ee",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "2026-04-02 - Quinta-feira.md",
+                "file": "2026-04-06 - Segunda-feira.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-04-02 - Quinta-feira"
+              "title": "2026-04-06 - Segunda-feira"
+            }
+          },
+          {
+            "id": "d475f39f9f3d98c1",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "OneNote/Importantes.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Importantes"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -210,45 +225,45 @@
       "terminal:Open terminal": false
     }
   },
-  "active": "59284587cb25b21e",
+  "active": "d475f39f9f3d98c1",
   "lastOpenFiles": [
+    "2026-04-06 - Segunda-feira.md",
+    "Manual.PaymentStatus.md",
+    "OneNote/Importantes.md",
+    "OneNote/Apresentação do ADM Multipay.md",
+    "OneNote/Lista.md",
+    "_inbox/2026-03-30 - Segunda-feira.md",
+    "OneNote",
+    "Scripts/Manual Payment.md",
+    "2026-04-02 - Quinta-feira.md",
+    "_inbox/2026-03-18 - Quarta-feira.md",
+    "NÃO ESQUECER.md",
+    "Sprints/Fluxo de Pagamento Manual.md",
+    "Sprints/Sprint 8 - EXTERNAL RECEIVABLE (XR).md",
     "_inbox/2026-03-25.md",
     "_inbox/2026-03-24.md",
     "_inbox/2026-03-23.md",
     "_inbox/2026-03-19  -  Quinta-feira.md",
-    "_inbox/2026-03-18 - Quarta-feira.md",
     "_inbox/2026-03-17.md",
-    "2026-04-02 - Quinta-feira.md",
     "_inbox/2026-03-26.md",
     "_inbox/2026-03-27.md",
-    "NÃO ESQUECER.md",
-    "Sprints/Sprint 8 - EXTERNAL RECEIVABLE (XR).md",
     "2026-04-02.md",
     "_inbox/2026-04-01 - Quarta-feira.md",
     "_inbox/2026-03-31 - Terça-feira.md",
     "README.md",
-    "_inbox/2026-03-30 - Segunda-feira.md",
     "2026-03-31.md",
-    "Manual.PaymentStatus.md",
     "Arquiteturas & Decisões/Layout Flexível com Sidebar e Cards.md",
     "Sprints/Pasted image 20260330171520.png",
-    "Scripts/Manual Payment.md",
-    "Sprints/Fluxo de Pagamento Manual.md",
     "Sem título.canvas",
     "Sprint.md",
-    "IA & Automação/Prompts/Skill - Performance Front-end.md",
-    "IA & Automação/Prompts/Skill - app-performance-analyzer.md",
-    "IA & Automação/Prompts/Skill - Code Reviewer.md",
     "Scripts/query-inclusão-cidades.sql",
     "Scripts/query-consulta-id-e-cidade.sql",
     "Tarefas",
-    "Script para testar código Manual Payment.md",
     "Sprints",
     "copilot/copilot-conversations",
     "Scripts",
     "Chats",
     "copilot/copilot-custom-prompts",
-    "copilot",
-    "_inbox"
+    "copilot"
   ]
 }
