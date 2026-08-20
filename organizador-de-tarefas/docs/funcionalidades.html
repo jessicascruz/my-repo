@@ -1,0 +1,1259 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EchoPlan — Catálogo de Funcionalidades</title>
+<style>
+  :root {
+    --bg: #f8fafc;
+    --bg-elev: #ffffff;
+    --bg-soft: #f1f5f9;
+    --fg: #0f172a;
+    --fg-muted: #475569;
+    --fg-faint: #64748b;
+    --border: #e2e8f0;
+    --accent: #493fdf;
+    --accent-soft: #eef2ff;
+    --ok: #059669;
+    --warn: #d97706;
+    --danger: #e11d48;
+    --code-bg: #0f172a;
+    --code-fg: #e2e8f0;
+    --sidebar-w: 300px;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b0f19;
+      --bg-elev: #111827;
+      --bg-soft: #172033;
+      --fg: #e5e7eb;
+      --fg-muted: #a9b4c6;
+      --fg-faint: #8593a8;
+      --border: #263145;
+      --accent: #8b83ff;
+      --accent-soft: #1c1b3d;
+      --ok: #34d399;
+      --warn: #fbbf24;
+      --danger: #fb7185;
+      --code-bg: #060a13;
+      --code-fg: #dbe3f0;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b0f19;
+    --bg-elev: #111827;
+    --bg-soft: #172033;
+    --fg: #e5e7eb;
+    --fg-muted: #a9b4c6;
+    --fg-faint: #8593a8;
+    --border: #263145;
+    --accent: #8b83ff;
+    --accent-soft: #1c1b3d;
+    --ok: #34d399;
+    --warn: #fbbf24;
+    --danger: #fb7185;
+    --code-bg: #060a13;
+    --code-fg: #dbe3f0;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 1.5rem; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 400 16px/1.65 "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .shell { display: flex; min-height: 100vh; }
+  nav.toc {
+    width: var(--sidebar-w);
+    flex: 0 0 var(--sidebar-w);
+    background: var(--bg-elev);
+    border-right: 1px solid var(--border);
+    padding: 1.75rem 1rem 3rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  nav.toc .brand { display: flex; align-items: center; gap: .65rem; padding: 0 .5rem 1.25rem; }
+  nav.toc .brand .mark {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: var(--accent); color: #fff;
+    display: grid; place-items: center; font-weight: 800; font-size: 15px;
+    flex: 0 0 auto;
+  }
+  nav.toc .brand b { display: block; font-size: 15px; letter-spacing: -.01em; }
+  nav.toc .brand span { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--fg-faint); font-weight: 700; }
+  nav.toc .group { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--fg-faint); font-weight: 700; padding: 1.1rem .75rem .4rem; }
+  nav.toc a {
+    display: block; padding: .38rem .75rem; border-radius: 8px;
+    color: var(--fg-muted); text-decoration: none; font-size: 13.5px; font-weight: 500;
+  }
+  nav.toc a:hover { background: var(--bg-soft); color: var(--fg); }
+  nav.toc a.sub { padding-left: 1.5rem; font-size: 13px; color: var(--fg-faint); }
+
+  main { flex: 1 1 auto; min-width: 0; padding: 2.5rem clamp(1rem, 4vw, 3.5rem) 6rem; max-width: 1100px; }
+
+  header.page { border-bottom: 1px solid var(--border); padding-bottom: 1.75rem; margin-bottom: 2.5rem; }
+  header.page h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); line-height: 1.15; letter-spacing: -.03em; margin: 0 0 .5rem; }
+  header.page p.lede { font-size: 1.05rem; color: var(--fg-muted); margin: 0 0 1rem; max-width: 64ch; }
+
+  h2 { font-size: 1.5rem; letter-spacing: -.02em; margin: 3.25rem 0 .5rem; padding-top: .5rem; scroll-margin-top: 1rem; }
+  h2::before { content: ""; display: block; width: 34px; height: 3px; background: var(--accent); border-radius: 2px; margin-bottom: .9rem; }
+  h3 { font-size: 1.12rem; letter-spacing: -.01em; margin: 2rem 0 .4rem; scroll-margin-top: 1rem; }
+  h4 { font-size: .95rem; margin: 1.4rem 0 .3rem; color: var(--fg-muted); text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+  p { margin: .6rem 0; color: var(--fg-muted); }
+  li { color: var(--fg-muted); margin: .25rem 0; }
+  strong { color: var(--fg); font-weight: 650; }
+  a { color: var(--accent); }
+
+  code {
+    font-family: var(--mono); font-size: .86em;
+    background: var(--bg-soft); border: 1px solid var(--border);
+    padding: .08em .38em; border-radius: 5px; color: var(--fg);
+    word-break: break-word;
+  }
+  pre {
+    background: var(--code-bg); color: var(--code-fg);
+    padding: 1rem 1.1rem; border-radius: 12px; overflow-x: auto;
+    font-family: var(--mono); font-size: 13px; line-height: 1.6;
+    border: 1px solid var(--border); margin: .9rem 0;
+  }
+  pre code { background: none; border: 0; padding: 0; color: inherit; font-size: inherit; }
+  .tok-c { color: #7c8aa5; }
+
+  .tablewrap { overflow-x: auto; margin: 1rem 0; border: 1px solid var(--border); border-radius: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; background: var(--bg-elev); }
+  th, td { text-align: left; padding: .65rem .85rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--bg-soft); font-weight: 650; color: var(--fg); font-size: 12.5px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  td { color: var(--fg-muted); }
+
+  .card { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem 1.25rem; margin: 1rem 0; }
+  .grid { display: grid; gap: .9rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin: 1.1rem 0; }
+  .grid .card { margin: 0; }
+  .card h4 { margin-top: 0; }
+  .card p:last-child { margin-bottom: 0; }
+
+  .note { border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 12px 12px 0; padding: .85rem 1.1rem; margin: 1.1rem 0; }
+  .note.warn { border-left-color: var(--warn); background: color-mix(in srgb, var(--warn) 10%, var(--bg-elev)); }
+  .note.danger { border-left-color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, var(--bg-elev)); }
+  .note.ok { border-left-color: var(--ok); background: color-mix(in srgb, var(--ok) 10%, var(--bg-elev)); }
+  .note p { margin: .25rem 0; }
+  .note b.tag { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg); margin-bottom: .2rem; }
+
+  .pill { display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 700; padding: .15rem .5rem; border-radius: 999px; letter-spacing: .04em; }
+  .pill.post { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); }
+  .pill.ok { background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+  .pill.warn { background: color-mix(in srgb, var(--warn) 20%, transparent); color: var(--warn); }
+  .pill.gap { background: color-mix(in srgb, var(--danger) 18%, transparent); color: var(--danger); }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: .5rem; margin: 1.2rem 0; }
+  .flow .step { flex: 1 1 160px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 12px; padding: .7rem .85rem; font-size: 13px; color: var(--fg-muted); }
+  .flow .step b { display: block; color: var(--fg); font-size: 13px; margin-bottom: .15rem; }
+  .flow .arrow { align-self: center; color: var(--fg-faint); font-size: 18px; }
+
+  .kbd { font-family: var(--mono); font-size: 12px; background: var(--bg-soft); border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: .1rem .4rem; color: var(--fg); }
+
+  .toggle {
+    position: fixed; top: 1rem; right: 1rem; z-index: 20;
+    background: var(--bg-elev); border: 1px solid var(--border); color: var(--fg-muted);
+    border-radius: 999px; padding: .45rem .9rem; font-size: 12px; font-weight: 650; cursor: pointer;
+  }
+  .toggle:hover { color: var(--fg); }
+
+  footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 13px; color: var(--fg-faint); }
+
+  @media (max-width: 900px) {
+    .shell { flex-direction: column; }
+    nav.toc { position: static; width: auto; flex: none; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+    nav.toc .group { padding-top: .8rem; }
+  }
+</style>
+</head>
+<body>
+<button class="toggle" id="themeToggle" type="button">Tema</button>
+<div class="shell">
+
+<nav class="toc">
+  <div class="brand">
+    <div class="mark">EP</div>
+    <div>
+      <b>EchoPlan</b>
+      <span>Funcionalidades</span>
+    </div>
+  </div>
+
+  <div class="group">Panorama</div>
+  <a href="#panorama">1. Panorama do produto</a>
+  <a href="#mapa">2. Mapa de funcionalidades</a>
+  <a href="#conta">3. Conta e sessão</a>
+
+  <div class="group">Entrada de dados</div>
+  <a href="#captura">4. Captura de tarefas</a>
+  <a href="#captura" class="sub">4.1 Voz com IA</a>
+  <a href="#captura-texto" class="sub">4.2 Texto com IA</a>
+  <a href="#captura-manual" class="sub">4.3 Formulário manual</a>
+  <a href="#captura-exemplos" class="sub">4.4 Tarefas de exemplo</a>
+
+  <div class="group">Tarefas</div>
+  <a href="#anatomia">5. Anatomia da tarefa</a>
+  <a href="#gestao">6. Gestão de tarefas</a>
+  <a href="#foco">7. Modo foco e timer</a>
+  <a href="#subtarefas">8. Subtarefas e IA</a>
+  <a href="#recorrencia">9. Recorrência</a>
+  <a href="#arquivamento">10. Arquivamento</a>
+
+  <div class="group">Tempo</div>
+  <a href="#lembretes">11. Lembretes e alarmes</a>
+  <a href="#dnd">12. Não perturbe e janelas</a>
+  <a href="#notificacoes">13. Notificações do SO</a>
+
+  <div class="group">Navegação</div>
+  <a href="#abas">14. Abas e navegação</a>
+  <a href="#filtros">15. Busca e filtros</a>
+  <a href="#calendario">16. Calendário mensal</a>
+  <a href="#historico">17. Histórico</a>
+  <a href="#atalhos">18. Atalhos e responsividade</a>
+
+  <div class="group">Outros módulos</div>
+  <a href="#notas">19. Notas e ideias</a>
+  <a href="#listas">20. Listas de verificação</a>
+  <a href="#categorias">21. Categorias</a>
+
+  <div class="group">Analytics</div>
+  <a href="#dashboard">22. Cards do dashboard</a>
+  <a href="#gamificacao">23. Feedback e gamificação</a>
+
+  <div class="group">Saída</div>
+  <a href="#exportacoes">24. Exportações e backup</a>
+  <a href="#preferencias">25. Preferências</a>
+
+  <div class="group">Operação</div>
+  <a href="#degradado">26. Modo degradado</a>
+  <a href="#matriz">27. Matriz funcionalidade → código</a>
+  <a href="#limitacoes">28. Limitações conhecidas</a>
+</nav>
+
+<main>
+
+<header class="page">
+  <h1>EchoPlan — Catálogo de Funcionalidades</h1>
+  <p class="lede">
+    Inventário detalhado de tudo que o aplicativo faz: cada entrada, cada botão, cada regra
+    de negócio, cada card do painel e cada exportação — com o comportamento real observado
+    no código, incluindo o que está apenas parcialmente implementado.
+  </p>
+  <p style="font-size:13px;color:var(--fg-faint);margin:0">
+    Complemento funcional da <a href="index.html">documentação técnica</a> ·
+    Nome do produto na UI: <strong>EchoPlan</strong> ·
+    Domínio e interface em pt-BR
+  </p>
+</header>
+
+<!-- ============================================================ -->
+<h2 id="panorama">1. Panorama do produto</h2>
+
+<p>
+  EchoPlan é um organizador de tarefas diárias operado principalmente por <strong>voz</strong>.
+  O usuário fala o que precisa fazer; o áudio é enviado ao backend, que pede ao Gemini uma
+  transcrição e uma lista estruturada de tarefas — com categoria, prioridade, horário de
+  lembrete, notas, tags e subtarefas. As tarefas são gravadas no Firestore por usuário e
+  sincronizam em tempo real com a interface.
+</p>
+
+<div class="flow">
+  <div class="step"><b>1. Falar</b>Gravação no navegador via <code>MediaRecorder</code></div>
+  <div class="arrow">→</div>
+  <div class="step"><b>2. Interpretar</b>Gemini transcreve e estrutura tarefas</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>3. Organizar</b>Fila priorizada, lembretes agendados</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>4. Acompanhar</b>Calendário, histórico, métricas</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>5. Exportar</b>PDF, CSV, JSON, planner PNG</div>
+</div>
+
+<p>
+  Além das tarefas, o app carrega três módulos independentes: <strong>Notas</strong> (texto ou
+  nota de voz transcrita), <strong>Listas</strong> (checklists, listas numeradas ou mistas) e um
+  conjunto de <strong>cards analíticos</strong> de produtividade.
+</p>
+
+<div class="grid">
+  <div class="card">
+    <h4>Seis áreas de trabalho</h4>
+    <p>Fila de Atividades, Calendário Mensal, Histórico, Banco de Tarefas (arquivadas), Notas e Listas.</p>
+  </div>
+  <div class="card">
+    <h4>Três formas de criar tarefa</h4>
+    <p>Voz com IA, texto livre com IA, e formulário manual com todos os campos.</p>
+  </div>
+  <div class="card">
+    <h4>Quatro formatos de saída</h4>
+    <p>JSON (backup), CSV (histórico), PDF (relatório semanal) e PNG (planner para imprimir).</p>
+  </div>
+  <div class="card">
+    <h4>Tudo por usuário</h4>
+    <p>Login Google obrigatório. Cada conta enxerga apenas <code>users/{uid}/…</code>, garantido por regras do Firestore.</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="mapa">2. Mapa de funcionalidades</h2>
+
+<p>Visão consolidada. A coluna <em>Status</em> distingue o que funciona plenamente do que é parcial ou apenas decorativo.</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Área</th><th>Funcionalidades</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Captura</strong></td>
+      <td>Gravação de áudio, transcrição em tempo real do navegador, análise por IA, texto livre por IA, formulário manual, tarefas de exemplo</td>
+      <td><span class="pill ok">Completo</span></td>
+    </tr>
+    <tr>
+      <td><strong>Tarefa</strong></td>
+      <td>Concluir, reativar, editar (completo e inline), notas, nota de voz, subtarefas, sugestão de subtarefas por IA, tags, arquivar, excluir com confirmação, badges de status</td>
+      <td><span class="pill ok">Completo</span></td>
+    </tr>
+    <tr>
+      <td><strong>Foco</strong></td>
+      <td>Modo foco (isola uma tarefa), timer configurável por tarefa, sugestão automática de foco por pontuação</td>
+      <td><span class="pill ok">Completo</span></td>
+    </tr>
+    <tr>
+      <td><strong>Lembretes</strong></td>
+      <td>Alarme por <code>HH:MM</code>, dias da semana, modal com som, soneca de 5/15 min, notificação do SO, vibração, aviso de atraso e de "em breve"</td>
+      <td><span class="pill ok">Completo</span></td>
+    </tr>
+    <tr>
+      <td><strong>Silenciamento</strong></td>
+      <td>Janela "não perturbe", janela de lembretes ativos (horário + dias), silenciar prioridade Baixa</td>
+      <td><span class="pill ok">Completo</span></td>
+    </tr>
+    <tr>
+      <td><strong>Recorrência</strong></td>
+      <td>Marcar tarefa como diária/semanal/mensal; ao concluir, uma cópia é recriada</td>
+      <td><span class="pill warn">Parcial — sem agendador</span></td>
+    </tr>
+    <tr>
+      <td><strong>Navegação</strong></td>
+      <td>6 abas, sidebar recolhível/ocultável, FAB mobile, bottom nav mobile, drawer mobile, atalho <span class="kbd">Ctrl+N</span></td>
+      <td><span class="pill ok">Completo</span></td>
+    </tr>
+    <tr>
+      <td><strong>Busca e filtros</strong></td>
+      <td>Busca textual ampla, busca por voz, filtro por categoria e prioridade, filtro por data no histórico</td>
+      <td><span class="pill ok">Completo</span></td>
+    </tr>
+    <tr>
+      <td><strong>Reordenação manual</strong></td>
+      <td>Arrastar e soltar tarefas na fila</td>
+      <td><span class="pill gap">Não implementado</span></td>
+    </tr>
+    <tr>
+      <td><strong>Notas</strong></td>
+      <td>Nota de texto, nota de voz com transcrição por IA, busca, filtro texto/áudio, grade ou lista, editar, excluir</td>
+      <td><span class="pill warn">Parcial — áudio não persiste</span></td>
+    </tr>
+    <tr>
+      <td><strong>Listas</strong></td>
+      <td>Checklist / numerada / mista, 12 ícones, itens marcáveis, progresso, busca, filtro por tipo, editar, excluir</td>
+      <td><span class="pill ok">Completo</span></td>
+    </tr>
+    <tr>
+      <td><strong>Categorias</strong></td>
+      <td>Criar, renomear (propaga às tarefas), excluir (migra tarefas para "Geral"), cores e ícones automáticos</td>
+      <td><span class="pill ok">Completo</span></td>
+    </tr>
+    <tr>
+      <td><strong>Analytics</strong></td>
+      <td>Meta diária, progresso de 7 dias, resumo de produtividade, tempo por prioridade, pizza por categoria, gráfico histórico, dicas contextuais</td>
+      <td><span class="pill ok">Completo</span></td>
+    </tr>
+    <tr>
+      <td><strong>Exportações</strong></td>
+      <td>Backup JSON, importação de backup, CSV de concluídas, PDF semanal, planner PNG, copiar resumo do dia</td>
+      <td><span class="pill ok">Completo</span></td>
+    </tr>
+    <tr>
+      <td><strong>Backup agendado</strong></td>
+      <td>Escolher frequência e horário; aviso para baixar</td>
+      <td><span class="pill warn">Parcial — frequência ignorada</span></td>
+    </tr>
+    <tr>
+      <td><strong>Preferências</strong></td>
+      <td>Tema claro/escuro, visibilidade de 6 cards, permissão de notificação com teste, atalhos documentados</td>
+      <td><span class="pill ok">Completo</span></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="conta">3. Conta e sessão</h2>
+
+<h3>Login</h3>
+<ul>
+  <li><strong>Único método:</strong> Google via popup (<code>signInWithPopup</code>). Não há e-mail/senha, cadastro nem modo anônimo.</li>
+  <li>Enquanto o estado de autenticação carrega, a tela mostra um spinner com "Carregando seus dados...".</li>
+  <li>Sem usuário autenticado, a aplicação renderiza apenas a tela de <strong>Login</strong> ("Potencializado por Gemini AI"). Nenhuma funcionalidade fica acessível.</li>
+</ul>
+
+<h3>Primeiro acesso</h3>
+<p>
+  Na primeira leitura do documento do usuário, o app cria as preferências padrão automaticamente:
+  8 categorias iniciais (<code>Trabalho</code>, <code>Pessoal</code>, <code>Estudos</code>, <code>Saúde</code>,
+  <code>Finanças</code>, <code>Casa</code>, <code>Geral</code>, <code>Outros</code>), "não perturbe" desligado
+  (22:00–07:00), janela de lembretes ativos desligada (08:00–18:00, seg–sex), todos os 6 cards visíveis e tema claro.
+</p>
+
+<h3>Sessão e sincronização</h3>
+<ul>
+  <li>Tarefas, notas, listas e preferências chegam por <strong>listeners em tempo real</strong>: alterações feitas em outra aba ou outro dispositivo aparecem imediatamente.</li>
+  <li>O cabeçalho exibe foto, nome e e-mail do usuário (também na sidebar e no drawer mobile).</li>
+  <li><strong>Sair</strong> está disponível no cabeçalho e no drawer mobile. Ao sair, todas as listas locais são zeradas.</li>
+</ul>
+
+<div class="note">
+  <b class="tag">Permissão de microfone e notificação</b>
+  <p>
+    Ao montar, o app solicita permissão de <strong>notificação</strong> se ela ainda estiver em "default".
+    A permissão de <strong>microfone</strong> é pedida somente no primeiro clique em gravar.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="captura">4. Captura de tarefas</h2>
+
+<p>
+  O painel "Como planejar hoje?" tem duas abas — <strong>Falar Áudio</strong> e <strong>Digitar</strong> —
+  e abaixo dele fica o formulário manual. No mobile, os três caminhos aparecem dentro de um
+  bottom sheet aberto pelo botão flutuante do microfone.
+</p>
+
+<h3>4.1 Voz com IA</h3>
+
+<ol>
+  <li><strong>Iniciar gravação</strong> — botão redondo vermelho. O app negocia o melhor <code>mimeType</code> suportado (<code>audio/webm</code> → <code>audio/ogg</code> → padrão do navegador, cobrindo Safari).</li>
+  <li><strong>Durante a gravação</strong> — três anéis pulsantes animados, cronômetro <code>MM:SS</code> e a mensagem "Gravando... Diga tudo o que você necessita hoje".</li>
+  <li><strong>Transcrição paralela local</strong> — em navegadores com <code>SpeechRecognition</code>, o app transcreve em pt-BR em tempo real, em paralelo à gravação. Essa transcrição serve como rede de segurança (ver item 5).</li>
+  <li><strong>Após parar</strong> — aparece um player <code>&lt;audio controls&gt;</code> para reouvir, um botão de descartar a gravação e, se houve captura local, o texto reconhecido é exibido entre aspas.</li>
+  <li><strong>Gerar e Organizar Minhas Tarefas</strong> — converte o blob para base64, envia para <code>POST /api/tasks/analyze-audio</code> e cria as tarefas retornadas. Durante o processamento, um overlay cobre o painel: "O Gemini está organizando o seu dia...".</li>
+</ol>
+
+<h4>O que a IA extrai do áudio</h4>
+<p>O prompt do servidor codifica regras de negócio explícitas — não é uma transcrição bruta:</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Regra</th><th>Comportamento</th></tr></thead>
+  <tbody>
+    <tr><td>Resiliência a ruído</td><td>Descarta hesitações e vícios de linguagem ("ééé", "tipo assim", "né", "então").</td></tr>
+    <tr><td>Coloquialismos</td><td>Reescreve gírias em títulos profissionais: "dar um tapa no quarto" → "Arrumar e limpar o quarto".</td></tr>
+    <tr><td>Desistência</td><td>Se o usuário cancela a si mesmo em seguida ("ah não, deixa, já comprei"), a tarefa é ignorada.</td></tr>
+    <tr><td>Horários vagos</td><td>"hora do almoço" → <code>12:00</code>; "final da tarde" → <code>18:00</code>; "à noite" → <code>20:00</code>; "logo cedo" → <code>08:00</code>; "3 da tarde" → <code>15:00</code>.</td></tr>
+    <tr><td>Notas</td><td>A parte explicativa vira o campo <code>notes</code> ("Ligar para Maria sobre o boleto que vence amanhã" → nota "Falar sobre o boleto vencido").</td></tr>
+    <tr><td>Subtarefas</td><td>Tarefas compostas são quebradas; se não houver quebra explícita, a IA pode propor de 2 a 3 subtarefas.</td></tr>
+    <tr><td>Categoria</td><td>Obrigatoriamente uma das 8 categorias padrão, com orientação para evitar cair em "Geral"/"Outros".</td></tr>
+    <tr><td>Tags</td><td>De 1 a 3 tags curtas e semânticas ("foco", "boleto", "urgente").</td></tr>
+    <tr><td>Título</td><td>No máximo 8 palavras.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h4>Transcrição exibida</h4>
+<p>
+  Após o sucesso, a transcrição completa aparece em um painel "Transcrição do seu relato" acima do
+  formulário manual (e dentro do bottom sheet, no mobile).
+</p>
+
+<h4>Rede de proteção em três níveis</h4>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Situação</th><th>O que acontece</th></tr></thead>
+  <tbody>
+    <tr><td>Upload de áudio falha e há transcrição local</td><td>O texto capturado pelo navegador é reenviado para <code>analyze-text</code> — o usuário não perde o relato.</td></tr>
+    <tr><td>Sem chave Gemini (403) e sem transcrição local</td><td>Mensagem orientando a usar a aba "Digitar", que funciona localmente.</td></tr>
+    <tr><td>Áudio grande demais (413)</td><td>"O áudio gravado excedeu o limite... grave uma mensagem mais curta de até 15-25 segundos!"</td></tr>
+    <tr><td>Servidor reiniciando (resposta HTML)</td><td>Mensagem pedindo para aguardar 5–10 segundos.</td></tr>
+    <tr><td>Microfone negado</td><td>Mensagem orientando a liberar permissão ou usar a entrada de texto.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3 id="captura-texto">4.2 Texto livre com IA</h3>
+<ul>
+  <li>Área de texto para um parágrafo corrido, com exemplo no placeholder: <em>"Fazer relatório semanal às 11:30, passar no mercado para comprar leite de tarde, e às 19:00 caminhar no parque por 30 minutos."</em></li>
+  <li><strong>Organizar via Texto</strong> envia para <code>POST /api/tasks/analyze-text</code>, que aplica as mesmas regras de notas, subtarefas, categorias, tags e horários.</li>
+  <li>Este é o único caminho de IA que <strong>funciona sem chave Gemini</strong> (cai no parser heurístico local — ver <a href="#degradado">§26</a>).</li>
+</ul>
+
+<h3 id="captura-manual">4.3 Formulário manual</h3>
+<p>"Adicionar Tarefa Manualmente" (atalho <span class="kbd">Ctrl+N</span>) expõe todos os campos:</p>
+<ul>
+  <li><strong>Título</strong> (obrigatório) e <strong>Notas/Descrição</strong> (opcional).</li>
+  <li><strong>Categoria</strong> (lista do usuário) e <strong>Prioridade</strong> (Alta/Média/Baixa, padrão Média).</li>
+  <li><strong>Tags</strong> — adicionadas com <span class="kbd">Enter</span>, vírgula ou botão "Adicionar"; removíveis individualmente; duplicatas bloqueadas.</li>
+  <li><strong>Lembrete</strong> — checkbox + campo de hora; botão <strong>"Lembrete Rápido (+1h)"</strong> preenche a hora atual mais uma hora.</li>
+  <li><strong>Dias da semana</strong> — sete botões (D,S,T,Q,Q,S,S). Nenhum selecionado significa "todos os dias", indicado abaixo em texto.</li>
+  <li><strong>Recorrência</strong> — checkbox "Definir como Recorrente" e seletor Diário/Semanal/Mensal.</li>
+</ul>
+<p>Após criar, o formulário se reseta por completo e um banner confirma "Tarefa adicionada com sucesso!".</p>
+
+<h3 id="captura-exemplos">4.4 Tarefas de exemplo</h3>
+<p>
+  "Carregar exemplo de organização" injeta 5 tarefas de demonstração cobrindo Trabalho, Saúde, Finanças,
+  Estudos e Pessoal, com prioridades e horários variados — útil para conhecer o app sem gravar nada.
+</p>
+
+<!-- ============================================================ -->
+<h2 id="anatomia">5. Anatomia da tarefa</h2>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Campo</th><th>Tipo</th><th>Papel funcional</th></tr></thead>
+  <tbody>
+    <tr><td><code>title</code></td><td>texto</td><td>Título; editável inline com duplo clique.</td></tr>
+    <tr><td><code>category</code></td><td>texto</td><td>Uma das categorias do usuário; define ícone e cor do badge.</td></tr>
+    <tr><td><code>priority</code></td><td><code>Alta</code> | <code>Média</code> | <code>Baixa</code></td><td>Ordena a fila, alimenta métricas, dispara confete e vibração dupla quando Alta.</td></tr>
+    <tr><td><code>completed</code></td><td>booleano</td><td>Move a tarefa da fila para o histórico.</td></tr>
+    <tr><td><code>reminderTime</code></td><td><code>"HH:MM"</code> ou nulo</td><td>Horário do alarme diário.</td></tr>
+    <tr><td><code>reminderDays</code></td><td>lista 0–6</td><td>Restringe o alarme a dias da semana (vazio = todos).</td></tr>
+    <tr><td><code>reminderTriggered</code></td><td>booleano</td><td>Trava anti-repetição dentro do mesmo minuto; reposta automaticamente.</td></tr>
+    <tr><td><code>notes</code></td><td>texto</td><td>Descrição livre; recebe também notas de voz transcritas.</td></tr>
+    <tr><td><code>subtasks</code></td><td>lista</td><td>Etapas com título e estado; alimentam a barra de progresso.</td></tr>
+    <tr><td><code>tags</code></td><td>lista de textos</td><td>Marcadores livres, exibidos como <code>#tag</code> e pesquisáveis.</td></tr>
+    <tr><td><code>archived</code></td><td>booleano</td><td>Move para o Banco de Tarefas, fora da fila e das métricas.</td></tr>
+    <tr><td><code>isRecurring</code> / <code>recurrence</code></td><td>booleano / diario·semanal·mensal</td><td>Recria a tarefa ao concluí-la.</td></tr>
+    <tr><td><code>createdAt</code> / <code>updatedAt</code></td><td>ISO</td><td>Base de todas as métricas, do agrupamento por dia e das durações.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note warn">
+  <b class="tag">Datas importam</b>
+  <p>
+    Métricas do dia usam <code>createdAt</code>; "concluído em" usa <code>updatedAt</code>. Como
+    <code>updatedAt</code> é atualizado em <em>qualquer</em> edição, editar uma tarefa antiga já concluída
+    a desloca no histórico e no calendário para o dia da edição.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="gestao">6. Gestão de tarefas</h2>
+
+<h3>Concluir e reativar</h3>
+<ul>
+  <li>Checkbox no cartão. Ao concluir: banner de parabéns, animação, e a tarefa sai da fila para o histórico.</li>
+  <li><strong>Vibração</strong> (onde suportada): pulso duplo <code>[120, 60, 120]</code> para prioridade Alta, toque único de 50 ms para as demais.</li>
+  <li><strong>Confete</strong> em tela cheia apenas para prioridade Alta.</li>
+  <li>Concluir uma tarefa em foco encerra o modo foco automaticamente.</li>
+  <li>Desmarcar reativa e devolve a tarefa à fila, com banner informativo.</li>
+</ul>
+
+<h3>Edição completa</h3>
+<p>O botão de lápis abre o cartão em modo edição, com título, categoria, prioridade, tags, lembrete + dias e recorrência. <span class="kbd">Ctrl+Enter</span> salva; <span class="kbd">Esc</span> cancela e restaura os valores originais.</p>
+<p>Se o horário do lembrete mudar, a trava <code>reminderTriggered</code> é zerada para que o novo horário volte a disparar no mesmo dia.</p>
+
+<h3>Edição inline do título</h3>
+<p><strong>Duplo clique</strong> no título transforma-o em campo de texto, para renomear sem abrir o modo edição.</p>
+
+<h3>Painel expandido</h3>
+<p>Clicar no corpo do cartão expande um painel com:</p>
+<ul>
+  <li><strong>Datas</strong> de criação e última modificação formatadas em pt-BR.</li>
+  <li><strong>Descrição</strong> editável, com botão "Salvar Descrição" (<span class="kbd">Ctrl+Enter</span>).</li>
+  <li><strong>Gravar Nota Rápida</strong> — grava áudio, envia para <code>POST /api/tasks/transcribe-audio</code> e anexa o resultado à descrição prefixado com <code>[Nota de Voz]:</code>. Se a IA falhar mas o navegador tiver capturado texto, o texto local é usado.</li>
+  <li><strong>Tags</strong> — adicionar (Enter ou vírgula) e remover individualmente.</li>
+  <li><strong>Subtarefas</strong> — lista, barra de progresso, criação inline, duplo clique para renomear, exclusão individual.</li>
+</ul>
+
+<h3>Badges de status no cartão</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Badge</th><th>Quando aparece</th></tr></thead>
+  <tbody>
+    <tr><td>Categoria (com ícone)</td><td>Sempre. Ícones fixos para as 8 categorias padrão; categorias novas recebem cor derivada de hash do nome.</td></tr>
+    <tr><td>Prioridade</td><td>Sempre, com cor por nível.</td></tr>
+    <tr><td>Horário do lembrete</td><td>Quando há <code>reminderTime</code>; sinaliza atraso quando o horário já passou.</td></tr>
+    <tr><td>"Lembrete em breve! (&lt; 1h)"</td><td>Quando faltam 60 minutos ou menos; recalculado a cada 15 segundos.</td></tr>
+    <tr><td>Recorrência</td><td>Quando a tarefa é recorrente, com a periodicidade.</td></tr>
+    <tr><td>Tags</td><td>Uma por tag.</td></tr>
+    <tr><td>Indicador de notas</td><td>Quando existe descrição.</td></tr>
+    <tr><td>Progresso de subtarefas</td><td><code>concluídas/total</code>.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Excluir</h3>
+<p>O botão da lixeira abre um <strong>modal de confirmação</strong> ("Excluir Atividade") — não há exclusão acidental em um clique. Excluir também remove a tarefa da fila de lembretes ativos.</p>
+
+<h3>Limpar tarefas do dia</h3>
+<p>"Limpar Minhas Tarefas" pede confirmação nativa do navegador e exclui as tarefas <strong>criadas hoje</strong> — não o histórico inteiro, apesar do texto de ajuda sugerir o contrário.</p>
+
+<!-- ============================================================ -->
+<h2 id="foco">7. Modo foco e timer</h2>
+
+<ul>
+  <li><strong>Focar</strong> (ícone de alvo) isola a tarefa: a fila passa a exibir apenas ela, com uma faixa de destaque e botão "Sair do Foco".</li>
+  <li><strong>Timer por tarefa</strong> — visível quando a tarefa está em foco. Duração configurável de 1 a 99 minutos (padrão 25, estilo pomodoro), com Start/Stop e contagem <code>M:SS</code>.</li>
+  <li>O foco é encerrado automaticamente ao concluir, arquivar ou excluir a tarefa focada.</li>
+</ul>
+
+<h3>Sugestão automática de foco</h3>
+<p>
+  O card "Foco Recomendado" escolhe uma tarefa pendente por pontuação heurística:
+  prioridade <strong>Alta = 30</strong>, <strong>Média = 15</strong>, <strong>Baixa = 5</strong>,
+  mais <strong>10 pontos</strong> se a tarefa pertencer à categoria mais frequente entre as pendências.
+  A tarefa de maior pontuação é apresentada com botão "Focar Agora" / "Parar Foco".
+</p>
+
+<div class="note">
+  <b class="tag">Comportamento do timer</b>
+  <p>Ao chegar a zero o timer simplesmente para — não há alarme sonoro nem notificação de fim de ciclo.</p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="subtarefas">8. Subtarefas e IA</h2>
+
+<ul>
+  <li><strong>Criação manual</strong> — campo inline "Nova subtarefa... (pressione Enter para criar)".</li>
+  <li><strong>Marcar/desmarcar</strong> individualmente, com barra de progresso e contador no badge do cartão.</li>
+  <li><strong>Renomear</strong> com duplo clique; <strong>excluir</strong> uma a uma.</li>
+  <li><strong>"Sugerir Foco"</strong> — chama <code>POST /api/tasks/suggest-subtasks</code> com o título da tarefa e o Gemini devolve <strong>3 subtarefas</strong> concretas e detalhadas (o prompt proíbe reticências). As sugestões são anexadas às existentes e o painel expande automaticamente.</li>
+  <li>Erros de sugestão aparecem como aviso dentro do próprio cartão, com botão de fechar — inclusive a orientação de configurar a <code>GEMINI_API_KEY</code>.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="recorrencia">9. Recorrência</h2>
+
+<p>
+  Uma tarefa pode ser marcada como recorrente com periodicidade <strong>Diária</strong>, <strong>Semanal</strong>
+  ou <strong>Mensal</strong>, tanto no formulário manual quanto na edição.
+</p>
+<p>
+  O comportamento real: <strong>ao concluir</strong> uma tarefa recorrente, o app cria imediatamente uma
+  <strong>nova cópia</strong> dela (título, categoria, prioridade, lembrete, dias, tags, notas e a marca de recorrência),
+  e informa "Tarefa recorrente criada para o próximo ciclo! 🔁".
+</p>
+
+<div class="note warn">
+  <b class="tag">Limitação</b>
+  <p>
+    Não existe agendador: a periodicidade escolhida é apenas descritiva. A cópia nasce no momento da conclusão,
+    seja "diário", "semanal" ou "mensal" — e se a tarefa nunca for concluída, nada é recriado.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="arquivamento">10. Arquivamento — Banco de Tarefas</h2>
+
+<ul>
+  <li>O ícone de arquivo em cada cartão move a tarefa para o <strong>Banco de Tarefas</strong> (aba "Arquivadas"), tirando-a da fila, do histórico e de todas as métricas.</li>
+  <li>A sidebar mostra um <strong>contador</strong> de tarefas arquivadas.</li>
+  <li>Dentro do Banco, busca e filtros de categoria/prioridade funcionam da mesma forma que na fila.</li>
+  <li>O mesmo botão <strong>desarquiva</strong>, devolvendo a tarefa à fila ativa.</li>
+</ul>
+<p>Uso típico: manter um repositório de tarefas modelo/recorrentes fora do dia a dia, sem excluí-las.</p>
+
+<!-- ============================================================ -->
+<h2 id="lembretes">11. Lembretes e alarmes</h2>
+
+<p>Um verificador roda <strong>a cada segundo</strong> comparando o <code>HH:MM</code> atual com o de cada tarefa.</p>
+
+<h4>Condições para disparar</h4>
+<ul>
+  <li>O horário bate exatamente com o minuto atual;</li>
+  <li>o dia da semana está entre os <code>reminderDays</code> (ou a lista está vazia);</li>
+  <li>a tarefa não está concluída;</li>
+  <li>ainda não disparou neste minuto (<code>reminderTriggered</code>);</li>
+  <li>nenhum dos três filtros de silenciamento se aplica (ver <a href="#dnd">§12</a>).</li>
+</ul>
+
+<h3>Modal de lembrete</h3>
+<ul>
+  <li>Mostra horário, categoria, título e prioridade (colorida por nível).</li>
+  <li><strong>Som:</strong> dois bipes sintetizados via Web Audio API — A5 (880 Hz) seguido de C6 (1046,5 Hz). Se a política de autoplay do navegador bloquear, o som é omitido silenciosamente.</li>
+  <li><strong>Ações:</strong> concluir a tarefa, <strong>adiar 5 min</strong>, <strong>adiar 15 min</strong>, ou dispensar.</li>
+  <li>Ao adiar, o <code>reminderTime</code> é reescrito para "agora + N minutos" e a trava é liberada — o alarme realmente volta a tocar.</li>
+  <li>Lembretes acumulam em fila; o modal exibe um por vez.</li>
+  <li>O sino no cabeçalho recebe um ponto pulsante enquanto houver lembretes ativos.</li>
+</ul>
+
+<h3>Avisos visuais antecipados</h3>
+<p>Independente do alarme, cada cartão avalia o próprio horário a cada 15 segundos e sinaliza <strong>atrasado</strong> (horário já passou) ou <strong>"em breve"</strong> (faltam ≤ 60 min).</p>
+
+<div class="note warn">
+  <b class="tag">Custo do laço de 1 segundo</b>
+  <p>
+    A cada tique, tarefas cujo minuto já passou têm <code>reminderTriggered</code> reposto <em>no Firestore</em>.
+    Ou seja: o laço de lembretes escreve no banco periodicamente, o que gera tráfego mesmo com o app ocioso.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="dnd">12. Não perturbe e janelas de silêncio</h2>
+
+<p>Três controles independentes se combinam. Qualquer um deles ativo e aplicável cancela o disparo:</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Controle</th><th>Configuração</th><th>Efeito</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Não Perturbe</strong></td>
+      <td>Início e fim do silêncio (padrão 22:00–07:00)</td>
+      <td>Silencia tudo dentro da janela. Suporta janelas que cruzam a meia-noite.</td>
+    </tr>
+    <tr>
+      <td><strong>Período de Lembretes Ativos</strong></td>
+      <td>Horário inicial/final (padrão 08:00–18:00) + dias da semana (padrão seg–sex)</td>
+      <td>Inverte a lógica: lembretes só disparam <em>dentro</em> da janela e nos dias marcados.</td>
+    </tr>
+    <tr>
+      <td><strong>Silenciar Prioridade Baixa</strong></td>
+      <td>Liga/desliga</td>
+      <td>Tarefas de prioridade Baixa nunca alarmam, em qualquer horário.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<p>Todos ficam em <strong>Configurações</strong> e são persistidos imediatamente nas preferências do usuário — valem em todos os dispositivos da conta.</p>
+
+<!-- ============================================================ -->
+<h2 id="notificacoes">13. Notificações do sistema operacional</h2>
+
+<ul>
+  <li>Quando a permissão está concedida, cada lembrete também gera uma <strong>notificação nativa</strong>: título "Lembrete: {tarefa}" e corpo com categoria e prioridade.</li>
+  <li>Em Configurações, o bloco <strong>"Notificações do Navegador"</strong> mostra o status da permissão — <span class="pill ok">Ativada</span>, <span class="pill warn">Pendente</span> ou <span class="pill gap">Bloqueada</span> — com botão <strong>Solicitar</strong>.</li>
+  <li>Há um botão <strong>"Enviar Notificação de Teste"</strong>, habilitado só quando a permissão existe, para validar a configuração sem esperar um alarme.</li>
+  <li>Se bloqueada, a mensagem explica que é preciso redefinir a permissão nas configurações do site.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="abas">14. Abas e navegação</h2>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Aba</th><th>O que mostra</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Fila de Atividades</strong></td><td>Tarefas ativas (não concluídas, não arquivadas) + cards do dashboard + painéis de entrada.</td></tr>
+    <tr><td><strong>Calendário Mensal</strong></td><td>Grade do mês com pontos por tarefa concluída e painel do dia selecionado.</td></tr>
+    <tr><td><strong>Histórico de Tarefas</strong></td><td>Gráfico de conclusões por dia + lista filtrável por data.</td></tr>
+    <tr><td><strong>Banco de Tarefas</strong></td><td>Tarefas arquivadas, com contador na sidebar.</td></tr>
+    <tr><td><strong>Notas &amp; Ideias</strong></td><td>Notas de texto e de voz.</td></tr>
+    <tr><td><strong>Listas de Verificação</strong></td><td>Checklists, listas numeradas e mistas.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Ordenação da fila</h3>
+<ul>
+  <li>Tarefas de prioridade <strong>Alta ativas sobem automaticamente ao topo</strong>; concluídas vão para o fim.</li>
+  <li>A fila exibe <strong>no máximo 5 tarefas</strong> por vez; o cabeçalho indica "Exibindo 5 de N".</li>
+  <li>Entrada e saída de cartões são animadas, com escalonamento por item.</li>
+</ul>
+
+<h3>Sidebar (desktop)</h3>
+<ul>
+  <li>Menu principal com as quatro visões de tarefa e um bloco "Ações e Planejamento" (planner, resumo, backups, CSV, categorias).</li>
+  <li><strong>Recolher</strong> para modo ícones (com badge numérico nas arquivadas) e <strong>ocultar</strong> por completo; quando oculta, um botão de menu no cabeçalho a traz de volta.</li>
+  <li>Rodapé com avatar, nome e e-mail do usuário.</li>
+</ul>
+
+<h3>Mobile</h3>
+<ul>
+  <li><strong>FAB de microfone</strong> abre um bottom sheet com gravador, transcrição recente e formulário manual.</li>
+  <li><strong>Bottom nav</strong> com Fila, Calendário, Notas, Listas e Menu.</li>
+  <li><strong>Drawer</strong> com todas as ações da sidebar, tema, configurações e sair; pode ser recolhido para modo ícones mantendo o conteúdo utilizável.</li>
+  <li>Faixa de título contextual mostrando a aba atual e um contador ("N ativas", "N notas", "N listas").</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="filtros">15. Busca e filtros</h2>
+
+<ul>
+  <li><strong>Busca textual ampla</strong> — casa com título, categoria, tags, notas <em>e</em> títulos de subtarefas.</li>
+  <li><strong>Busca por voz</strong> — o microfone no campo de busca usa <code>SpeechRecognition</code> em pt-BR, com indicador animado de nível e mensagens específicas de erro ("Permissão de microfone negada", "Nenhum comando de voz detectado", navegador sem suporte). O ponto final é removido do texto reconhecido.</li>
+  <li><strong>Filtro de categoria</strong> (Todas + categorias do usuário) e <strong>de prioridade</strong> (Todas / Alta / Média / Baixa).</li>
+  <li>Atalho <strong>"Limpar Filtros"</strong> aparece quando algum filtro está ativo.</li>
+  <li>Os mesmos filtros valem no Banco de Tarefas.</li>
+</ul>
+
+<h3>Três cartões de métrica acima dos filtros</h3>
+<ul>
+  <li><strong>Minhas Tarefas Do Dia</strong> — total criado hoje.</li>
+  <li><strong>Concluídas</strong> — quantidade concluída hoje, com barra de percentual.</li>
+  <li><strong>Urgentes (Alta)</strong> — pendências de prioridade Alta criadas hoje, com aviso "⚠️ Exige atenção prioritária" ou "✅ Nada urgente pedindo foco".</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="calendario">16. Calendário mensal</h2>
+
+<ul>
+  <li>Grade fixa de 42 células (6 semanas), incluindo dias vazados do mês anterior e do seguinte — clicar em um deles navega para aquele mês.</li>
+  <li>Navegação: mês anterior, mês seguinte e botão <strong>"Hoje"</strong>.</li>
+  <li>Cada dia mostra até <strong>4 pontos coloridos</strong> (um por tarefa concluída, cor por categoria) e um "+" quando há mais de 4 — o "mapa de bolinhas" de constância.</li>
+  <li>Destaques visuais para <strong>hoje</strong>, <strong>dia selecionado</strong> e dias com pendências.</li>
+  <li>Cabeçalho com o total de concluídas no mês exibido.</li>
+  <li><strong>Painel do dia selecionado</strong> — data completa em pt-BR, contadores de concluídas e fila ativa, e a lista de tarefas do dia com checkbox para <strong>concluir direto do calendário</strong>, além de badges de categoria e prioridade.</li>
+  <li>Legenda de cores por categoria.</li>
+</ul>
+
+<div class="note warn">
+  <b class="tag">Detalhe de agrupamento</b>
+  <p>
+    O dia de uma tarefa vem de <code>updatedAt</code> (ou <code>createdAt</code>), não de uma data de vencimento.
+    A legenda de cores lista "Estudo", enquanto a categoria padrão se chama "Estudos" — tarefas de Estudos caem na cor genérica.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="historico">17. Histórico</h2>
+
+<ul>
+  <li><strong>Filtro por data</strong> — seletor de data com botão para limpar; o título muda para "Tarefas em DD/MM/AAAA".</li>
+  <li><strong>Gráfico de progresso</strong> — conclusões por dia, com rótulos em pt-BR, total acumulado e "Recorde Diário" (melhor dia). Quando não há nada concluído, exibe um estado vazio explicativo.</li>
+  <li>Cada item da lista é um cartão de tarefa completo — dá para reabrir, editar, arquivar ou excluir a partir do histórico.</li>
+  <li>O calendário integra-se aqui: selecionar um dia e pedir para ver no histórico já aplica o filtro de data e troca de aba.</li>
+</ul>
+
+<div class="note warn">
+  <b class="tag">Escopo real da aba</b>
+  <p>
+    Apesar do nome, a lista traz tarefas <strong>concluídas e ativas</strong> não arquivadas (o gráfico, sim, conta apenas concluídas).
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="atalhos">18. Atalhos e responsividade</h2>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Atalho</th><th>Ação</th></tr></thead>
+  <tbody>
+    <tr><td><span class="kbd">Ctrl+N</span> / <span class="kbd">⌘N</span></td><td>Vai para a Fila de Atividades, rola até o campo de título e o foca, com banner de confirmação.</td></tr>
+    <tr><td><span class="kbd">Ctrl+Enter</span></td><td>Salva a edição da tarefa e a descrição no painel expandido.</td></tr>
+    <tr><td><span class="kbd">Esc</span></td><td>Cancela a edição em andamento.</td></tr>
+    <tr><td><span class="kbd">Enter</span></td><td>Cria tag, subtarefa ou item de lista, conforme o campo em foco.</td></tr>
+    <tr><td>Duplo clique</td><td>Renomeia título de tarefa ou de subtarefa.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Os atalhos estão documentados dentro do próprio app, no bloco "Atalhos de Teclado" de Configurações.
+  A interface é responsiva em três faixas: mobile (bottom nav + FAB + sheet), tablet (abas horizontais) e
+  desktop (sidebar + duas colunas, com o painel de entrada fixo na coluna esquerda). Tooltips explicativos
+  acompanham os controles principais, com indicação de atalho quando houver.
+</p>
+
+<!-- ============================================================ -->
+<h2 id="notas">19. Notas e ideias</h2>
+
+<h3>Criar</h3>
+<ul>
+  <li><strong>Aba Texto</strong> — digitação direta.</li>
+  <li><strong>Aba Gravar Nota</strong> — grava áudio, envia para <code>POST /api/tasks/transcribe-audio</code> e preenche o campo com a transcrição da IA, ainda editável antes de salvar ("Transcrição da IA" fica visível separadamente).</li>
+  <li>Durante a transcrição aparece o estado "Transcrevendo..."; erros de rede ou de chave são mostrados no formulário.</li>
+</ul>
+
+<h3>Organizar</h3>
+<ul>
+  <li><strong>Busca</strong> que varre conteúdo <em>e</em> transcrição.</li>
+  <li><strong>Filtro</strong> por tipo: todas / texto / áudio.</li>
+  <li><strong>Visualização</strong> em grade ou lista.</li>
+  <li>Cada nota permite <strong>expandir</strong>, <strong>editar</strong> o conteúdo e <strong>excluir</strong>.</li>
+  <li>Notas são listadas da mais recente para a mais antiga.</li>
+</ul>
+
+<div class="note warn">
+  <b class="tag">Limitação do áudio</b>
+  <p>
+    O campo <code>audioUrl</code> guarda uma URL de blob local (<code>blob:</code>), válida apenas na sessão atual.
+    Depois de recarregar a página, o áudio original não toca mais — o que permanece é o texto transcrito.
+    A distinção "nota de áudio" no filtro também depende desse campo.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="listas">20. Listas de verificação</h2>
+
+<ul>
+  <li><strong>Três tipos:</strong> <em>Checklist</em> (itens marcáveis), <em>Numerada</em> (ordenada) e <em>Mista</em>.</li>
+  <li><strong>12 ícones</strong> para identificar a lista: lista, carrinho de compras, avião, maleta, formatura, refeição, halteres, coração, casa, código, café e sorriso.</li>
+  <li><strong>Itens</strong> — adicionados por Enter ou botão, editáveis, removíveis; a lista exige pelo menos um item para salvar.</li>
+  <li><strong>Marcar itens</strong> diretamente no cartão, com <strong>percentual de conclusão</strong> calculado.</li>
+  <li><strong>Busca</strong> por título, <strong>filtro</strong> por tipo, <strong>visualização</strong> em grade ou lista.</li>
+  <li><strong>Editar</strong> (título, tipo, ícone e itens) e <strong>excluir</strong> a lista.</li>
+</ul>
+<p>Usos típicos: compras do mês, checklist de viagem, rotina de treino, roteiro de projeto.</p>
+
+<!-- ============================================================ -->
+<h2 id="categorias">21. Categorias personalizadas</h2>
+
+<ul>
+  <li><strong>Criar</strong> — até 25 caracteres; nomes duplicados (ignorando maiúsculas) são recusados com "Essa categoria já existe!".</li>
+  <li><strong>Renomear</strong> — atualiza a categoria <em>e todas as tarefas</em> que a usavam, além do filtro ativo, mantendo a consistência dos dados.</li>
+  <li><strong>Excluir</strong> — pede confirmação e <strong>migra as tarefas para "Geral"</strong>; nenhuma tarefa fica órfã. "Geral" é protegida como categoria padrão.</li>
+  <li>O contador "Categorias Ativas (N)" acompanha a lista.</li>
+  <li>As 8 categorias padrão têm ícone e cor fixos; categorias criadas pelo usuário recebem cor estável derivada do nome.</li>
+  <li>Se a IA devolver uma categoria que não existe na lista do usuário, a tarefa cai em <strong>"Geral"</strong> automaticamente.</li>
+</ul>
+
+<div class="note">
+  <b class="tag">Categorias e prompts</b>
+  <p>
+    Os prompts do servidor conhecem apenas as 8 categorias padrão. Categorias novas funcionam na criação
+    manual e nos filtros, mas a IA não as usará espontaneamente — ela escolhe entre as 8 e o app faz o ajuste.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="dashboard">22. Cards do dashboard</h2>
+
+<p>Seis dos cards podem ser ligados/desligados individualmente em Configurações → "Cards da Tela Inicial".</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Card</th><th>Conteúdo</th><th>Configurável</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Foco em Alta Prioridade</strong></td>
+      <td>Tempo acumulado em tarefas Alta vs. outras no dia, com percentual "crítico".</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><strong>Meta Diária</strong></td>
+      <td>Concluídas / total do dia com percentual e barra.</td>
+      <td>Sim</td>
+    </tr>
+    <tr>
+      <td><strong>Progresso Semanal</strong></td>
+      <td>Gráfico dos últimos 7 dias, total do período, média diária e quantos dias bateram a meta (mínimo de 3). Inclui geração de <strong>relatório PDF</strong>.</td>
+      <td>Sim</td>
+    </tr>
+    <tr>
+      <td><strong>Resumo de Produtividade</strong></td>
+      <td>Tempo médio entre criação e conclusão, tarefa mais rápida, mais lenta e comparação Alta vs. outras prioridades. Durações em dias/horas/minutos/segundos.</td>
+      <td>Sim</td>
+    </tr>
+    <tr>
+      <td><strong>Distribuição de Categorias</strong></td>
+      <td>Gráfico de pizza das tarefas concluídas hoje, com percentual por categoria.</td>
+      <td>Sim</td>
+    </tr>
+    <tr>
+      <td><strong>Dicas de Hoje</strong></td>
+      <td>Carrossel de dicas escolhido pela taxa de conclusão do dia: sem tarefas, baixa, média ou alta — cada faixa com seu próprio conjunto de 3 a 5 dicas etiquetadas ("Início Rápido", "Foco Profundo", "Alta Performance"...). Navegação anterior/próxima e sorteio.</td>
+      <td>Sim</td>
+    </tr>
+    <tr>
+      <td><strong>Foco Recomendado</strong></td>
+      <td>Sugestão automática de tarefa por pontuação (ver <a href="#foco">§7</a>), com botão de focar.</td>
+      <td>Sim</td>
+    </tr>
+    <tr>
+      <td><strong>Gráfico de Histórico</strong></td>
+      <td>Conclusões por dia, total e recorde diário (aba Histórico).</td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Relatório PDF semanal</h3>
+<p>O card de Progresso Semanal gera um PDF (<code>relatorio_produtividade_semanal_AAAA-MM-DD.pdf</code>) com:</p>
+<ul>
+  <li>Cabeçalho com marca, período de 7 dias e data/hora de geração;</li>
+  <li>três indicadores: tarefas concluídas, média diária e metas cumpridas (X de 7 dias);</li>
+  <li>tabela de <strong>volume por categoria</strong> com quantidade e percentual de contribuição, ordenada;</li>
+  <li>matriz de <strong>distribuição diária por categoria</strong>, com totais por dia;</li>
+  <li>estados vazios próprios quando não há dados no período.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="gamificacao">23. Feedback, dicas e gamificação</h2>
+
+<ul>
+  <li><strong>Banners flutuantes</strong> — sucesso, erro ou informação, no topo da tela, com autofechamento em 4 segundos e botão de fechar. Cobrem criação, conclusão, arquivamento, exclusão, importação, exportações, atalhos e avisos de IA.</li>
+  <li><strong>Confete</strong> — animação de partículas ao concluir tarefa de prioridade Alta.</li>
+  <li><strong>Vibração</strong> — padrão distinto para prioridade Alta.</li>
+  <li><strong>Estado vazio motivacional</strong> — quando não há pendências, um card exibe dica de produtividade rotativa com metodologia associada e botão "Outra Dica".</li>
+  <li><strong>Dica do dia</strong> — sugestão diária guardada em <code>localStorage</code>, exibida uma vez por dia.</li>
+  <li><strong>Animações de transição</strong> — entrada e saída de cartões, modais, sheets e painéis expandidos.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="exportacoes">24. Exportações e backup</h2>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Recurso</th><th>Formato / nome</th><th>Conteúdo</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Exportar Backup</strong></td>
+      <td><code>echoplan-backup-AAAA-MM-DD.json</code></td>
+      <td>Todas as tarefas + lista de categorias.</td>
+    </tr>
+    <tr>
+      <td><strong>Exportar tudo (Configurações)</strong></td>
+      <td><code>backup_tarefas_AAAA-MM-DD.json</code></td>
+      <td>Tarefas, categorias e data de exportação.</td>
+    </tr>
+    <tr>
+      <td><strong>Importar Backup</strong></td>
+      <td>arquivo <code>.json</code></td>
+      <td>Recria as tarefas (novos IDs) e substitui a lista de categorias. Formato inválido é recusado com aviso.</td>
+    </tr>
+    <tr>
+      <td><strong>Exportar Histórico</strong></td>
+      <td><code>historico-tarefas-concluidas-AAAA-MM-DD.csv</code></td>
+      <td>Só tarefas concluídas: título, categoria, prioridade, notas, subtarefas (concluídas/total), criado em, concluído em, tags. Com BOM UTF-8 e escape de vírgulas/aspas — abre corretamente no Excel em pt-BR.</td>
+    </tr>
+    <tr>
+      <td><strong>Relatório semanal</strong></td>
+      <td><code>relatorio_produtividade_semanal_*.pdf</code></td>
+      <td>Ver <a href="#dashboard">§22</a>.</td>
+    </tr>
+    <tr>
+      <td><strong>Imprimir Planner</strong></td>
+      <td><code>echoplan-planner-{categoria}-{data}.png</code></td>
+      <td>Planner desenhado em canvas 1200×1700: fundo pontilhado estilo bullet journal, cabeçalho com onda sonora, metadados do filtro aplicado, até 8 tarefas com cor por prioridade, notas e até 3 subtarefas, e linhas pautadas com checkboxes para escrever à mão.</td>
+    </tr>
+    <tr>
+      <td><strong>Copiar Resumo</strong></td>
+      <td>área de transferência</td>
+      <td>Lista das tarefas concluídas hoje em texto simples, pronta para colar em chat ou e-mail. Avisa quando não há nada concluído.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Backup agendado</h3>
+<p>
+  Em Configurações é possível escolher <strong>frequência</strong> (diário/semanal) e <strong>horário</strong>.
+  Quando o relógio bate o horário, aparece um aviso fixo no canto inferior direito com botão <strong>Download</strong>,
+  que baixa o backup e registra a data do último download.
+</p>
+
+<div class="note warn">
+  <b class="tag">Limitações do agendamento</b>
+  <p>
+    A verificação compara apenas o horário: a opção <strong>"semanal" não altera o comportamento</strong> — o aviso
+    aparece todos os dias. A preferência fica em <code>localStorage</code>, portanto é por navegador, não por conta,
+    e só funciona com o app aberto.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="preferencias">25. Preferências e configurações</h2>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Preferência</th><th>Onde</th><th>Escopo</th></tr></thead>
+  <tbody>
+    <tr><td>Tema claro/escuro</td><td>Botão sol/lua no cabeçalho e no drawer</td><td>Conta (Firestore)</td></tr>
+    <tr><td>Categorias</td><td>Modal "Gerenciar Categorias"</td><td>Conta</td></tr>
+    <tr><td>Não perturbe, lembretes ativos, silenciar Baixa</td><td>Configurações</td><td>Conta</td></tr>
+    <tr><td>Visibilidade dos 6 cards</td><td>Configurações</td><td>Conta</td></tr>
+    <tr><td>Backup agendado</td><td>Configurações</td><td>Navegador (<code>localStorage</code>)</td></tr>
+    <tr><td>Dica do dia já exibida</td><td>automático</td><td>Navegador</td></tr>
+    <tr><td>Permissão de notificação</td><td>Configurações</td><td>Navegador/SO</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>
+  Todas as preferências de conta são <strong>salvas na hora</strong>, sem botão "Salvar", e propagam para as
+  demais sessões abertas. Configurações reúne, em uma coluna rolável: backup, backup agendado, notificações,
+  não perturbe, cards da tela inicial, atalho para categorias e a lista de atalhos de teclado.
+</p>
+
+<!-- ============================================================ -->
+<h2 id="degradado">26. Modo degradado (sem chave Gemini)</h2>
+
+<p>Sem <code>GEMINI_API_KEY</code> (ou com o valor de exemplo <code>MY_GEMINI_API_KEY</code>), o app continua útil:</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Recurso</th><th>Comportamento</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Texto → tarefas</strong></td><td>Funciona com um <strong>parser heurístico local em português</strong>, e a UI avisa que a análise foi local.</td></tr>
+    <tr><td><strong>Áudio → tarefas</strong></td><td>Indisponível (403). Se o navegador capturou transcrição local, ela é reaproveitada pelo caminho de texto.</td></tr>
+    <tr><td><strong>Transcrição de nota de voz</strong></td><td>Indisponível; o texto local do navegador é usado quando existir.</td></tr>
+    <tr><td><strong>Sugerir subtarefas</strong></td><td>Indisponível, com aviso no cartão.</td></tr>
+    <tr><td><strong>Todo o resto</strong></td><td>Funciona normalmente: criação manual, lembretes, notas, listas, métricas, exportações.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>O que o parser local reconhece</h3>
+<ul>
+  <li><strong>Separa tarefas</strong> por pontuação e pela conjunção " e ".</li>
+  <li><strong>Limpa verbos de obrigação</strong>: "preciso de", "tenho que", "lembrar de", "não esquecer de", "devo", "vou", "gostaria de".</li>
+  <li><strong>Infere categoria</strong> por vocabulário: reunião/relatório/cliente → Trabalho; médico/academia/consulta → Saúde; boleto/pix/fatura → Finanças; prova/faculdade/TCC → Estudos; mercado/faxina/louça → Casa; família/cachorro/aniversário → Pessoal.</li>
+  <li><strong>Infere prioridade</strong>: "urgente", "importante", "hoje", "prazo", "agora" → Alta; "depois", "quando der", "tranquilo", "lazer" → Baixa; caso contrário Média.</li>
+  <li><strong>Extrai horário</strong> de formatos numéricos (<code>15h30</code>, <code>15:30</code>, "às 14") e de expressões escritas ("três da tarde" → 15:00, "meio-dia" → 12:00, "meia-noite" → 00:00, "sete da noite" → 19:00).</li>
+  <li><strong>Normaliza o título</strong>: primeira letra maiúscula e no máximo 8 palavras.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="matriz">27. Matriz funcionalidade → código</h2>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Funcionalidade</th><th>Arquivo</th><th>Endpoint</th></tr></thead>
+  <tbody>
+    <tr><td>Gravação e análise de áudio</td><td><code>src/components/AudioRecorder.tsx</code></td><td><span class="pill post">POST</span> <code>/api/tasks/analyze-audio</code></td></tr>
+    <tr><td>Análise de texto livre</td><td><code>src/components/AudioRecorder.tsx</code></td><td><span class="pill post">POST</span> <code>/api/tasks/analyze-text</code></td></tr>
+    <tr><td>Nota de voz na tarefa</td><td><code>src/components/TaskItem.tsx</code></td><td><span class="pill post">POST</span> <code>/api/tasks/transcribe-audio</code></td></tr>
+    <tr><td>Nota de voz autônoma</td><td><code>src/components/NoteForm.tsx</code></td><td><span class="pill post">POST</span> <code>/api/tasks/transcribe-audio</code></td></tr>
+    <tr><td>Sugestão de subtarefas</td><td><code>src/components/TaskItem.tsx</code></td><td><span class="pill post">POST</span> <code>/api/tasks/suggest-subtasks</code></td></tr>
+    <tr><td>Criação manual</td><td><code>src/components/TaskForm.tsx</code></td><td>—</td></tr>
+    <tr><td>Cartão de tarefa (tudo)</td><td><code>src/components/TaskItem.tsx</code></td><td>—</td></tr>
+    <tr><td>Busca, filtros e métricas do topo</td><td><code>src/components/TaskFilter.tsx</code></td><td>—</td></tr>
+    <tr><td>Lembretes, DND e disparo</td><td><code>src/App.tsx</code> + <code>ReminderModal.tsx</code></td><td>—</td></tr>
+    <tr><td>Calendário</td><td><code>src/components/CalendarView.tsx</code></td><td>—</td></tr>
+    <tr><td>Histórico e gráfico</td><td><code>src/App.tsx</code> + <code>ProgressChart.tsx</code></td><td>—</td></tr>
+    <tr><td>Notas</td><td><code>NotesView.tsx</code>, <code>NoteForm.tsx</code>, <code>NoteItem.tsx</code></td><td>—</td></tr>
+    <tr><td>Listas</td><td><code>ListView.tsx</code>, <code>ListForm.tsx</code>, <code>ListItem.tsx</code></td><td>—</td></tr>
+    <tr><td>Categorias</td><td><code>CategoryManagerModal.tsx</code></td><td>—</td></tr>
+    <tr><td>Configurações e preferências</td><td><code>SettingsModal.tsx</code></td><td>—</td></tr>
+    <tr><td>Cards analíticos</td><td><code>DailyGoal</code>, <code>WeeklyProgress</code>, <code>ProductivitySummary</code>, <code>PriorityDurationCard</code>, <code>CategoryPieChart</code>, <code>DicasHoje</code>, <code>SugestaoTarefa</code></td><td>—</td></tr>
+    <tr><td>Planner PNG, backups, CSV, resumo</td><td><code>src/App.tsx</code></td><td>—</td></tr>
+    <tr><td>Backup agendado</td><td><code>src/hooks/useBackupScheduler.ts</code> + <code>src/lib/backup.ts</code></td><td>—</td></tr>
+    <tr><td>Persistência e tempo real</td><td><code>src/hooks/useFirebase.ts</code></td><td>—</td></tr>
+    <tr><td>Login / logout</td><td><code>src/components/Login.tsx</code> + <code>src/lib/firebase.ts</code></td><td>—</td></tr>
+    <tr><td>Prompts, schemas e parser local</td><td><code>server.ts</code></td><td>—</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="limitacoes">28. Limitações conhecidas</h2>
+
+<p>Comportamentos que a interface promete ou sugere, mas que o código entrega de forma diferente:</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>#</th><th>Onde</th><th>Situação</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Reordenar tarefas</td>
+      <td>Os cartões são arrastáveis e o texto convida a "arrastar pelo marcador", mas soltar apenas exibe o aviso de que falta um campo de posição. A ordem efetiva é sempre prioridade Alta primeiro, depois data de criação.</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Recorrência</td>
+      <td>Sem agendador. A cópia nasce na conclusão; a periodicidade é apenas rótulo.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Notas de áudio</td>
+      <td>O áudio não é enviado para armazenamento: a URL de blob morre ao recarregar. Só a transcrição persiste.</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Backup agendado</td>
+      <td>Frequência "semanal" não é respeitada; a configuração é por navegador e exige o app aberto.</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>"Limpar Minhas Tarefas"</td>
+      <td>O texto fala em remover tudo, incluindo histórico; a ação apaga apenas tarefas criadas hoje.</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Aba Histórico</td>
+      <td>Lista tarefas ativas e concluídas, não só o histórico.</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Fila de atividades</td>
+      <td>Exibe no máximo 5 tarefas; não há paginação nem "ver mais" — é preciso filtrar ou concluir para ver o resto.</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Laço de lembretes</td>
+      <td>Roda a cada segundo e escreve no Firestore ao repor a trava de disparo, gerando tráfego contínuo.</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Timer de foco</td>
+      <td>Não avisa ao terminar: apenas para em zero.</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>Importação de backup</td>
+      <td>Sempre adiciona (nunca substitui ou mescla por ID) e sobrescreve a lista de categorias — importar duas vezes duplica as tarefas.</td>
+    </tr>
+    <tr>
+      <td>11</td>
+      <td>Categorias e IA</td>
+      <td>Os prompts conhecem só as 8 categorias padrão; categorias novas nunca são escolhidas pela IA.</td>
+    </tr>
+    <tr>
+      <td>12</td>
+      <td>Legenda do calendário</td>
+      <td>Usa "Estudo" onde a categoria real é "Estudos", então essas tarefas recebem a cor genérica.</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>Lembretes e horário</td>
+      <td>O lembrete é sempre um <code>HH:MM</code> recorrente por dia — não existe data de vencimento nem lembrete único em data futura.</td>
+    </tr>
+    <tr>
+      <td>14</td>
+      <td>Notas e listas</td>
+      <td>Ambos os tipos aceitam <code>tags</code> no modelo de dados, mas a interface não expõe criação nem filtro por tag nesses módulos.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note ok">
+  <b class="tag">Como usar esta seção</b>
+  <p>
+    Nenhum dos pontos acima impede o uso diário do app — todos são oportunidades claras de próxima
+    iteração. Os itens 1, 3 e 4 são os que mais divergem da expectativa criada pela interface.
+  </p>
+</div>
+
+<footer>
+  <p>
+    EchoPlan — catálogo de funcionalidades gerado a partir da leitura do código
+    (<code>server.ts</code>, <code>src/App.tsx</code>, <code>src/hooks/</code>, <code>src/components/</code>).
+    Documentação técnica complementar em <a href="index.html">index.html</a>.
+  </p>
+</footer>
+
+</main>
+</div>
+
+<script>
+  (function () {
+    var btn = document.getElementById("themeToggle");
+    var root = document.documentElement;
+    btn.addEventListener("click", function () {
+      var isDark = root.getAttribute("data-theme") === "dark"
+        || (!root.getAttribute("data-theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      root.setAttribute("data-theme", isDark ? "light" : "dark");
+    });
+  })();
+</script>
+</body>
+</html>

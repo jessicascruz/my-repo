@@ -1,0 +1,154 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User preferences and global settings",
+      "type": "object",
+      "properties": {
+        "darkMode": {
+          "type": "boolean",
+          "description": "Whether dark mode is enabled"
+        },
+        "categories": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Custom task categories"
+        },
+        "dndSettings": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "startTime": { "type": "string" },
+            "endTime": { "type": "string" },
+            "muteLowPriority": { "type": "boolean" },
+            "activeRemindersEnabled": { "type": "boolean" },
+            "activeRemindersStartTime": { "type": "string" },
+            "activeRemindersEndTime": { "type": "string" },
+            "activeRemindersDays": {
+              "type": "array",
+              "items": { "type": "integer" }
+            }
+          }
+        },
+        "visibleCards": {
+          "type": "object",
+          "properties": {
+            "categoryPieChart": { "type": "boolean" },
+            "dicasHoje": { "type": "boolean" },
+            "dailyGoal": { "type": "boolean" },
+            "weeklyProgress": { "type": "boolean" },
+            "productivitySummary": { "type": "boolean" },
+            "sugestaoTarefa": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "Task": {
+      "title": "Task",
+      "description": "A task created by the user",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "priority": { "type": "string", "enum": ["Alta", "Média", "Baixa"] },
+        "completed": { "type": "boolean" },
+        "reminderTime": { "type": ["string", "null"] },
+        "reminderTriggered": { "type": "boolean" },
+        "reminderDays": {
+          "type": "array",
+          "items": { "type": "integer" }
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "notes": { "type": "string" },
+        "subtasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "title": { "type": "string" },
+              "completed": { "type": "boolean" }
+            }
+          }
+        },
+        "archived": { "type": "boolean" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "userId": { "type": "string", "description": "The UID of the owner" }
+      },
+      "required": ["title", "category", "priority", "completed", "createdAt", "userId"]
+    },
+    "Note": {
+      "title": "Note",
+      "description": "A note created by the user, possibly with audio",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string" },
+        "transcription": { "type": "string" },
+        "audioUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "userId": { "type": "string" }
+      },
+      "required": ["content", "createdAt", "userId"]
+    },
+    "ListEntry": {
+      "title": "ListEntry",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "type": "string" },
+        "completed": { "type": "boolean" }
+      },
+      "required": ["id", "text", "completed"]
+    },
+    "List": {
+      "title": "List",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "icon": { "type": "string" },
+        "type": { "enum": ["numbered", "checklist", "mixed"] },
+        "items": {
+          "type": "array",
+          "items": { "$ref": "ListEntry" }
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "userId": { "type": "string" }
+      },
+      "required": ["title", "type", "items", "createdAt", "userId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User preferences"
+    },
+    "/users/{userId}/tasks/{taskId}": {
+      "schema": "Task",
+      "description": "User tasks"
+    },
+    "/users/{userId}/notes/{noteId}": {
+      "schema": "Note",
+      "description": "User notes"
+    },
+    "/users/{userId}/lists/{listId}": {
+      "schema": "List",
+      "description": "User lists"
+    }
+  }
+}

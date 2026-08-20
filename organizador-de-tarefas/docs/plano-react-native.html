@@ -1,0 +1,1627 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EchoPlan — Plano de Migração para React Native</title>
+<style>
+  :root {
+    --bg: #f8fafc;
+    --bg-elev: #ffffff;
+    --bg-soft: #f1f5f9;
+    --fg: #0f172a;
+    --fg-muted: #475569;
+    --fg-faint: #64748b;
+    --border: #e2e8f0;
+    --accent: #493fdf;
+    --accent-soft: #eef2ff;
+    --ok: #059669;
+    --warn: #d97706;
+    --danger: #e11d48;
+    --code-bg: #0f172a;
+    --code-fg: #e2e8f0;
+    --sidebar-w: 290px;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  :root[data-theme="dark"], :root:not([data-theme="light"]) {
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b0f19;
+      --bg-elev: #111827;
+      --bg-soft: #172033;
+      --fg: #e5e7eb;
+      --fg-muted: #a9b4c6;
+      --fg-faint: #8593a8;
+      --border: #263145;
+      --accent: #8b83ff;
+      --accent-soft: #1c1b3d;
+      --ok: #34d399;
+      --warn: #fbbf24;
+      --danger: #fb7185;
+      --code-bg: #060a13;
+      --code-fg: #dbe3f0;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b0f19;
+    --bg-elev: #111827;
+    --bg-soft: #172033;
+    --fg: #e5e7eb;
+    --fg-muted: #a9b4c6;
+    --fg-faint: #8593a8;
+    --border: #263145;
+    --accent: #8b83ff;
+    --accent-soft: #1c1b3d;
+    --ok: #34d399;
+    --warn: #fbbf24;
+    --danger: #fb7185;
+    --code-bg: #060a13;
+    --code-fg: #dbe3f0;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 1.5rem; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 400 16px/1.65 "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Layout */
+  .shell { display: flex; min-height: 100vh; }
+  nav.toc {
+    width: var(--sidebar-w);
+    flex: 0 0 var(--sidebar-w);
+    background: var(--bg-elev);
+    border-right: 1px solid var(--border);
+    padding: 1.75rem 1rem 3rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  nav.toc .brand { display: flex; align-items: center; gap: .65rem; padding: 0 .5rem 1.25rem; }
+  nav.toc .brand .mark {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: var(--accent); color: #fff;
+    display: grid; place-items: center; font-weight: 800; font-size: 15px;
+    flex: 0 0 auto;
+  }
+  nav.toc .brand b { display: block; font-size: 15px; letter-spacing: -.01em; }
+  nav.toc .brand span { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--fg-faint); font-weight: 700; }
+  nav.toc .group { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--fg-faint); font-weight: 700; padding: 1.1rem .75rem .4rem; }
+  nav.toc a {
+    display: block; padding: .38rem .75rem; border-radius: 8px;
+    color: var(--fg-muted); text-decoration: none; font-size: 13.5px; font-weight: 500;
+  }
+  nav.toc a:hover { background: var(--bg-soft); color: var(--fg); }
+  nav.toc a.sub { padding-left: 1.5rem; font-size: 13px; color: var(--fg-faint); }
+
+  main { flex: 1 1 auto; min-width: 0; padding: 2.5rem clamp(1rem, 4vw, 3.5rem) 6rem; max-width: 1080px; }
+
+  header.page { border-bottom: 1px solid var(--border); padding-bottom: 1.75rem; margin-bottom: 2.5rem; }
+  header.page h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); line-height: 1.15; letter-spacing: -.03em; margin: 0 0 .5rem; }
+  header.page p.lede { font-size: 1.05rem; color: var(--fg-muted); margin: 0 0 1rem; max-width: 62ch; }
+
+  h2 { font-size: 1.5rem; letter-spacing: -.02em; margin: 3.25rem 0 .5rem; padding-top: .5rem; scroll-margin-top: 1rem; }
+  h2::before { content: ""; display: block; width: 34px; height: 3px; background: var(--accent); border-radius: 2px; margin-bottom: .9rem; }
+  h3 { font-size: 1.12rem; letter-spacing: -.01em; margin: 2rem 0 .4rem; scroll-margin-top: 1rem; }
+  h4 { font-size: .95rem; margin: 1.4rem 0 .3rem; color: var(--fg-muted); text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+  p { margin: .6rem 0; color: var(--fg-muted); }
+  li { color: var(--fg-muted); margin: .25rem 0; }
+  strong { color: var(--fg); font-weight: 650; }
+  a { color: var(--accent); }
+
+  code {
+    font-family: var(--mono); font-size: .86em;
+    background: var(--bg-soft); border: 1px solid var(--border);
+    padding: .08em .38em; border-radius: 5px; color: var(--fg);
+    word-break: break-word;
+  }
+  pre {
+    background: var(--code-bg); color: var(--code-fg);
+    padding: 1rem 1.1rem; border-radius: 12px; overflow-x: auto;
+    font-family: var(--mono); font-size: 13px; line-height: 1.6;
+    border: 1px solid var(--border); margin: .9rem 0;
+  }
+  pre code { background: none; border: 0; padding: 0; color: inherit; font-size: inherit; }
+  .tok-c { color: #7c8aa5; }
+  .tok-s { color: #86e1a0; }
+  .tok-k { color: #a5a1ff; }
+
+  .tablewrap { overflow-x: auto; margin: 1rem 0; border: 1px solid var(--border); border-radius: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; background: var(--bg-elev); }
+  th, td { text-align: left; padding: .65rem .85rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--bg-soft); font-weight: 650; color: var(--fg); font-size: 12.5px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  td { color: var(--fg-muted); }
+  td code { white-space: nowrap; }
+
+  .card { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem 1.25rem; margin: 1rem 0; }
+  .grid { display: grid; gap: .9rem; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); margin: 1.1rem 0; }
+  .grid .card { margin: 0; }
+  .card h4 { margin-top: 0; }
+  .card p:last-child { margin-bottom: 0; }
+
+  .note { border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 12px 12px 0; padding: .85rem 1.1rem; margin: 1.1rem 0; }
+  .note.warn { border-left-color: var(--warn); background: color-mix(in srgb, var(--warn) 10%, var(--bg-elev)); }
+  .note.danger { border-left-color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, var(--bg-elev)); }
+  .note.ok { border-left-color: var(--ok); background: color-mix(in srgb, var(--ok) 10%, var(--bg-elev)); }
+  .note p { margin: .25rem 0; }
+  .note b.tag { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg); margin-bottom: .2rem; }
+
+  .pill { display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 700; padding: .15rem .5rem; border-radius: 999px; letter-spacing: .04em; }
+  .pill.post { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); }
+  .pill.get { background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: .5rem; margin: 1.2rem 0; }
+  .flow .step { flex: 1 1 150px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 12px; padding: .7rem .85rem; font-size: 13px; color: var(--fg-muted); }
+  .flow .step b { display: block; color: var(--fg); font-size: 13px; margin-bottom: .15rem; }
+  .flow .arrow { align-self: center; color: var(--fg-faint); font-size: 18px; }
+
+  .layers { display: grid; gap: .6rem; margin: 1.2rem 0; }
+  .layer { border: 1px solid var(--border); border-radius: 12px; padding: .85rem 1rem; background: var(--bg-elev); }
+  .layer .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; color: var(--accent); }
+  .layer b { display: block; margin: .1rem 0 .2rem; }
+  .layer p { margin: 0; font-size: 14px; }
+
+  .kbd { font-family: var(--mono); font-size: 12px; background: var(--bg-soft); border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: .1rem .4rem; color: var(--fg); }
+
+  .toggle {
+    position: fixed; top: 1rem; right: 1rem; z-index: 20;
+    background: var(--bg-elev); border: 1px solid var(--border); color: var(--fg-muted);
+    border-radius: 999px; padding: .45rem .9rem; font-size: 12px; font-weight: 650; cursor: pointer;
+  }
+  .toggle:hover { color: var(--fg); }
+
+  footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 13px; color: var(--fg-faint); }
+
+  @media (max-width: 900px) {
+    .shell { flex-direction: column; }
+    nav.toc { position: static; width: auto; flex: none; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+    nav.toc .group { padding-top: .8rem; }
+  }
+</style>
+<style>
+  /* Extensões desta página */
+  .phase { border: 1px solid var(--border); border-radius: 14px; background: var(--bg-elev); padding: 1.1rem 1.25rem; margin: 1rem 0; position: relative; }
+  .phase .hdr { display: flex; flex-wrap: wrap; align-items: baseline; gap: .6rem; margin-bottom: .5rem; }
+  .phase .num { font-family: var(--mono); font-size: 11px; font-weight: 800; letter-spacing: .1em; color: #fff; background: var(--accent); border-radius: 999px; padding: .18rem .55rem; }
+  .phase .hdr b { font-size: 1.05rem; letter-spacing: -.01em; }
+  .phase .cost { margin-left: auto; font-family: var(--mono); font-size: 12px; color: var(--fg-faint); }
+  .phase ul { margin: .4rem 0 .2rem; padding-left: 1.15rem; }
+  .phase .exit { margin-top: .7rem; font-size: 13.5px; border-top: 1px dashed var(--border); padding-top: .6rem; }
+  .phase .exit b { color: var(--ok); }
+
+  .bar { display: flex; height: 26px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); margin: 1rem 0 .4rem; font-size: 11px; font-weight: 700; font-family: var(--mono); }
+  .bar div { display: grid; place-items: center; color: #fff; }
+  .legend { display: flex; flex-wrap: wrap; gap: .9rem; font-size: 12.5px; color: var(--fg-faint); }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: .35rem; vertical-align: baseline; }
+
+  .tag2 { display: inline-block; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: .12rem .45rem; border-radius: 5px; white-space: nowrap; }
+  .t-reuse { background: color-mix(in srgb, var(--ok) 20%, transparent); color: var(--ok); }
+  .t-adapt { background: color-mix(in srgb, var(--warn) 22%, transparent); color: var(--warn); }
+  .t-rewrite { background: color-mix(in srgb, var(--danger) 20%, transparent); color: var(--danger); }
+  .t-drop { background: var(--bg-soft); color: var(--fg-faint); }
+
+  .risk { font-family: var(--mono); font-size: 11px; font-weight: 800; padding: .12rem .45rem; border-radius: 5px; }
+  .r-alto { background: color-mix(in srgb, var(--danger) 20%, transparent); color: var(--danger); }
+  .r-medio { background: color-mix(in srgb, var(--warn) 22%, transparent); color: var(--warn); }
+  .r-baixo { background: color-mix(in srgb, var(--ok) 20%, transparent); color: var(--ok); }
+
+  .tree { font-family: var(--mono); font-size: 12.5px; line-height: 1.7; }
+  .backlink { display: inline-flex; align-items: center; gap: .35rem; font-size: 13px; text-decoration: none; margin-bottom: 1rem; }
+</style>
+</head>
+<body>
+<button class="toggle" id="themeToggle" type="button">Tema</button>
+<div class="shell">
+
+<nav class="toc">
+  <div class="brand">
+    <div class="mark">RN</div>
+    <div>
+      <b>EchoPlan Mobile</b>
+      <span>Plano de Migração</span>
+    </div>
+  </div>
+
+  <div class="group">Decisão</div>
+  <a href="#sumario">1. Sumário executivo</a>
+  <a href="#alternativas">2. Alternativas avaliadas</a>
+  <a href="#inventario">3. Inventário do código atual</a>
+
+  <div class="group">Arquitetura alvo</div>
+  <a href="#stack">4. Stack alvo</a>
+  <a href="#arquitetura">5. Arquitetura</a>
+  <a href="#estrutura">6. Estrutura de pastas</a>
+  <a href="#backend">7. Backend e API</a>
+  <a href="#dados">8. Dados e autenticação</a>
+
+  <div class="group">Tradução técnica</div>
+  <a href="#apis">9. APIs web → nativas</a>
+  <a href="#lembretes">10. Lembretes (reescrita)</a>
+  <a href="#audio">11. Áudio e voz</a>
+  <a href="#exportacoes">12. Exportações</a>
+  <a href="#estilo">13. Estilo e tema</a>
+  <a href="#navegacao">14. Navegação</a>
+  <a href="#componentes">15. Componente a componente</a>
+
+  <div class="group">Execução</div>
+  <a href="#fases">16. Roadmap em fases</a>
+  <a href="#riscos">17. Riscos</a>
+  <a href="#aceite">18. Critérios de aceite</a>
+  <a href="#build">19. Build e distribuição</a>
+  <a href="#abertos">20. Decisões em aberto</a>
+
+  <div class="group">Referência</div>
+  <a href="index.html">← Docs do app web</a>
+</nav>
+
+<main>
+
+<header class="page">
+  <h1>Plano de Migração — EchoPlan Web → React Native</h1>
+  <p class="lede">
+    Plano completo para portar o organizador de tarefas por voz (React 19 + Vite + Express + Firestore + Gemini)
+    para um app nativo iOS/Android em React Native com Expo. Cobre decisão de stack, tradução de cada API web,
+    roadmap em fases com esforço estimado, riscos e critérios de aceite.
+  </p>
+  <p style="font-size:13px;color:var(--fg-faint);margin:0">
+    Base analisada: <code>~11.988 linhas</code> de TS/TSX ·
+    <code>src/App.tsx</code> com 2.583 linhas · 29 componentes ·
+    <code>server.ts</code> com 537 linhas · Idioma do domínio: pt-BR
+  </p>
+</header>
+
+<!-- ============================================================ -->
+<h2 id="sumario">1. Sumário executivo</h2>
+
+<p>
+  O EchoPlan é hoje uma SPA React que depende fortemente de APIs de browser:
+  <code>MediaRecorder</code>, <code>SpeechRecognition</code>, <code>Notification</code>,
+  <code>Canvas 2D</code>, <code>Blob</code> + <code>&lt;a download&gt;</code>, drag-and-drop HTML5 e Tailwind.
+  Nenhuma dessas existe em React Native. Em compensação, a <strong>lógica de domínio</strong>
+  — tipos, regras de categoria e prioridade, cálculo de janelas DND, agregações de produtividade,
+  camada Firestore e os prompts do Gemini — é agnóstica de plataforma e migra quase intacta.
+</p>
+
+<div class="grid">
+  <div class="card">
+    <h4>Recomendação</h4>
+    <p><strong>Expo (managed) + expo-router + NativeWind v4 + React Native Firebase.</strong> Reescrita de UI, reuso do domínio, backend Express preservado como serviço remoto.</p>
+  </div>
+  <div class="card">
+    <h4>Reuso realista</h4>
+    <p>≈ <strong>25–30%</strong> do código atual sobrevive quase sem mudança (tipos, hooks de dados, utilitários, servidor). O restante é reescrita de apresentação.</p>
+  </div>
+  <div class="card">
+    <h4>Esforço</h4>
+    <p><strong>9 a 13 semanas</strong> para 1 dev sênior full-time até paridade funcional e build de loja. Seis fases, cada uma com entregável testável.</p>
+  </div>
+  <div class="card">
+    <h4>Maior risco</h4>
+    <p>O motor de lembretes. Hoje é um <code>setInterval</code> de 1 s no browser — modelo que <strong>não funciona</strong> em mobile. Exige reescrita para notificações locais agendadas.</p>
+  </div>
+</div>
+
+<h3>As cinco decisões estruturais</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>#</th><th>Decisão</th><th>Escolha</th><th>Razão</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Framework RN</td><td><strong>Expo SDK, fluxo managed</strong></td><td>Todas as capacidades necessárias (áudio, notificações, arquivos, print, share, auth) têm módulo Expo mantido. EAS Build elimina Xcode/Android Studio local no dia a dia.</td></tr>
+    <tr><td>2</td><td>Camada Firebase</td><td><strong><code>@react-native-firebase</code></strong></td><td>SDK nativo dá persistência offline real do Firestore (o SDK JS não tem em RN) e Google Sign-In nativo. API modular quase idêntica à atual.</td></tr>
+    <tr><td>3</td><td>Estilo</td><td><strong>NativeWind v4</strong></td><td>Mantém as classes Tailwind já escritas nos 29 componentes. Reduz drasticamente o custo da reescrita de UI frente a <code>StyleSheet</code> puro.</td></tr>
+    <tr><td>4</td><td>Lembretes</td><td><strong><code>expo-notifications</code> agendadas</strong></td><td>Único modelo que dispara com o app fechado. Elimina o loop de 1 s que hoje escreve no Firestore a cada tick.</td></tr>
+    <tr><td>5</td><td>Backend</td><td><strong>Manter <code>server.ts</code></strong>, publicar remoto</td><td>Os prompts e <code>responseSchema</code> do Gemini são o ativo de maior valor e não mudam. Muda só o transporte: de same-origin para URL absoluta autenticada.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note ok">
+  <b class="tag">Ganho colateral</b>
+  <p>
+    A migração corrige duas dívidas conhecidas do app web: o loop de lembretes que grava no
+    Firestore a cada segundo, e a ausência de persistência offline. Em mobile, nenhuma das duas
+    é opcional — o plano já as trata como escopo.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="alternativas">2. Alternativas avaliadas</h2>
+
+<p>Antes de aceitar o custo de uma reescrita de UI, dois caminhos mais baratos foram considerados:</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Caminho</th><th>Custo</th><th>Entrega</th><th>Veredito</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>PWA</strong> — manifest + service worker</td>
+      <td>~1 semana</td>
+      <td>Instalável, offline básico, notificação no Android</td>
+      <td><span class="risk r-medio">Parcial</span> — iOS não dá notificação local confiável em PWA nem acesso estável ao microfone. Falha justamente no núcleo do produto.</td>
+    </tr>
+    <tr>
+      <td><strong>Capacitor</strong> — empacota a web app atual</td>
+      <td>~2–3 semanas</td>
+      <td>App nas lojas reusando ~100% do código</td>
+      <td><span class="risk r-medio">Viável</span> — herda a UX de WebView: scroll, teclado, gestos e performance de lista percebidos como não-nativos. Bom plano B se o prazo apertar.</td>
+    </tr>
+    <tr>
+      <td><strong>React Native</strong> — este plano</td>
+      <td>9–13 semanas</td>
+      <td>App nativo, notificação confiável, gravação nativa, offline real</td>
+      <td><span class="risk r-baixo">Recomendado</span> — único caminho que resolve lembrete em background no iOS, requisito central do produto.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note warn">
+  <b class="tag">Se o prazo for o fator dominante</b>
+  <p>
+    Capacitor entrega app de loja em ~3 semanas reusando o código atual. Este plano continua válido
+    como evolução: a <strong>Fase 1</strong> (extração do domínio) beneficia os dois caminhos e pode
+    ser executada antes de a decisão ser tomada.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="inventario">3. Inventário do código atual</h2>
+
+<p>Classificação de cada arquivo por destino na migração.</p>
+
+<div class="legend" style="margin:1rem 0 1.2rem">
+  <span><span class="tag2 t-reuse">Reusa</span> copia com ajuste mínimo</span>
+  <span><span class="tag2 t-adapt">Adapta</span> lógica preservada, camada de plataforma trocada</span>
+  <span><span class="tag2 t-rewrite">Reescreve</span> apresentação refeita em primitivas RN</span>
+  <span><span class="tag2 t-drop">Descarta</span> some ou vira outra coisa</span>
+</div>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Arquivo</th><th>LOC</th><th>Destino</th><th>Observação</th></tr></thead>
+  <tbody>
+    <tr><td><code>src/types.ts</code></td><td>83</td><td><span class="tag2 t-reuse">Reusa</span></td><td>Zero mudanças. Vira o contrato compartilhado entre app e servidor.</td></tr>
+    <tr><td><code>src/lib/dateUtils.ts</code></td><td>35</td><td><span class="tag2 t-reuse">Reusa</span></td><td>JS puro, timezone-safe. Copiar como está.</td></tr>
+    <tr><td><code>server.ts</code></td><td>537</td><td><span class="tag2 t-reuse">Reusa</span></td><td>Prompts, <code>responseSchema</code> e <code>fallbackParseText</code> intactos. Mudam só CORS, verificação de token e o bloco que serve estático (que some).</td></tr>
+    <tr><td><code>src/lib/firebase.ts</code></td><td>70</td><td><span class="tag2 t-adapt">Adapta</span></td><td><code>signInWithPopup</code> → Google Sign-In nativo. <code>stripUndefined</code> e <code>handleFirestoreError</code> ficam idênticos — o formato JSON de diagnóstico é preservado.</td></tr>
+    <tr><td><code>src/hooks/useFirebase.ts</code></td><td>308</td><td><span class="tag2 t-adapt">Adapta</span></td><td>Trocar imports <code>firebase/*</code> por <code>@react-native-firebase/*</code>. Os quatro <code>onSnapshot</code> e os CRUDs mantêm assinatura.</td></tr>
+    <tr><td><code>src/lib/backup.ts</code></td><td>20</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td><code>Blob</code> + <code>&lt;a download&gt;</code> → <code>expo-file-system</code> + <code>expo-sharing</code>.</td></tr>
+    <tr><td><code>src/hooks/useBackupScheduler.ts</code></td><td>36</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td><code>localStorage</code> → <code>AsyncStorage</code>; polling de 1 min → notificação agendada.</td></tr>
+    <tr><td><code>src/App.tsx</code></td><td>2.583</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Quebrar o monólito em rotas do <code>expo-router</code> + hooks de domínio. Os <code>handleX</code> migram quase literalmente. Ver §15.</td></tr>
+    <tr><td><code>src/components/*.tsx</code> (29)</td><td>8.316</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td><code>div/span/button</code> → <code>View/Text/Pressable</code>. Com NativeWind, as classes de estilo sobrevivem.</td></tr>
+    <tr><td><code>src/main.tsx</code>, <code>index.html</code>, <code>vite.config.ts</code></td><td>—</td><td><span class="tag2 t-drop">Descarta</span></td><td>Substituídos por <code>app.json</code>, <code>app/_layout.tsx</code> e Metro bundler.</td></tr>
+    <tr><td><code>src/index.css</code></td><td>—</td><td><span class="tag2 t-adapt">Adapta</span></td><td>Tokens do bloco <code>@theme</code> viram <code>tailwind.config.js</code> do NativeWind. A variante <code>dark</code> custom é substituída pelo <code>colorScheme</code>.</td></tr>
+    <tr><td><code>firestore.rules</code>, <code>firebase-blueprint.json</code></td><td>—</td><td><span class="tag2 t-reuse">Reusa</span></td><td>Mesmo projeto Firebase, mesmas regras <code>isOwner(userId)</code>. Só registrar os apps iOS/Android no console.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Onde está o esforço</h3>
+<div class="bar">
+  <div style="flex:0 0 26%;background:var(--ok)">DOMÍNIO 26%</div>
+  <div style="flex:0 0 12%;background:var(--warn)">PLATAFORMA 12%</div>
+  <div style="flex:1 1 auto;background:var(--danger)">UI 62%</div>
+</div>
+<div class="legend">
+  <span><i style="background:var(--ok)"></i>Reusável direto — tipos, utils, servidor, regras</span>
+  <span><i style="background:var(--warn)"></i>Troca de camada — Firebase, áudio, arquivos, notificações</span>
+  <span><i style="background:var(--danger)"></i>Reescrita de apresentação — <code>App.tsx</code> + 29 componentes</span>
+</div>
+
+<div class="note">
+  <b class="tag">Leitura do gráfico</b>
+  <p>
+    62% do esforço é UI, e é justamente aí que o NativeWind e a disciplina de "componentes são
+    apresentacionais e recebem callbacks" (já verdadeira no projeto atual) reduzem risco: a
+    reescrita é mecânica, não conceitual.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="stack">4. Stack alvo</h2>
+
+<p>Mapeamento dependência a dependência a partir do <code>package.json</code> atual.</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Hoje (web)</th><th>Alvo (React Native)</th><th>Nota de migração</th></tr></thead>
+  <tbody>
+    <tr><td><code>react</code> 19 + <code>react-dom</code></td><td><code>react</code> 19 + <code>react-native</code></td><td><code>react-dom</code> sai. Hooks e regras de render idênticos.</td></tr>
+    <tr><td><code>vite</code> + <code>@vitejs/plugin-react</code></td><td><strong>Expo SDK</strong> + Metro</td><td>Bundler diferente; sem HMR do Vite — Fast Refresh do Metro cobre.</td></tr>
+    <tr><td><code>tailwindcss</code> 4 + <code>@tailwindcss/vite</code></td><td><strong><code>nativewind</code></strong> 4 + <code>tailwindcss</code> 3.4</td><td>NativeWind v4 exige Tailwind <strong>3.4</strong>, não 4. Os tokens do <code>@theme</code> migram para <code>tailwind.config.js</code>.</td></tr>
+    <tr><td><code>firebase</code> 12 (SDK JS)</td><td><code>@react-native-firebase/app</code> · <code>/auth</code> · <code>/firestore</code></td><td>API modular equivalente; ganha cache offline nativo.</td></tr>
+    <tr><td><code>signInWithPopup</code></td><td><code>@react-native-google-signin/google-signin</code></td><td>Login nativo → credencial → <code>signInWithCredential</code>.</td></tr>
+    <tr><td><code>motion</code> (<code>motion/react</code>)</td><td><code>react-native-reanimated</code> 3 + <code>Layout</code>/<code>FadeIn</code></td><td>Único item sem tradução 1:1. As ~60 animações são simples (fade, slide, scale) — mapeáveis para <code>Animated</code> declarativo do Reanimated.</td></tr>
+    <tr><td><code>lucide-react</code></td><td><code>lucide-react-native</code></td><td>Mesmo conjunto de ícones, mesma API de props. Requer <code>react-native-svg</code>.</td></tr>
+    <tr><td><code>recharts</code></td><td><code>victory-native</code> ou <code>react-native-gifted-charts</code></td><td>Reescrever 3 gráficos: pizza de categorias, barras semanais, linha de progresso.</td></tr>
+    <tr><td><code>jspdf</code></td><td><code>expo-print</code> (HTML → PDF) + <code>expo-sharing</code></td><td>Gerar o relatório como HTML e imprimir — mais simples que reposicionar coordenadas do jsPDF.</td></tr>
+    <tr><td><code>Canvas 2D</code> (planner PNG)</td><td><code>react-native-view-shot</code> ou <code>expo-print</code></td><td>Ver §12.</td></tr>
+    <tr><td><code>MediaRecorder</code></td><td><code>expo-audio</code> (sucessor de <code>expo-av</code>)</td><td>Grava <code>.m4a</code>; converter para base64 com <code>expo-file-system</code>.</td></tr>
+    <tr><td><code>Notification</code> API</td><td><code>expo-notifications</code></td><td>Reescrita do modelo, não só da chamada. Ver §10.</td></tr>
+    <tr><td><code>localStorage</code></td><td><code>@react-native-async-storage/async-storage</code></td><td>API assíncrona — os dois usos atuais viram <code>await</code>.</td></tr>
+    <tr><td><code>navigator.vibrate</code></td><td><code>expo-haptics</code></td><td>Melhor: feedback háptico tipado em vez de padrão de vibração cru.</td></tr>
+    <tr><td>HTML5 drag-and-drop</td><td><code>react-native-gesture-handler</code> + <code>react-native-draggable-flatlist</code></td><td>Reordenação de tarefas e de itens de lista.</td></tr>
+    <tr><td><code>express</code> + <code>tsx</code>/<code>esbuild</code></td><td>Mesmo <code>express</code>, publicado em Cloud Run</td><td>Deixa de servir o front; passa a ser API pura.</td></tr>
+    <tr><td>—</td><td><code>expo-router</code></td><td>Navegação por arquivos; substitui o <code>activeTab</code> em estado.</td></tr>
+    <tr><td>—</td><td><code>expo-secure-store</code></td><td>Guardar token de sessão quando necessário.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note warn">
+  <b class="tag">Armadilha de versão</b>
+  <p>
+    O projeto usa <strong>Tailwind v4</strong> com configuração CSS-first (<code>@theme</code> dentro de
+    <code>src/index.css</code>, sem <code>tailwind.config</code>). NativeWind v4 roda sobre
+    <strong>Tailwind 3.4</strong> e exige <code>tailwind.config.js</code>. Traduzir os tokens é trabalho
+    de uma tarde, mas precisa ser feito cedo — todo o restante da UI depende disso.
+  </p>
+</div>
+
+<div class="note danger">
+  <b class="tag">Classes inexistentes</b>
+  <p>
+    O código atual espalha classes que não existem (<code>slate-655</code>, <code>indigo-550</code>,
+    <code>slate-850</code>) e que hoje falham em silêncio no browser. Ao portar para NativeWind, essas
+    classes continuam sem gerar estilo, mas o comportamento visual pode divergir do web (onde algum
+    fallback herdado disfarçava). <strong>Fazer um grep e normalizar antes da migração de UI.</strong>
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="arquitetura">5. Arquitetura</h2>
+
+<p>
+  A arquitetura de três camadas do web se mantém. O que muda é a fronteira entre elas: hoje front e
+  API vivem no mesmo processo e na mesma porta; no mobile, o app é um cliente remoto.
+</p>
+
+<div class="layers">
+  <div class="layer">
+    <div class="lbl">Camada 1 · App nativo</div>
+    <b>Expo / React Native — iOS e Android</b>
+    <p>Telas, gestos, gravação de áudio, agendamento de notificações locais, cache offline. Nunca fala com o Gemini diretamente — mesma regra do web.</p>
+  </div>
+  <div class="layer">
+    <div class="lbl">Camada 2 · Dados</div>
+    <b>Firestore via <code>@react-native-firebase</code> — fonte de verdade</b>
+    <p>Mesmas coleções <code>users/{uid}/{tasks,notes,lists}</code>, mesmas regras. Ganha persistência offline nativa: o app abre e funciona sem rede, sincronizando ao reconectar.</p>
+  </div>
+  <div class="layer">
+    <div class="lbl">Camada 3 · API de IA</div>
+    <b><code>server.ts</code> em Cloud Run — API pura</b>
+    <p>Os quatro endpoints <code>POST /api/tasks/*</code> continuam idênticos. Passa a exigir <code>Authorization: Bearer &lt;Firebase ID token&gt;</code> e a responder CORS, já que deixa de ser same-origin.</p>
+  </div>
+</div>
+
+<h3>Fluxo de captura por voz — antes e depois</h3>
+
+<h4>Hoje (web)</h4>
+<div class="flow">
+  <div class="step"><b>MediaRecorder</b>Blob webm</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>FileReader</b>base64</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>fetch same-origin</b><code>/api/tasks/analyze-audio</code></div>
+  <div class="arrow">→</div>
+  <div class="step"><b>Gemini</b>JSON estruturado</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>Firestore</b><code>addTask</code></div>
+</div>
+
+<h4>Alvo (mobile)</h4>
+<div class="flow">
+  <div class="step"><b>expo-audio</b>arquivo .m4a</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>expo-file-system</b>base64</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>fetch + Bearer</b><code>https://api…/analyze-audio</code></div>
+  <div class="arrow">→</div>
+  <div class="step"><b>Gemini</b>JSON estruturado</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>Firestore</b><code>addTask</code> + agenda notificação</div>
+</div>
+
+<div class="note">
+  <b class="tag">Diferença que importa</b>
+  <p>
+    O passo final ganha uma responsabilidade nova: toda escrita de tarefa com <code>reminderTime</code>
+    precisa <strong>agendar ou cancelar a notificação local correspondente</strong>. Isso deve viver
+    dentro da camada de dados (§10), não espalhado nos <code>handleX</code> — senão qualquer caminho
+    de escrita esquecido gera lembrete fantasma ou lembrete perdido.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="estrutura">6. Estrutura de pastas alvo</h2>
+
+<p>
+  Monorepo leve com um pacote compartilhado. Justifica-se porque <code>types.ts</code> e as constantes
+  de domínio (categorias, prioridades) hoje estão duplicadas entre <code>src/types.ts</code> e os
+  prompts do <code>server.ts</code> — a duplicação já é uma armadilha documentada do projeto.
+</p>
+
+<pre class="tree"><code>echoplan/
+├── apps/
+│   ├── mobile/                   <span class="tok-c"># Expo app</span>
+│   │   ├── app/                  <span class="tok-c"># rotas do expo-router</span>
+│   │   │   ├── _layout.tsx       <span class="tok-c"># providers, tema, gate de auth</span>
+│   │   │   ├── login.tsx
+│   │   │   └── (tabs)/
+│   │   │       ├── _layout.tsx   <span class="tok-c"># bottom tabs</span>
+│   │   │       ├── index.tsx     <span class="tok-c"># diárias</span>
+│   │   │       ├── calendario.tsx
+│   │   │       ├── historico.tsx
+│   │   │       ├── notas.tsx
+│   │   │       └── listas.tsx
+│   │   ├── src/
+│   │   │   ├── components/       <span class="tok-c"># 29 componentes portados</span>
+│   │   │   ├── hooks/
+│   │   │   │   ├── useFirebase.ts        <span class="tok-c"># adaptado de src/hooks/</span>
+│   │   │   │   ├── useReminders.ts       <span class="tok-c"># NOVO — agendamento</span>
+│   │   │   │   ├── useAudioRecorder.ts   <span class="tok-c"># NOVO — expo-audio</span>
+│   │   │   │   └── useExport.ts          <span class="tok-c"># NOVO — print/share</span>
+│   │   │   ├── lib/
+│   │   │   │   ├── firebase.ts   <span class="tok-c"># RN Firebase + Google Sign-In</span>
+│   │   │   │   ├── api.ts        <span class="tok-c"># NOVO — cliente HTTP com Bearer</span>
+│   │   │   │   ├── notifications.ts
+│   │   │   │   └── files.ts
+│   │   │   └── theme/
+│   │   ├── app.json              <span class="tok-c"># permissões, ícones, plugins</span>
+│   │   ├── eas.json
+│   │   └── tailwind.config.js    <span class="tok-c"># tokens vindos do @theme</span>
+│   └── api/                      <span class="tok-c"># server.ts, praticamente intacto</span>
+│       ├── server.ts
+│       └── Dockerfile
+├── packages/
+│   └── shared/
+│       ├── types.ts              <span class="tok-c"># cópia única — hoje só em src/</span>
+│       ├── domain.ts             <span class="tok-c"># categorias, prioridades, mapas de horário</span>
+│       └── dateUtils.ts
+├── firestore.rules
+└── firebase-blueprint.json</code></pre>
+
+<div class="note ok">
+  <b class="tag">Por que o pacote <code>shared</code> paga o próprio custo</b>
+  <p>
+    O CLAUDE.md do projeto já avisa: "ao mudar categorias ou prioridades, atualize os prompts, o
+    <code>responseSchema</code> e <code>fallbackParseText</code> juntos — eles duplicam a mesma lista".
+    Com <code>packages/shared/domain.ts</code>, essa lista passa a existir uma vez só e é importada
+    pelos três lugares. Uma dívida antiga fechada de graça na migração.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="backend">7. Backend e API</h2>
+
+<p>
+  <code>server.ts</code> é a parte mais barata da migração: <strong>a lógica de IA não muda em nada</strong>.
+  Os quatro endpoints, os prompts em pt-BR, os <code>responseSchema</code> e o parser heurístico
+  <code>fallbackParseText</code> ficam byte a byte iguais. Muda só o entorno.
+</p>
+
+<h3>Alterações necessárias</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Item</th><th>Hoje</th><th>Alvo</th></tr></thead>
+  <tbody>
+    <tr><td>Origem das requisições</td><td>Same-origin (Vite em middleware)</td><td>App nativo → precisa de <code>cors()</code> ou de nenhuma restrição de origem (apps não enviam <code>Origin</code>)</td></tr>
+    <tr><td>Autenticação</td><td>Nenhuma — a rota é pública dentro do applet</td><td><strong>Obrigatória.</strong> <code>Authorization: Bearer &lt;ID token&gt;</code> verificado com <code>firebase-admin</code></td></tr>
+    <tr><td>Servir estático</td><td><code>express.static(dist)</code> + fallback SPA</td><td>Removido — o bundle vive no dispositivo</td></tr>
+    <tr><td>Vite middleware</td><td>Injetado quando <code>NODE_ENV !== production</code></td><td>Removido; o servidor vira API pura em qualquer ambiente</td></tr>
+    <tr><td>Limite de corpo</td><td><code>50mb</code> (áudio base64)</td><td>Manter — o áudio mobile continua indo em base64</td></tr>
+    <tr><td>Hospedagem</td><td>Cloud Run do AI Studio</td><td>Cloud Run próprio, com <code>GEMINI_API_KEY</code> em Secret Manager</td></tr>
+    <tr><td>Versionamento</td><td>—</td><td>Prefixar rotas com <code>/v1/</code>. Apps instalados não atualizam junto com o servidor.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note danger">
+  <b class="tag">Segurança — não pular</b>
+  <p>
+    Hoje a API é pública porque só é alcançável de dentro do applet do AI Studio. Publicada para um app
+    mobile, ela passa a ser um endpoint aberto que <strong>gasta cota do Gemini de quem chamar</strong>.
+    Verificação de ID token do Firebase é requisito de lançamento, não melhoria futura. Somar
+    rate-limit por <code>uid</code>.
+  </p>
+</div>
+
+<h3>Contrato do cliente HTTP</h3>
+<pre><code><span class="tok-c">// apps/mobile/src/lib/api.ts</span>
+<span class="tok-k">import</span> auth <span class="tok-k">from</span> <span class="tok-s">'@react-native-firebase/auth'</span>;
+
+<span class="tok-k">const</span> BASE = process.env.EXPO_PUBLIC_API_URL; <span class="tok-c">// definido por perfil no eas.json</span>
+
+<span class="tok-k">export async function</span> apiPost&lt;T&gt;(path: <span class="tok-k">string</span>, body: <span class="tok-k">unknown</span>): Promise&lt;T&gt; {
+  <span class="tok-k">const</span> token = <span class="tok-k">await</span> auth().currentUser?.getIdToken();
+  <span class="tok-k">const</span> res = <span class="tok-k">await</span> fetch(`${BASE}/v1${path}`, {
+    method: <span class="tok-s">'POST'</span>,
+    headers: {
+      <span class="tok-s">'Content-Type'</span>: <span class="tok-s">'application/json'</span>,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(body),
+  });
+  <span class="tok-k">if</span> (!res.ok) <span class="tok-k">throw new</span> Error(<span class="tok-k">await</span> res.text());
+  <span class="tok-k">return</span> res.json();
+}</code></pre>
+
+<p>
+  Com isso, as seis chamadas <code>fetch("/api/tasks/…")</code> espalhadas em
+  <code>AudioRecorder.tsx</code>, <code>NoteForm.tsx</code> e <code>TaskItem.tsx</code> viram
+  <code>apiPost("/tasks/…")</code> — e o tratamento do fallback <code>isLocalFallback</code> continua
+  igual.
+</p>
+
+<!-- ============================================================ -->
+<h2 id="dados">8. Dados e autenticação</h2>
+
+<h3>Firestore</h3>
+<p>
+  Mesmo projeto (<code>app-tarefas-500823</code>), mesma database
+  (<code>ai-studio-remixorganizador-…</code>), mesmas <code>firestore.rules</code>. É preciso apenas
+  registrar um app iOS e um Android no console e baixar <code>GoogleService-Info.plist</code> /
+  <code>google-services.json</code>.
+</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Aspecto</th><th>SDK JS (hoje)</th><th>RN Firebase (alvo)</th></tr></thead>
+  <tbody>
+    <tr><td>Persistência offline</td><td>Não suportada em RN</td><td><strong>Ligada por padrão</strong> — leitura e escrita funcionam sem rede</td></tr>
+    <tr><td><code>onSnapshot</code></td><td><code>onSnapshot(query, cb, errCb)</code></td><td><code>query.onSnapshot(cb, errCb)</code> — mesma semântica</td></tr>
+    <tr><td>Escrita</td><td><code>setDoc</code> / <code>updateDoc</code> / <code>deleteDoc</code></td><td><code>ref.set()</code> / <code>.update()</code> / <code>.delete()</code></td></tr>
+    <tr><td>Timestamps</td><td>ISO string em <code>createdAt</code></td><td><strong>Manter ISO string</strong> — não trocar por <code>serverTimestamp</code>, os dados existentes usam string e o <code>orderBy('createdAt','desc')</code> depende disso</td></tr>
+    <tr><td><code>stripUndefined</code></td><td>Obrigatório</td><td>Continua obrigatório — Firestore nativo também rejeita <code>undefined</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note warn">
+  <b class="tag">Compatibilidade de dados</b>
+  <p>
+    O app mobile e o app web vão coexistir na mesma base durante a transição. Isso proíbe qualquer
+    mudança de shape em <code>Task</code>, <code>Note</code> ou <code>List</code> durante a migração.
+    Campos novos, se necessários, entram como opcionais e com default no leitor. Os literais pt-BR
+    (<code>"Alta"</code>, <code>"Saúde"</code>, <code>"Finanças"</code>) são comparados literalmente nos
+    dois clientes — <strong>acentos importam</strong>.
+  </p>
+</div>
+
+<h3>Autenticação</h3>
+<p>
+  <code>signInWithPopup</code> não existe em RN. O fluxo passa a ser: Google Sign-In nativo devolve um
+  <code>idToken</code> → constrói-se uma credencial → <code>signInWithCredential</code>. O resto do app
+  não percebe a diferença, porque <code>useFirebase</code> continua expondo <code>user</code> via
+  <code>onAuthStateChanged</code>.
+</p>
+
+<pre><code><span class="tok-c">// apps/mobile/src/lib/firebase.ts</span>
+<span class="tok-k">import</span> auth <span class="tok-k">from</span> <span class="tok-s">'@react-native-firebase/auth'</span>;
+<span class="tok-k">import</span> { GoogleSignin } <span class="tok-k">from</span> <span class="tok-s">'@react-native-google-signin/google-signin'</span>;
+
+GoogleSignin.configure({ webClientId: <span class="tok-s">'&lt;client id do projeto&gt;'</span> });
+
+<span class="tok-k">export const</span> loginWithGoogle = <span class="tok-k">async</span> () =&gt; {
+  <span class="tok-k">await</span> GoogleSignin.hasPlayServices();
+  <span class="tok-k">const</span> { data } = <span class="tok-k">await</span> GoogleSignin.signIn();
+  <span class="tok-k">const</span> credential = auth.GoogleAuthProvider.credential(data.idToken);
+  <span class="tok-k">return</span> auth().signInWithCredential(credential);
+};
+
+<span class="tok-k">export const</span> logout = <span class="tok-k">async</span> () =&gt; {
+  <span class="tok-k">await</span> GoogleSignin.signOut();
+  <span class="tok-k">await</span> auth().signOut();
+};</code></pre>
+
+<div class="note">
+  <b class="tag">Preservar</b>
+  <p>
+    <code>handleFirestoreError()</code> deve continuar relançando o mesmo <code>Error</code> com JSON de
+    diagnóstico (uid, email, path, operação). O formato é esperado pelo tooling do AI Studio e não
+    custa nada manter.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="apis">9. APIs web → nativas</h2>
+
+<p>
+  Tabela de tradução completa, levantada por varredura do código-fonte. A coluna <em>Ocorrências</em>
+  indica onde o uso está concentrado.
+</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>API web</th><th>Ocorrências</th><th>Substituto</th><th>Complexidade</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><code>navigator.mediaDevices.getUserMedia</code> + <code>MediaRecorder</code></td>
+      <td><code>AudioRecorder.tsx</code>, <code>NoteForm.tsx</code>, <code>TaskItem.tsx</code></td>
+      <td><code>expo-audio</code> — <code>useAudioRecorder()</code></td>
+      <td><span class="risk r-medio">Média</span></td>
+    </tr>
+    <tr>
+      <td><code>SpeechRecognition</code> (Web Speech)</td>
+      <td><code>AudioRecorder.tsx</code>, <code>TaskFilter.tsx</code>, <code>TaskItem.tsx</code></td>
+      <td><code>expo-speech-recognition</code> ou remover (Gemini já transcreve)</td>
+      <td><span class="risk r-alto">Alta</span> — ver §11</td>
+    </tr>
+    <tr>
+      <td><code>Notification</code> + <code>Notification.requestPermission</code></td>
+      <td><code>App.tsx</code>, <code>SettingsModal.tsx</code></td>
+      <td><code>expo-notifications</code></td>
+      <td><span class="risk r-alto">Alta</span> — reescrita de modelo, §10</td>
+    </tr>
+    <tr>
+      <td><code>navigator.vibrate</code></td>
+      <td><code>App.tsx</code></td>
+      <td><code>expo-haptics</code> — <code>notificationAsync()</code></td>
+      <td><span class="risk r-baixo">Baixa</span></td>
+    </tr>
+    <tr>
+      <td><code>FileReader</code> → base64</td>
+      <td><code>AudioRecorder.tsx</code>, <code>NoteForm.tsx</code>, <code>TaskItem.tsx</code>, <code>App.tsx</code></td>
+      <td><code>FileSystem.readAsStringAsync(uri, { encoding: Base64 })</code></td>
+      <td><span class="risk r-baixo">Baixa</span></td>
+    </tr>
+    <tr>
+      <td><code>Blob</code> + <code>URL.createObjectURL</code> + <code>&lt;a download&gt;</code></td>
+      <td><code>backup.ts</code>, <code>App.tsx</code>, <code>SettingsModal.tsx</code></td>
+      <td><code>FileSystem.writeAsStringAsync</code> + <code>Sharing.shareAsync</code></td>
+      <td><span class="risk r-baixo">Baixa</span></td>
+    </tr>
+    <tr>
+      <td><code>&lt;input type="file"&gt;</code> (import de backup)</td>
+      <td><code>App.tsx</code></td>
+      <td><code>expo-document-picker</code></td>
+      <td><span class="risk r-baixo">Baixa</span></td>
+    </tr>
+    <tr>
+      <td><code>Canvas 2D</code> (planner PNG, ~350 linhas de <code>ctx.*</code>)</td>
+      <td><code>App.tsx</code> §<code>generatePlannerImage</code></td>
+      <td><code>expo-print</code> (HTML→PDF) ou <code>react-native-view-shot</code></td>
+      <td><span class="risk r-alto">Alta</span> — §12</td>
+    </tr>
+    <tr>
+      <td><code>jsPDF</code></td>
+      <td><code>WeeklyProgress.tsx</code></td>
+      <td><code>expo-print</code> a partir de HTML</td>
+      <td><span class="risk r-medio">Média</span></td>
+    </tr>
+    <tr>
+      <td><code>localStorage</code></td>
+      <td><code>useBackupScheduler.ts</code>, <code>ProductivityTip.tsx</code>, <code>SettingsModal.tsx</code></td>
+      <td><code>AsyncStorage</code> (assíncrono)</td>
+      <td><span class="risk r-baixo">Baixa</span></td>
+    </tr>
+    <tr>
+      <td>HTML5 drag-and-drop (<code>onDragStart/Over/Drop</code>)</td>
+      <td><code>App.tsx</code>, <code>TaskItem.tsx</code></td>
+      <td><code>react-native-draggable-flatlist</code></td>
+      <td><span class="risk r-medio">Média</span></td>
+    </tr>
+    <tr>
+      <td><code>window.addEventListener('keydown')</code> — atalho <span class="kbd">Ctrl</span>+<span class="kbd">N</span></td>
+      <td><code>App.tsx</code></td>
+      <td><span class="tag2 t-drop">Descarta</span> — substituir por FAB</td>
+      <td><span class="risk r-baixo">Baixa</span></td>
+    </tr>
+    <tr>
+      <td><code>document.getElementById</code> + <code>scrollIntoView</code> + <code>.focus()</code></td>
+      <td><code>App.tsx</code></td>
+      <td><code>ref.current.focus()</code> + <code>scrollTo</code> de <code>FlatList</code></td>
+      <td><span class="risk r-baixo">Baixa</span></td>
+    </tr>
+    <tr>
+      <td><code>window.matchMedia</code> / breakpoints CSS</td>
+      <td><code>App.tsx</code>, <code>TaskItem.tsx</code></td>
+      <td><code>useWindowDimensions</code> + variantes do NativeWind</td>
+      <td><span class="risk r-baixo">Baixa</span></td>
+    </tr>
+    <tr>
+      <td>Sidebar / menu mobile / colapso (<code>isSidebarCollapsed</code>, <code>isMobileMenuOpen</code>…)</td>
+      <td><code>App.tsx</code> — 6 flags de estado</td>
+      <td><span class="tag2 t-drop">Descarta</span> — bottom tabs + drawer nativo</td>
+      <td><span class="risk r-baixo">Baixa</span> — simplificação</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note ok">
+  <b class="tag">Código que desaparece</b>
+  <p>
+    Seis flags de layout responsivo, o atalho de teclado e toda a lógica de sidebar colapsável somem
+    ao adotar navegação nativa. São várias centenas de linhas de <code>App.tsx</code> que não precisam
+    ser portadas — apenas deletadas.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="lembretes">10. Lembretes — a reescrita crítica</h2>
+
+<h3>Como funciona hoje</h3>
+<p>
+  <code>App.tsx</code> roda um <code>setInterval</code> de <strong>1 segundo</strong> que compara
+  <code>task.reminderTime</code> com o <code>HH:MM</code> atual. A cada tick ele também reseta
+  <code>reminderTriggered</code> no Firestore para tarefas cujo minuto já passou — ou seja,
+  <strong>o loop escreve no banco</strong>. Três portões de silenciamento se combinam: janela DND,
+  janela de lembretes ativos (com dias da semana) e <code>muteLowPriority</code>.
+</p>
+
+<div class="note danger">
+  <b class="tag">Por que isso não sobrevive ao mobile</b>
+  <p>
+    Em iOS e Android, o JavaScript de um app em background é suspenso. O <code>setInterval</code>
+    simplesmente <strong>para de rodar</strong> quando o usuário sai do app — que é exatamente o momento
+    em que o lembrete precisa disparar. Além disso, um loop de 1 s escrevendo no Firestore drena
+    bateria e cota. Isso não é uma tradução de API; é uma mudança de modelo.
+  </p>
+</div>
+
+<h3>Modelo alvo — agendamento declarativo</h3>
+<p>
+  Em vez de o app verificar o relógio, ele <strong>declara ao sistema operacional</strong> quando quer
+  ser acordado. O SO dispara a notificação mesmo com o app fechado.
+</p>
+
+<div class="flow">
+  <div class="step"><b>1. Escrita de tarefa</b>create / update / delete / toggle</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>2. Reconciliação</b>calcula gatilhos válidos aplicando DND, janela ativa e muteLowPriority</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>3. <code>scheduleNotificationAsync</code></b>1 agendamento por (tarefa × dia da semana)</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>4. SO dispara</b>app aberto ou fechado</div>
+</div>
+
+<h3>Regras da reconciliação</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Regra atual (web)</th><th>Tradução</th></tr></thead>
+  <tbody>
+    <tr><td><code>reminderTime === "HH:MM"</code></td><td><code>trigger: { type: 'daily'|'weekly', hour, minute }</code></td></tr>
+    <tr><td><code>reminderDays: number[]</code> (0=domingo)</td><td>Um agendamento <code>weekly</code> por dia. <strong>Atenção:</strong> o <code>weekday</code> do expo-notifications é 1-indexado (1=domingo) — converter.</td></tr>
+    <tr><td><code>reminderTriggered</code> anti-duplicação</td><td><span class="tag2 t-drop">Descarta</span> — o SO não duplica. <strong>Remove a escrita por tick no Firestore.</strong></td></tr>
+    <tr><td>Janela DND (com wrap de meia-noite)</td><td>Aplicada <em>no momento do agendamento</em>: se o horário cai dentro da janela, não agenda</td></tr>
+    <tr><td>Janela de lembretes ativos + dias</td><td>Idem — filtra os dias antes de agendar</td></tr>
+    <tr><td><code>muteLowPriority</code></td><td>Idem — tarefas <code>"Baixa"</code> não geram agendamento</td></tr>
+    <tr><td>Modal <code>ReminderModal</code> in-app</td><td>Mantido para quando o app está em foreground, via listener <code>addNotificationReceivedListener</code></td></tr>
+    <tr><td>Soneca</td><td><code>scheduleNotificationAsync</code> com <code>timeInterval</code> relativo</td></tr>
+    <tr><td><code>navigator.vibrate</code></td><td>Configurado no canal Android da notificação + <code>expo-haptics</code> no foreground</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Onde a reconciliação vive</h3>
+<pre><code><span class="tok-c">// apps/mobile/src/lib/notifications.ts</span>
+<span class="tok-k">import</span> * <span class="tok-k">as</span> Notifications <span class="tok-k">from</span> <span class="tok-s">'expo-notifications'</span>;
+
+<span class="tok-c">// Chamado após QUALQUER mudança em tasks ou dndSettings.</span>
+<span class="tok-c">// Idempotente: apaga tudo e reagenda a partir do estado atual.</span>
+<span class="tok-k">export async function</span> reconcileReminders(tasks: Task[], dnd: DndSettings) {
+  <span class="tok-k">await</span> Notifications.cancelAllScheduledNotificationsAsync();
+
+  <span class="tok-k">for</span> (<span class="tok-k">const</span> t <span class="tok-k">of</span> tasks) {
+    <span class="tok-k">if</span> (!t.reminderTime || t.completed || t.archived) <span class="tok-k">continue</span>;
+    <span class="tok-k">if</span> (dnd.muteLowPriority &amp;&amp; t.priority === <span class="tok-s">'Baixa'</span>) <span class="tok-k">continue</span>;
+
+    <span class="tok-k">const</span> [hour, minute] = t.reminderTime.split(<span class="tok-s">':'</span>).map(Number);
+    <span class="tok-k">if</span> (isSilenced(t.reminderTime, dnd)) <span class="tok-k">continue</span>; <span class="tok-c">// reusa a lógica de janela do web</span>
+
+    <span class="tok-k">const</span> days = t.reminderDays?.length ? t.reminderDays : <span class="tok-k">null</span>;
+    <span class="tok-k">const</span> content = {
+      title: `Lembrete: ${t.title}`,
+      body: `Categoria: ${t.category} | Prioridade: ${t.priority}`,
+      data: { taskId: t.id },
+    };
+
+    <span class="tok-k">if</span> (!days) {
+      <span class="tok-k">await</span> Notifications.scheduleNotificationAsync({
+        content, trigger: { type: <span class="tok-s">'daily'</span>, hour, minute },
+      });
+    } <span class="tok-k">else</span> {
+      <span class="tok-k">for</span> (<span class="tok-k">const</span> d <span class="tok-k">of</span> days) {
+        <span class="tok-k">await</span> Notifications.scheduleNotificationAsync({
+          content,
+          trigger: { type: <span class="tok-s">'weekly'</span>, weekday: d + 1, hour, minute }, <span class="tok-c">// 0=dom → 1=dom</span>
+        });
+      }
+    }
+  }
+}</code></pre>
+
+<div class="note warn">
+  <b class="tag">Limite de plataforma</b>
+  <p>
+    iOS permite no máximo <strong>64 notificações locais agendadas</strong> por app. Um usuário com 20
+    tarefas × 5 dias da semana estoura o limite. Mitigação: agendar apenas a <strong>próxima ocorrência
+    de cada tarefa</strong> (janela deslizante) e reagendar quando o app abre ou quando uma notificação
+    é entregue. Isso precisa entrar no design desde o começo — não é ajuste posterior.
+  </p>
+</div>
+
+<div class="note">
+  <b class="tag">Recorrência de tarefa continua igual</b>
+  <p>
+    A recorrência (<code>isRecurring</code>) não tem scheduler hoje: ao concluir uma tarefa recorrente,
+    <code>handleToggleComplete</code> cria uma cópia nova na hora. Esse comportamento migra sem
+    alteração — é lógica de domínio pura. Não confundir com o agendamento de notificações.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="audio">11. Áudio e voz</h2>
+
+<h3>Gravação</h3>
+<p>
+  Três componentes gravam áudio hoje (<code>AudioRecorder</code>, <code>NoteForm</code>,
+  <code>TaskItem</code>), cada um com sua própria instância de <code>MediaRecorder</code> e lógica de
+  chunks. Na migração, isso vira <strong>um hook único</strong> <code>useAudioRecorder()</code> usado
+  pelos três — consolidação que o código web nunca fez.
+</p>
+
+<pre><code><span class="tok-c">// Fluxo alvo, com expo-audio</span>
+<span class="tok-k">const</span> rec = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
+<span class="tok-k">await</span> rec.record();
+<span class="tok-c">// … usuário fala …</span>
+<span class="tok-k">await</span> rec.stop();
+<span class="tok-k">const</span> base64 = <span class="tok-k">await</span> FileSystem.readAsStringAsync(rec.uri, {
+  encoding: FileSystem.EncodingType.Base64,
+});
+<span class="tok-k">await</span> apiPost(<span class="tok-s">'/tasks/analyze-audio'</span>, { audio: base64, mimeType: <span class="tok-s">'audio/m4a'</span> });</code></pre>
+
+<div class="note warn">
+  <b class="tag">Formato de áudio</b>
+  <p>
+    O web envia <code>audio/webm</code>; o mobile envia <code>.m4a</code> (iOS) ou <code>.mp4/.3gp</code>
+    (Android). O Gemini aceita ambos, mas o <code>mimeType</code> passado no <code>inlineData</code> do
+    <code>server.ts</code> precisa vir do cliente em vez de ser fixo. Verificar o valor hardcoded atual
+    antes da Fase 3.
+  </p>
+</div>
+
+<h3>Reconhecimento de fala no dispositivo</h3>
+<p>
+  O <code>SpeechRecognition</code> do browser é usado hoje para três coisas distintas — e cada uma tem
+  um destino diferente:
+</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Uso atual</th><th>Onde</th><th>Destino</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Transcrição ao vivo enquanto grava (feedback visual)</td>
+      <td><code>AudioRecorder.tsx</code></td>
+      <td><code>expo-speech-recognition</code>, ou aceitar perder o preview ao vivo e mostrar só o resultado do Gemini</td>
+    </tr>
+    <tr>
+      <td><strong>Fallback</strong> quando o upload de áudio falha — reenvia o texto capturado para <code>analyze-text</code></td>
+      <td><code>AudioRecorder.tsx</code></td>
+      <td><span class="risk r-alto">Requer decisão</span> — sem Web Speech não há texto para reenviar. Alternativa: reter o arquivo e reenviar o áudio quando houver rede</td>
+    </tr>
+    <tr>
+      <td>Busca por voz no filtro</td>
+      <td><code>TaskFilter.tsx</code></td>
+      <td><code>expo-speech-recognition</code> ou remover (é conveniência, não núcleo)</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <b class="tag">Recomendação</b>
+  <p>
+    Substituir o fallback baseado em Web Speech por uma <strong>fila de reenvio offline</strong>: se o
+    upload falha, o <code>.m4a</code> fica no <code>FileSystem.documentDirectory</code> e é reenviado
+    quando a conectividade volta. É mais confiável que a transcrição do browser, funciona offline de
+    verdade e aproveita a persistência que o mobile já oferece. Custo: ~meio dia. Ganho: elimina uma
+    dependência de API instável.
+  </p>
+</div>
+
+<div class="note ok">
+  <b class="tag">O fallback sem Gemini continua valendo</b>
+  <p>
+    Sem <code>GEMINI_API_KEY</code>, <code>analyze-text</code> cai no parser heurístico local
+    <code>fallbackParseText</code> e responde <code>isLocalFallback: true</code>. Como esse parser vive
+    no servidor e é JS puro, ele funciona igual para o cliente mobile. A UI deve continuar sinalizando
+    o modo degradado ao usuário.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="exportacoes">12. Exportações</h2>
+
+<p>
+  O app web exporta em quatro formatos. Todos dependem de APIs de browser e todos precisam ser
+  refeitos — mas o resultado no mobile é melhor, porque o share sheet nativo cobre e-mail, nuvem,
+  mensageiros e impressão de uma vez.
+</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Export</th><th>Mecanismo hoje</th><th>Mecanismo alvo</th><th>Esforço</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Backup JSON</strong></td>
+      <td><code>Blob</code> + <code>&lt;a download&gt;</code> (<code>lib/backup.ts</code>)</td>
+      <td><code>FileSystem.writeAsStringAsync</code> → <code>Sharing.shareAsync</code></td>
+      <td>~2 h</td>
+    </tr>
+    <tr>
+      <td><strong>Histórico CSV</strong></td>
+      <td>String CSV com BOM <code>﻿</code> + <code>Blob</code></td>
+      <td>Mesma geração de string; só troca a entrega. <strong>Manter o BOM</strong> — é o que faz o Excel abrir os acentos corretamente</td>
+      <td>~1 h</td>
+    </tr>
+    <tr>
+      <td><strong>Relatório semanal PDF</strong></td>
+      <td><code>jsPDF</code>, layout por coordenadas (<code>WeeklyProgress.tsx</code>)</td>
+      <td><code>Print.printToFileAsync({ html })</code> — montar o relatório como HTML string</td>
+      <td>~1 dia</td>
+    </tr>
+    <tr>
+      <td><strong>Planner imprimível PNG</strong></td>
+      <td><code>Canvas 2D</code> — ~350 linhas de <code>ctx.fillText</code>, gradientes, <code>roundRect</code></td>
+      <td>Reescrever como HTML+CSS e usar <code>expo-print</code>; ou renderizar uma <code>View</code> oculta e capturar com <code>react-native-view-shot</code></td>
+      <td><span class="risk r-alto">2–3 dias</span></td>
+    </tr>
+    <tr>
+      <td><strong>Import de backup</strong></td>
+      <td><code>&lt;input type="file"&gt;</code> + <code>FileReader</code></td>
+      <td><code>DocumentPicker.getDocumentAsync</code> + <code>FileSystem.readAsStringAsync</code></td>
+      <td>~2 h</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note ok">
+  <b class="tag">Simplificação recomendada</b>
+  <p>
+    Converter <strong>planner e relatório semanal para o mesmo pipeline HTML → <code>expo-print</code></strong>.
+    Uma única função <code>renderReportHtml(data)</code> serve os dois, elimina 350 linhas de Canvas e
+    ~100 de jsPDF, e o resultado é editável por qualquer pessoa que saiba CSS. Custo de reescrita
+    similar, manutenção muito menor.
+  </p>
+</div>
+
+<div class="note warn">
+  <b class="tag">Backup agendado</b>
+  <p>
+    O <code>useBackupScheduler</code> hoje faz polling de 1 minuto no <code>localStorage</code> e dispara
+    um banner. Em mobile isso não roda em background. Substituir por uma notificação local agendada
+    ("seu backup está pronto") que, ao ser tocada, abre o app e executa o export. Mesmo padrão da §10.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="estilo">13. Estilo e tema</h2>
+
+<h3>Tailwind v4 CSS-first → NativeWind v4</h3>
+<p>
+  O projeto não tem <code>tailwind.config</code>: os tokens vivem em um bloco <code>@theme</code> dentro
+  de <code>src/index.css</code>, e a variante dark é custom
+  (<code>@variant dark (&amp;:where(.dark, .dark *))</code>) aplicada a uma <code>div</code> raiz — não ao
+  <code>&lt;html&gt;</code>. Nada disso existe no NativeWind.
+</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Aspecto</th><th>Hoje</th><th>Alvo</th></tr></thead>
+  <tbody>
+    <tr><td>Configuração</td><td><code>@theme</code> em CSS (Tailwind 4)</td><td><code>tailwind.config.js</code> com <code>theme.extend.colors</code> (Tailwind 3.4)</td></tr>
+    <tr><td>Dark mode</td><td>Variante custom + classe <code>dark</code> numa <code>div</code></td><td><code>darkMode: 'class'</code> + <code>colorScheme</code> do NativeWind</td></tr>
+    <tr><td>Preferência do usuário</td><td><code>darkMode</code> no doc Firestore do usuário</td><td><strong>Manter</strong> — só trocar quem consome; adicionar opção "seguir o sistema"</td></tr>
+    <tr><td>Regra morta</td><td><code>html.dark body</code> nunca dispara</td><td>Deletar na migração</td></tr>
+    <tr><td>Classes inexistentes</td><td><code>slate-655</code>, <code>indigo-550</code>, <code>slate-850</code> — falham em silêncio</td><td>Normalizar antes de portar (grep + substituição)</td></tr>
+    <tr><td>Layout</td><td>CSS Grid, <code>position: sticky</code>, media queries</td><td>Flexbox apenas (RN não tem grid); <code>FlatList</code> com <code>stickyHeaderIndices</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note danger">
+  <b class="tag">O que não existe em React Native</b>
+  <p>
+    <code>display: grid</code>, <code>float</code>, <code>position: fixed</code>, <code>z-index</code>
+    com stacking context de CSS, pseudo-elementos (<code>::before</code>), <code>box-shadow</code> com
+    múltiplas sombras, herança de fonte entre componentes, e unidades <code>rem/vh/vw</code>. Cada uso
+    dessas no JSX atual vira um item de trabalho. Todo texto precisa estar dentro de
+    <code>&lt;Text&gt;</code> — não há texto solto dentro de <code>&lt;View&gt;</code>.
+  </p>
+</div>
+
+<h3>Design mobile-first</h3>
+<p>
+  A UI web é desktop-first com adaptações mobile (sidebar colapsável, menu hambúrguer, drawer de
+  adição). No app, essas construções somem e dão lugar a padrões nativos:
+</p>
+
+<ul>
+  <li><strong>Sidebar</strong> → bottom tab bar (5 abas) + drawer para configurações e exportações</li>
+  <li><strong>Botão flutuante de adicionar</strong> → FAB nativo, com ação longa abrindo a gravação por voz</li>
+  <li><strong>Modais</strong> → bottom sheets (<code>@gorhom/bottom-sheet</code>) em vez de overlays centralizados</li>
+  <li><strong>Tooltips</strong> → removidos; não há hover em touch. Substituir por rótulos ou ícones autoexplicativos</li>
+  <li><strong>Listas</strong> → <code>FlatList</code> com virtualização (o web renderiza tudo de uma vez)</li>
+  <li><strong>Ações de item</strong> → swipe actions (concluir / arquivar / excluir) em vez de botões visíveis</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="navegacao">14. Navegação</h2>
+
+<p>
+  Hoje as seis "abas" são um estado local em <code>App.tsx</code>
+  (<code>diarias | calendario | historico | arquivadas | notas | listas</code>) com render condicional.
+  No app, viram rotas de arquivo do <code>expo-router</code>, ganhando deep linking, botão voltar do
+  Android e preservação de estado por aba de graça.
+</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Aba atual</th><th>Rota alvo</th><th>Apresentação</th></tr></thead>
+  <tbody>
+    <tr><td><code>diarias</code></td><td><code>app/(tabs)/index.tsx</code></td><td>Tab — lista principal + cards de produtividade</td></tr>
+    <tr><td><code>calendario</code></td><td><code>app/(tabs)/calendario.tsx</code></td><td>Tab</td></tr>
+    <tr><td><code>historico</code></td><td><code>app/(tabs)/historico.tsx</code></td><td>Tab</td></tr>
+    <tr><td><code>notas</code></td><td><code>app/(tabs)/notas.tsx</code></td><td>Tab</td></tr>
+    <tr><td><code>listas</code></td><td><code>app/(tabs)/listas.tsx</code></td><td>Tab</td></tr>
+    <tr><td><code>arquivadas</code></td><td><code>app/arquivadas.tsx</code></td><td><strong>Stack</strong> — acessada pelo drawer; não merece uma tab</td></tr>
+    <tr><td>Modal de configurações</td><td><code>app/configuracoes.tsx</code></td><td>Stack com <code>presentation: 'modal'</code></td></tr>
+    <tr><td>Modal de categorias</td><td><code>app/categorias.tsx</code></td><td>Stack modal</td></tr>
+    <tr><td><code>&lt;Login /&gt;</code> quando <code>user === null</code></td><td><code>app/login.tsx</code></td><td>Gate no <code>_layout.tsx</code> raiz, com <code>&lt;Redirect&gt;</code></td></tr>
+    <tr><td>—</td><td><code>app/tarefa/[id].tsx</code></td><td><strong>Novo</strong> — detalhe de tarefa. No web, tudo acontece dentro do <code>TaskItem</code> expansível (1.688 linhas); em mobile, tela dedicada é mais adequada</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note ok">
+  <b class="tag">Oportunidade de arquitetura</b>
+  <p>
+    Extrair a tela de detalhe da tarefa desmonta o componente mais pesado do projeto —
+    <code>TaskItem.tsx</code> com 1.688 linhas, que hoje acumula exibição de linha, edição inline,
+    gravação de áudio, subtarefas, drag handle e sugestão de IA. Na migração ele se divide em
+    <code>TaskRow</code> (leve, virtualizado) e a rota de detalhe.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="componentes">15. Componente a componente</h2>
+
+<p>Plano de porte dos 29 componentes, ordenado por dependência (o que precisa existir primeiro).</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Componente</th><th>LOC</th><th>Destino</th><th>O que muda</th></tr></thead>
+  <tbody>
+    <tr><td><code>Login</code></td><td>65</td><td><span class="tag2 t-adapt">Adapta</span></td><td>Botão chama o Google Sign-In nativo. Layout trivial.</td></tr>
+    <tr><td><code>ConfirmationModal</code></td><td>90</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Vira <code>Alert.alert</code> nativo — some quase inteiro.</td></tr>
+    <tr><td><code>Tooltip</code></td><td>131</td><td><span class="tag2 t-drop">Descarta</span></td><td>Não há hover em touch.</td></tr>
+    <tr><td><code>ProductivityTip</code></td><td>55</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Simples; <code>localStorage</code> → <code>AsyncStorage</code>.</td></tr>
+    <tr><td><code>DailyGoal</code></td><td>106</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Barra de progresso → <code>View</code> com largura percentual.</td></tr>
+    <tr><td><code>PriorityDurationCard</code></td><td>114</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Cálculo preservado, layout refeito.</td></tr>
+    <tr><td><code>ConfettiEffect</code></td><td>112</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td><code>motion</code> → Reanimated, ou trocar por <code>react-native-confetti-cannon</code>.</td></tr>
+    <tr><td><code>EmptyStateProductivityTip</code></td><td>168</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Só apresentação.</td></tr>
+    <tr><td><code>DicasHoje</code> / <code>SugestaoTarefa</code></td><td>460</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Lógica de seleção de dica preservada integralmente.</td></tr>
+    <tr><td><code>CategoryPieChart</code></td><td>173</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Recharts → <code>victory-native</code>. Agregação de dados reusada.</td></tr>
+    <tr><td><code>ProgressChart</code></td><td>177</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Idem.</td></tr>
+    <tr><td><code>ProductivitySummary</code></td><td>226</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Cálculos reusados; grid → flex.</td></tr>
+    <tr><td><code>WeeklyProgress</code></td><td>602</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Gráfico + export PDF (jsPDF → expo-print). Dois trabalhos em um arquivo.</td></tr>
+    <tr><td><code>TaskFilter</code></td><td>318</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Busca por voz precisa de decisão (§11). Filtros viram chips roláveis.</td></tr>
+    <tr><td><code>TaskForm</code></td><td>369</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td><code>&lt;input type="time"&gt;</code> → <code>@react-native-community/datetimepicker</code>. Teclado precisa de <code>KeyboardAvoidingView</code>.</td></tr>
+    <tr><td><code>TaskItem</code></td><td><strong>1.688</strong></td><td><span class="tag2 t-rewrite">Reescreve</span></td><td><strong>Dividir</strong> em <code>TaskRow</code> + rota de detalhe. Contém gravação de áudio, subtarefas, sugestão de IA e drag handle.</td></tr>
+    <tr><td><code>AudioRecorder</code></td><td>518</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Núcleo do produto. <code>MediaRecorder</code> + Web Speech → <code>expo-audio</code> + fila de reenvio.</td></tr>
+    <tr><td><code>CalendarView</code></td><td>514</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Grid mensal → <code>react-native-calendars</code> com marcação por categoria. Boa candidata a economia de código.</td></tr>
+    <tr><td><code>ReminderModal</code></td><td>144</td><td><span class="tag2 t-adapt">Adapta</span></td><td>Continua existindo para foreground; ganha listener de notificação.</td></tr>
+    <tr><td><code>SettingsModal</code></td><td>579</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Vira tela. Permissão de notificação, DND, backup agendado, cards visíveis.</td></tr>
+    <tr><td><code>CategoryManagerModal</code></td><td>237</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Tela com lista editável.</td></tr>
+    <tr><td><code>NoteForm</code> / <code>NoteItem</code> / <code>NotesView</code></td><td>706</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Inclui gravação de nota de voz — usa o mesmo hook do <code>AudioRecorder</code>.</td></tr>
+    <tr><td><code>ListForm</code> / <code>ListItem</code> / <code>ListView</code></td><td>754</td><td><span class="tag2 t-rewrite">Reescreve</span></td><td>Reordenação de itens → <code>draggable-flatlist</code>.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Desmontando o <code>App.tsx</code></h3>
+<p>As 2.583 linhas se distribuem assim:</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Bloco atual</th><th>Vai para</th></tr></thead>
+  <tbody>
+    <tr><td>Estado de UI (abas, modais, sidebar, menus)</td><td><span class="tag2 t-drop">Some</span> — <code>expo-router</code> + estado local por tela</td></tr>
+    <tr><td><code>handleAddTask</code>, <code>handleToggleComplete</code>, <code>handleArchive</code>, …</td><td><code>hooks/useTasks.ts</code> — lógica migra quase literal</td></tr>
+    <tr><td>Filtros e ordenação (<code>useMemo</code>)</td><td><code>hooks/useFilteredTasks.ts</code></td></tr>
+    <tr><td>Loop de lembretes (<code>setInterval</code> 1 s)</td><td><span class="tag2 t-rewrite">Reescreve</span> → <code>lib/notifications.ts</code> (§10)</td></tr>
+    <tr><td>Wrappers de preferências (<code>setCategories</code>, <code>setDndSettings</code>, …)</td><td><code>hooks/usePrefs.ts</code> — mesmo padrão de escrita direta em <code>updateUserPrefs</code></td></tr>
+    <tr><td><code>generatePlannerImage</code> (Canvas, ~350 linhas)</td><td><span class="tag2 t-rewrite">Reescreve</span> → <code>lib/reports.ts</code> (§12)</td></tr>
+    <tr><td><code>handleExportCompletedCSV</code>, import de backup</td><td><code>hooks/useExport.ts</code></td></tr>
+    <tr><td>Drag-and-drop de reordenação</td><td><span class="tag2 t-rewrite">Reescreve</span> → <code>draggable-flatlist</code></td></tr>
+    <tr><td>JSX de layout (sidebar, header, tabs, drawers)</td><td><span class="tag2 t-drop">Some</span> — substituído por navegação nativa</td></tr>
+    <tr><td>Atalho <span class="kbd">Ctrl</span>+<span class="kbd">N</span></td><td><span class="tag2 t-drop">Some</span></td></tr>
+    <tr><td>Constantes legadas <code>LOCAL_STORAGE_KEY</code>, <code>LOCAL_STORAGE_CATEGORIES_KEY</code></td><td><span class="tag2 t-drop">Some</span> — já são código morto hoje</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="fases">16. Roadmap em fases</h2>
+
+<p>
+  Seis fases, cada uma com um critério de saída verificável. As fases 1 e 2 são pré-requisito de tudo;
+  da 3 em diante há paralelismo possível se houver mais de um dev.
+</p>
+
+<div class="phase">
+  <div class="hdr"><span class="num">FASE 1</span><b>Extrair o domínio</b><span class="cost">~1 semana</span></div>
+  <p>Feita <strong>no repositório web atual</strong>, sem tocar em React Native. Reduz risco e vale mesmo se a migração for cancelada.</p>
+  <ul>
+    <li>Criar <code>packages/shared/</code> com <code>types.ts</code>, <code>dateUtils.ts</code> e um novo <code>domain.ts</code> (categorias, prioridades, mapa de horários vagos).</li>
+    <li>Fazer <code>server.ts</code> e o front importarem a lista única de categorias/prioridades — fecha a duplicação entre prompts, <code>responseSchema</code> e <code>fallbackParseText</code>.</li>
+    <li>Extrair de <code>App.tsx</code> a lógica pura: janelas DND, filtros, agregações de produtividade, regra de recorrência.</li>
+    <li>Escrever testes dessas funções puras — hoje o projeto não tem nenhum teste, e essas são as funções que o app mobile vai reusar sem revisão.</li>
+    <li>Normalizar as classes Tailwind inexistentes (<code>slate-655</code>, <code>indigo-550</code>, <code>slate-850</code>).</li>
+  </ul>
+  <div class="exit"><b>Saída:</b> <code>npm run lint</code> passa, app web funciona igual, e existe um pacote de domínio testado e sem dependência de browser.</div>
+</div>
+
+<div class="phase">
+  <div class="hdr"><span class="num">FASE 2</span><b>Esqueleto do app + dados</b><span class="cost">~1,5 semana</span></div>
+  <ul>
+    <li>Projeto Expo, <code>expo-router</code>, NativeWind configurado com os tokens traduzidos do <code>@theme</code>.</li>
+    <li>Registrar apps iOS/Android no Firebase; instalar <code>@react-native-firebase</code>.</li>
+    <li>Portar <code>lib/firebase.ts</code> e <code>useFirebase.ts</code>; login Google nativo funcionando.</li>
+    <li>Tela única provisória listando as tarefas do Firestore em tempo real.</li>
+    <li>Publicar <code>server.ts</code> em Cloud Run com verificação de ID token; criar <code>lib/api.ts</code>.</li>
+  </ul>
+  <div class="exit"><b>Saída:</b> login real em dispositivo físico, lista de tarefas sincronizando, e um <code>POST /v1/tasks/analyze-text</code> autenticado respondendo.</div>
+</div>
+
+<div class="phase">
+  <div class="hdr"><span class="num">FASE 3</span><b>Núcleo do produto — voz e tarefas</b><span class="cost">~2,5 semanas</span></div>
+  <ul>
+    <li><code>useAudioRecorder</code> com <code>expo-audio</code>; gravação → base64 → <code>analyze-audio</code>.</li>
+    <li>Fila de reenvio offline substituindo o fallback de Web Speech.</li>
+    <li>CRUD completo de tarefas: <code>TaskRow</code>, rota de detalhe, <code>TaskForm</code>, subtarefas, sugestão de subtarefas via IA.</li>
+    <li>Filtros e busca (<code>TaskFilter</code>), reordenação com <code>draggable-flatlist</code>.</li>
+    <li>Bottom tabs com as cinco abas; abas ainda vazias exceto "diárias".</li>
+  </ul>
+  <div class="exit"><b>Saída:</b> um usuário consegue falar suas tarefas do dia e vê-las criadas, editadas e concluídas no celular. É o primeiro build que faz sentido mostrar a alguém.</div>
+</div>
+
+<div class="phase">
+  <div class="hdr"><span class="num">FASE 4</span><b>Lembretes e notificações</b><span class="cost">~2 semanas</span></div>
+  <ul>
+    <li><code>lib/notifications.ts</code> com <code>reconcileReminders</code> idempotente.</li>
+    <li>Janela deslizante para respeitar o limite de 64 agendamentos do iOS.</li>
+    <li>Portar DND, janela de lembretes ativos e <code>muteLowPriority</code> como filtros de agendamento.</li>
+    <li>Listeners de foreground (<code>ReminderModal</code>) e de toque na notificação (deep link para a tarefa).</li>
+    <li>Soneca, haptics, canal de notificação Android.</li>
+    <li>Fluxo de permissão e tela explicando por que o app precisa notificar.</li>
+  </ul>
+  <div class="exit"><b>Saída:</b> lembrete dispara com o app fechado, em iOS e Android, respeitando as três regras de silenciamento. <strong>É a fase que precisa de mais teste manual em dispositivo real.</strong></div>
+</div>
+
+<div class="phase">
+  <div class="hdr"><span class="num">FASE 5</span><b>Paridade funcional</b><span class="cost">~2,5 semanas</span></div>
+  <ul>
+    <li>Calendário (<code>react-native-calendars</code>), histórico, arquivadas.</li>
+    <li>Notas e listas completas, incluindo nota de voz.</li>
+    <li>Cards de produtividade e gráficos (<code>victory-native</code>).</li>
+    <li>Tela de configurações: categorias, DND, cards visíveis, tema.</li>
+    <li>Exportações: JSON, CSV, relatório e planner via <code>expo-print</code>; import por <code>DocumentPicker</code>.</li>
+    <li>Estados vazios, loading, tratamento de erro de rede.</li>
+  </ul>
+  <div class="exit"><b>Saída:</b> checklist de paridade da §18 100% verde.</div>
+</div>
+
+<div class="phase">
+  <div class="hdr"><span class="num">FASE 6</span><b>Polimento e publicação</b><span class="cost">~2 semanas</span></div>
+  <ul>
+    <li>Ícone, splash, nome, deep links, tratamento de <code>SafeArea</code>.</li>
+    <li>Acessibilidade: <code>accessibilityLabel</code> nos controles, alvos de toque ≥ 44 pt, contraste em dark mode.</li>
+    <li>Performance: virtualização das listas, memoização, medição de tempo de abertura.</li>
+    <li>Crash reporting e analytics básicos.</li>
+    <li>EAS Build de produção, TestFlight e faixa interna da Play Store.</li>
+    <li>Textos de loja, política de privacidade (o app grava áudio — exigência das duas lojas).</li>
+  </ul>
+  <div class="exit"><b>Saída:</b> builds assinados aprovados na revisão das lojas.</div>
+</div>
+
+<h3>Linha do tempo consolidada</h3>
+<div class="bar">
+  <div style="flex:0 0 9%;background:#6366f1">F1</div>
+  <div style="flex:0 0 13%;background:#7c73f0">F2</div>
+  <div style="flex:0 0 22%;background:#8b83ff">F3</div>
+  <div style="flex:0 0 18%;background:#a29bff">F4</div>
+  <div style="flex:0 0 22%;background:#b8b2ff">F5</div>
+  <div style="flex:1 1 auto;background:#cec9ff;color:#312e81">F6</div>
+</div>
+<div class="legend">
+  <span>F1 Domínio · F2 Esqueleto · F3 Voz e tarefas · F4 Lembretes · F5 Paridade · F6 Publicação</span>
+</div>
+<p style="font-size:13.5px">
+  Total: <strong>11,5 semanas</strong> para 1 dev sênior full-time. A faixa de 9–13 semanas absorve
+  variação de familiaridade com Expo e o tempo de revisão das lojas (que não é trabalho, mas é espera).
+</p>
+
+<div class="note warn">
+  <b class="tag">O que não está no prazo</b>
+  <p>
+    Design visual novo. O plano assume <strong>porte da identidade visual existente</strong>. Um
+    redesenho mobile-first feito por designer adiciona 2–4 semanas e deve ser decidido antes da Fase 3,
+    não depois.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="riscos">17. Riscos</h2>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Risco</th><th>Nível</th><th>Impacto</th><th>Mitigação</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Limite de 64 notificações agendadas no iOS</td>
+      <td><span class="risk r-alto">Alto</span></td>
+      <td>Usuário com muitas tarefas recorrentes deixa de receber lembretes silenciosamente</td>
+      <td>Janela deslizante desde o design; reagendar ao abrir o app e ao entregar notificação; log de quantos agendamentos existem</td>
+    </tr>
+    <tr>
+      <td>Perda do fallback de Web Speech</td>
+      <td><span class="risk r-alto">Alto</span></td>
+      <td>Gravação em área sem sinal falha sem recuperação</td>
+      <td>Fila de reenvio offline com o <code>.m4a</code> persistido (§11) — mais confiável que o fallback atual</td>
+    </tr>
+    <tr>
+      <td>Divergência de comportamento entre app web e mobile na mesma base Firestore</td>
+      <td><span class="risk r-alto">Alto</span></td>
+      <td>Corrupção de dados ou lembretes duplicados durante a coexistência</td>
+      <td>Congelar o shape dos documentos durante a migração; nenhum campo novo obrigatório; testar os dois clientes na mesma conta</td>
+    </tr>
+    <tr>
+      <td>API do Gemini exposta publicamente</td>
+      <td><span class="risk r-alto">Alto</span></td>
+      <td>Consumo de cota por terceiros</td>
+      <td>Verificação de ID token + rate-limit por <code>uid</code> como requisito de lançamento (§7)</td>
+    </tr>
+    <tr>
+      <td>Tailwind 4 → 3.4 (NativeWind)</td>
+      <td><span class="risk r-medio">Médio</span></td>
+      <td>Retrabalho de estilo espalhado</td>
+      <td>Traduzir tokens na Fase 2, antes de qualquer componente ser portado</td>
+    </tr>
+    <tr>
+      <td><code>motion</code> sem equivalente 1:1</td>
+      <td><span class="risk r-medio">Médio</span></td>
+      <td>~60 animações a reescrever</td>
+      <td>Padronizar em 4 ou 5 presets de Reanimated e aplicá-los; não replicar cada animação individualmente</td>
+    </tr>
+    <tr>
+      <td>Reescrita do <code>Canvas</code> do planner</td>
+      <td><span class="risk r-medio">Médio</span></td>
+      <td>350 linhas de layout por coordenadas</td>
+      <td>Trocar por HTML + <code>expo-print</code>; aceitar diferença visual em vez de replicar pixel a pixel</td>
+    </tr>
+    <tr>
+      <td>Revisão das lojas (permissão de microfone)</td>
+      <td><span class="risk r-medio">Médio</span></td>
+      <td>Rejeição atrasa lançamento em semanas</td>
+      <td>Textos de justificativa de permissão claros no <code>app.json</code>; política de privacidade pronta na Fase 5, não na 6</td>
+    </tr>
+    <tr>
+      <td><code>TaskItem.tsx</code> com 1.688 linhas</td>
+      <td><span class="risk r-medio">Médio</span></td>
+      <td>Porte demorado e propenso a regressão</td>
+      <td>Dividir em <code>TaskRow</code> + rota de detalhe antes de portar; não traduzir o monólito</td>
+    </tr>
+    <tr>
+      <td>Ausência de testes no projeto atual</td>
+      <td><span class="risk r-medio">Médio</span></td>
+      <td>Sem rede de segurança para comparar comportamento</td>
+      <td>Fase 1 cria testes das funções puras — o mínimo para provar que o domínio migrou correto</td>
+    </tr>
+    <tr>
+      <td>Recharts → victory-native</td>
+      <td><span class="risk r-baixo">Baixo</span></td>
+      <td>3 gráficos a refazer</td>
+      <td>Agregação de dados já está separada da renderização</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="aceite">18. Critérios de aceite</h2>
+
+<p>Checklist de paridade funcional. O app só é considerado pronto quando todos passam em dispositivo físico iOS e Android.</p>
+
+<h4>Captura</h4>
+<ul>
+  <li>Gravar áudio falando várias tarefas e vê-las criadas com título, categoria, prioridade e horário corretos.</li>
+  <li>Horários vagos ("final da tarde") são mapeados conforme a regra do prompt.</li>
+  <li>Criar tarefa por texto livre e por formulário manual.</li>
+  <li>Sem rede: a gravação é enfileirada e enviada ao reconectar.</li>
+  <li>Sem <code>GEMINI_API_KEY</code>: <code>analyze-text</code> cai no parser local e a UI sinaliza o modo degradado.</li>
+</ul>
+
+<h4>Lembretes</h4>
+<ul>
+  <li>Lembrete dispara <strong>com o app fechado</strong>, no horário certo.</li>
+  <li>Tocar na notificação abre a tarefa correspondente.</li>
+  <li>Janela DND silencia; janela de lembretes ativos silencia fora dos dias e horas configurados.</li>
+  <li><code>muteLowPriority</code> silencia tarefas de prioridade <code>"Baixa"</code>.</li>
+  <li>Editar o horário de uma tarefa reagenda; concluir ou excluir cancela.</li>
+  <li>Soneca reagenda corretamente.</li>
+</ul>
+
+<h4>Dados</h4>
+<ul>
+  <li>Uma tarefa criada no app web aparece no mobile em tempo real, e vice-versa.</li>
+  <li>App abre e opera sem rede, sincronizando depois.</li>
+  <li>Categorias, DND, cards visíveis e tema persistem no doc do usuário e valem nos dois clientes.</li>
+  <li>Tarefa recorrente concluída gera a cópia seguinte.</li>
+</ul>
+
+<h4>Exportação</h4>
+<ul>
+  <li>Backup JSON, CSV do histórico, relatório semanal e planner são gerados e abrem no share sheet.</li>
+  <li>CSV abre no Excel com acentos corretos (BOM preservado).</li>
+  <li>Import de backup restaura tarefas e categorias.</li>
+</ul>
+
+<h4>Qualidade</h4>
+<ul>
+  <li>Lista com 500 tarefas rola a 60 fps.</li>
+  <li>Dark mode consistente em todas as telas.</li>
+  <li>Alvos de toque ≥ 44 pt; leitor de tela anuncia os controles principais.</li>
+  <li>Nenhuma tela quebra com fonte do sistema ampliada.</li>
+  <li>Textos e mensagens de erro em pt-BR, com acentuação correta.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2 id="build">19. Build e distribuição</h2>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Item</th><th>Detalhe</th></tr></thead>
+  <tbody>
+    <tr><td>Build</td><td><strong>EAS Build</strong> — perfis <code>development</code>, <code>preview</code> e <code>production</code> em <code>eas.json</code></td></tr>
+    <tr><td>Variáveis</td><td><code>EXPO_PUBLIC_API_URL</code> por perfil. <strong>Nada de <code>GEMINI_API_KEY</code> no app</strong> — a regra "a chave nunca chega ao cliente" continua valendo</td></tr>
+    <tr><td>Atualizações</td><td><strong>EAS Update</strong> para correções de JS sem passar pela loja; mudanças nativas continuam exigindo build novo</td></tr>
+    <tr><td>Backend</td><td>Cloud Run com <code>GEMINI_API_KEY</code> em Secret Manager; deploy pelo mesmo repositório (<code>apps/api</code>)</td></tr>
+    <tr><td>Permissões declaradas</td><td>Microfone (gravação), Notificações (lembretes). Ambas com texto de justificativa em pt-BR no <code>app.json</code></td></tr>
+    <tr><td>Distribuição de teste</td><td>TestFlight (iOS) e faixa interna da Play Store (Android) a partir da Fase 3</td></tr>
+    <tr><td>Verificação automatizada</td><td>CI com <code>tsc --noEmit</code> (a checagem que o projeto já usa) + os testes do <code>packages/shared</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note danger">
+  <b class="tag">Exigência das lojas</b>
+  <p>
+    Um app que grava áudio e o envia a um serviço de IA precisa de <strong>política de privacidade
+    publicada</strong> e de declaração de coleta de dados (App Privacy na Apple, Data Safety no Google).
+    Deve constar explicitamente que o áudio é enviado ao Google Gemini para processamento. Preparar na
+    Fase 5.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="abertos">20. Decisões em aberto</h2>
+
+<p>Pontos que precisam de resposta do responsável pelo produto antes das fases indicadas.</p>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>#</th><th>Pergunta</th><th>Necessária antes de</th><th>Default sugerido</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>O app web continua existindo depois do mobile, ou é substituído?</td>
+      <td>Fase 1</td>
+      <td><strong>Continua</strong> — justifica o monorepo e o congelamento de shape dos dados</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Transcrição ao vivo enquanto grava é requisito, ou basta o resultado do Gemini?</td>
+      <td>Fase 3</td>
+      <td><strong>Basta o Gemini</strong> — remove <code>expo-speech-recognition</code> e simplifica três componentes</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Busca por voz no filtro é essencial?</td>
+      <td>Fase 3</td>
+      <td><strong>Não</strong> — é conveniência; entra depois se houver demanda</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>O planner PNG precisa ser visualmente idêntico ao atual?</td>
+      <td>Fase 5</td>
+      <td><strong>Não</strong> — reescrever em HTML e aceitar diferença visual economiza ~2 dias</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Redesenho mobile-first ou porte da identidade visual atual?</td>
+      <td>Fase 3</td>
+      <td><strong>Porte</strong> — redesenho adiciona 2–4 semanas ao prazo</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>iOS e Android simultâneos, ou uma plataforma primeiro?</td>
+      <td>Fase 2</td>
+      <td><strong>Simultâneos</strong> — o código é o mesmo; o custo extra está só no teste da Fase 4</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>Notificação push remota (servidor dispara) além das locais?</td>
+      <td>Fase 4</td>
+      <td><strong>Não no v1</strong> — lembretes locais cobrem o caso de uso; push exige FCM/APNs e infraestrutura de envio</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Quem mantém o backend depois de sair do AI Studio?</td>
+      <td>Fase 2</td>
+      <td>Definir responsável e projeto GCP antes de publicar</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note ok">
+  <b class="tag">Primeiro passo concreto</b>
+  <p>
+    Executar a <strong>Fase 1</strong>. Ela roda dentro do repositório web atual, não exige nenhuma
+    decisão da tabela acima, melhora o código que já está em produção e produz o pacote de domínio
+    testado do qual todas as outras fases dependem. Se a migração for adiada ou trocada por Capacitor,
+    o trabalho da Fase 1 continua valendo integralmente.
+  </p>
+</div>
+
+<footer>
+  <p>
+    Plano de migração React Native · EchoPlan — Organizador de Tarefas por Voz ·
+    Documento técnico em pt-BR · Complementa as
+    <a href="index.html">Docs Técnicas do app web</a>.
+  </p>
+  <p>
+    Base analisada: <code>src/</code> (11.451 linhas), <code>server.ts</code> (537 linhas),
+    <code>firestore.rules</code>, <code>firebase-blueprint.json</code>, <code>package.json</code>.
+    Estimativas de esforço para 1 desenvolvedor sênior full-time.
+  </p>
+</footer>
+
+</main>
+</div>
+
+<script>
+  (function () {
+    var btn = document.getElementById('themeToggle');
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('echoplan-docs-theme'); } catch (e) {}
+    if (saved) root.setAttribute('data-theme', saved);
+    btn.addEventListener('click', function () {
+      var current = root.getAttribute('data-theme');
+      if (!current) {
+        current = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      var next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('echoplan-docs-theme', next); } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>

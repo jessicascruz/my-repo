@@ -1,0 +1,1331 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EchoPlan — Documentação Técnica</title>
+<style>
+  :root {
+    --bg: #f8fafc;
+    --bg-elev: #ffffff;
+    --bg-soft: #f1f5f9;
+    --fg: #0f172a;
+    --fg-muted: #475569;
+    --fg-faint: #64748b;
+    --border: #e2e8f0;
+    --accent: #493fdf;
+    --accent-soft: #eef2ff;
+    --ok: #059669;
+    --warn: #d97706;
+    --danger: #e11d48;
+    --code-bg: #0f172a;
+    --code-fg: #e2e8f0;
+    --sidebar-w: 290px;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  :root[data-theme="dark"], :root:not([data-theme="light"]) {
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b0f19;
+      --bg-elev: #111827;
+      --bg-soft: #172033;
+      --fg: #e5e7eb;
+      --fg-muted: #a9b4c6;
+      --fg-faint: #8593a8;
+      --border: #263145;
+      --accent: #8b83ff;
+      --accent-soft: #1c1b3d;
+      --ok: #34d399;
+      --warn: #fbbf24;
+      --danger: #fb7185;
+      --code-bg: #060a13;
+      --code-fg: #dbe3f0;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b0f19;
+    --bg-elev: #111827;
+    --bg-soft: #172033;
+    --fg: #e5e7eb;
+    --fg-muted: #a9b4c6;
+    --fg-faint: #8593a8;
+    --border: #263145;
+    --accent: #8b83ff;
+    --accent-soft: #1c1b3d;
+    --ok: #34d399;
+    --warn: #fbbf24;
+    --danger: #fb7185;
+    --code-bg: #060a13;
+    --code-fg: #dbe3f0;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 1.5rem; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 400 16px/1.65 "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Layout */
+  .shell { display: flex; min-height: 100vh; }
+  nav.toc {
+    width: var(--sidebar-w);
+    flex: 0 0 var(--sidebar-w);
+    background: var(--bg-elev);
+    border-right: 1px solid var(--border);
+    padding: 1.75rem 1rem 3rem;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  nav.toc .brand { display: flex; align-items: center; gap: .65rem; padding: 0 .5rem 1.25rem; }
+  nav.toc .brand .mark {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: var(--accent); color: #fff;
+    display: grid; place-items: center; font-weight: 800; font-size: 15px;
+    flex: 0 0 auto;
+  }
+  nav.toc .brand b { display: block; font-size: 15px; letter-spacing: -.01em; }
+  nav.toc .brand span { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--fg-faint); font-weight: 700; }
+  nav.toc .group { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--fg-faint); font-weight: 700; padding: 1.1rem .75rem .4rem; }
+  nav.toc a {
+    display: block; padding: .38rem .75rem; border-radius: 8px;
+    color: var(--fg-muted); text-decoration: none; font-size: 13.5px; font-weight: 500;
+  }
+  nav.toc a:hover { background: var(--bg-soft); color: var(--fg); }
+  nav.toc a.sub { padding-left: 1.5rem; font-size: 13px; color: var(--fg-faint); }
+
+  main { flex: 1 1 auto; min-width: 0; padding: 2.5rem clamp(1rem, 4vw, 3.5rem) 6rem; max-width: 1080px; }
+
+  header.page { border-bottom: 1px solid var(--border); padding-bottom: 1.75rem; margin-bottom: 2.5rem; }
+  header.page h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); line-height: 1.15; letter-spacing: -.03em; margin: 0 0 .5rem; }
+  header.page p.lede { font-size: 1.05rem; color: var(--fg-muted); margin: 0 0 1rem; max-width: 62ch; }
+
+  h2 { font-size: 1.5rem; letter-spacing: -.02em; margin: 3.25rem 0 .5rem; padding-top: .5rem; scroll-margin-top: 1rem; }
+  h2::before { content: ""; display: block; width: 34px; height: 3px; background: var(--accent); border-radius: 2px; margin-bottom: .9rem; }
+  h3 { font-size: 1.12rem; letter-spacing: -.01em; margin: 2rem 0 .4rem; scroll-margin-top: 1rem; }
+  h4 { font-size: .95rem; margin: 1.4rem 0 .3rem; color: var(--fg-muted); text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+  p { margin: .6rem 0; color: var(--fg-muted); }
+  li { color: var(--fg-muted); margin: .25rem 0; }
+  strong { color: var(--fg); font-weight: 650; }
+  a { color: var(--accent); }
+
+  code {
+    font-family: var(--mono); font-size: .86em;
+    background: var(--bg-soft); border: 1px solid var(--border);
+    padding: .08em .38em; border-radius: 5px; color: var(--fg);
+    word-break: break-word;
+  }
+  pre {
+    background: var(--code-bg); color: var(--code-fg);
+    padding: 1rem 1.1rem; border-radius: 12px; overflow-x: auto;
+    font-family: var(--mono); font-size: 13px; line-height: 1.6;
+    border: 1px solid var(--border); margin: .9rem 0;
+  }
+  pre code { background: none; border: 0; padding: 0; color: inherit; font-size: inherit; }
+  .tok-c { color: #7c8aa5; }
+  .tok-s { color: #86e1a0; }
+  .tok-k { color: #a5a1ff; }
+
+  .tablewrap { overflow-x: auto; margin: 1rem 0; border: 1px solid var(--border); border-radius: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; background: var(--bg-elev); }
+  th, td { text-align: left; padding: .65rem .85rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--bg-soft); font-weight: 650; color: var(--fg); font-size: 12.5px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  td { color: var(--fg-muted); }
+  td code { white-space: nowrap; }
+
+  .card { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 14px; padding: 1.1rem 1.25rem; margin: 1rem 0; }
+  .grid { display: grid; gap: .9rem; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); margin: 1.1rem 0; }
+  .grid .card { margin: 0; }
+  .card h4 { margin-top: 0; }
+  .card p:last-child { margin-bottom: 0; }
+
+  .note { border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 12px 12px 0; padding: .85rem 1.1rem; margin: 1.1rem 0; }
+  .note.warn { border-left-color: var(--warn); background: color-mix(in srgb, var(--warn) 10%, var(--bg-elev)); }
+  .note.danger { border-left-color: var(--danger); background: color-mix(in srgb, var(--danger) 10%, var(--bg-elev)); }
+  .note.ok { border-left-color: var(--ok); background: color-mix(in srgb, var(--ok) 10%, var(--bg-elev)); }
+  .note p { margin: .25rem 0; }
+  .note b.tag { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg); margin-bottom: .2rem; }
+
+  .pill { display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 700; padding: .15rem .5rem; border-radius: 999px; letter-spacing: .04em; }
+  .pill.post { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); }
+  .pill.get { background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: .5rem; margin: 1.2rem 0; }
+  .flow .step { flex: 1 1 150px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 12px; padding: .7rem .85rem; font-size: 13px; color: var(--fg-muted); }
+  .flow .step b { display: block; color: var(--fg); font-size: 13px; margin-bottom: .15rem; }
+  .flow .arrow { align-self: center; color: var(--fg-faint); font-size: 18px; }
+
+  .layers { display: grid; gap: .6rem; margin: 1.2rem 0; }
+  .layer { border: 1px solid var(--border); border-radius: 12px; padding: .85rem 1rem; background: var(--bg-elev); }
+  .layer .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; color: var(--accent); }
+  .layer b { display: block; margin: .1rem 0 .2rem; }
+  .layer p { margin: 0; font-size: 14px; }
+
+  .kbd { font-family: var(--mono); font-size: 12px; background: var(--bg-soft); border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 6px; padding: .1rem .4rem; color: var(--fg); }
+
+  .toggle {
+    position: fixed; top: 1rem; right: 1rem; z-index: 20;
+    background: var(--bg-elev); border: 1px solid var(--border); color: var(--fg-muted);
+    border-radius: 999px; padding: .45rem .9rem; font-size: 12px; font-weight: 650; cursor: pointer;
+  }
+  .toggle:hover { color: var(--fg); }
+
+  footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 13px; color: var(--fg-faint); }
+
+  @media (max-width: 900px) {
+    .shell { flex-direction: column; }
+    nav.toc { position: static; width: auto; flex: none; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+    nav.toc .group { padding-top: .8rem; }
+  }
+</style>
+</head>
+<body>
+<button class="toggle" id="themeToggle" type="button">Tema</button>
+<div class="shell">
+
+<nav class="toc">
+  <div class="brand">
+    <div class="mark">EP</div>
+    <div>
+      <b>EchoPlan</b>
+      <span>Docs Técnicas</span>
+    </div>
+  </div>
+
+  <div class="group">Fundamentos</div>
+  <a href="#visao-geral">1. Visão geral</a>
+  <a href="#stack">2. Stack e dependências</a>
+  <a href="#inicio-rapido">3. Início rápido</a>
+  <a href="#arquitetura">4. Arquitetura</a>
+
+  <div class="group">Backend</div>
+  <a href="#servidor">5. Servidor Express</a>
+  <a href="#api">6. Referência da API</a>
+  <a href="#prompts">7. Prompts e schemas Gemini</a>
+  <a href="#fallback">8. Fallback sem Gemini</a>
+
+  <div class="group">Dados</div>
+  <a href="#modelo-dados">9. Modelo de dados</a>
+  <a href="#firestore">10. Firestore e segurança</a>
+  <a href="#usefirebase">11. Hook <code>useFirebase</code></a>
+
+  <div class="group">Front-end</div>
+  <a href="#app">12. <code>App.tsx</code></a>
+  <a href="#componentes">13. Catálogo de componentes</a>
+  <a href="#funcionalidades">14. Funcionalidades</a>
+  <a href="#funcionalidades" class="sub">14.1 Captura por voz</a>
+  <a href="#lembretes" class="sub">14.2 Lembretes e DND</a>
+  <a href="#recorrencia" class="sub">14.3 Recorrência</a>
+  <a href="#exportacoes" class="sub">14.4 Exportações</a>
+  <a href="#estilo">15. Estilo e tema</a>
+
+  <div class="group">Operação</div>
+  <a href="#build">16. Build e deploy</a>
+  <a href="#armadilhas">17. Armadilhas conhecidas</a>
+  <a href="#estender">18. Como estender</a>
+  <a href="#glossario">19. Glossário</a>
+
+  <div class="group">Mobile</div>
+  <a href="plano-react-native.html">Plano de migração React Native →</a>
+</nav>
+
+<main>
+
+<header class="page">
+  <h1>EchoPlan — Organizador de Tarefas por Voz</h1>
+  <p class="lede">
+    Aplicação web que grava um áudio com as tarefas do dia, transcreve, categoriza,
+    define prioridades e configura lembretes usando o Gemini. Documentação técnica
+    completa da arquitetura, API, modelo de dados e comportamento em runtime.
+  </p>
+  <p style="font-size:13px;color:var(--fg-faint);margin:0">
+    Origem: Google AI Studio (applet <code>76782a1b-0ee3-4f73-8cbb-f80f9cc6e8f8</code>) ·
+    Nome interno do produto na UI: <strong>EchoPlan</strong> ·
+    Idioma do domínio: pt-BR
+  </p>
+</header>
+
+<!-- ============================================================ -->
+<h2 id="visao-geral">1. Visão geral</h2>
+
+<p>
+  O usuário fala (ou digita) o que precisa fazer no dia. O áudio vai em base64 para um
+  backend Express, que repassa ao Gemini com um prompt em português que codifica as regras
+  de negócio. A resposta volta como JSON estruturado — lista de tarefas com título,
+  categoria, prioridade, horário de lembrete, notas, tags e subtarefas — e é gravada no
+  Firestore, que é a fonte de verdade e sincroniza em tempo real com a UI.
+</p>
+
+<div class="grid">
+  <div class="card">
+    <h4>Entrada</h4>
+    <p>Áudio via <code>MediaRecorder</code>, texto livre, ou formulário manual. Todos convergem para os mesmos campos de <code>Task</code>.</p>
+  </div>
+  <div class="card">
+    <h4>Inteligência</h4>
+    <p><code>gemini-3.5-flash</code> multimodal com <code>responseSchema</code> explícito. Sempre server-side — a chave nunca chega ao browser.</p>
+  </div>
+  <div class="card">
+    <h4>Persistência</h4>
+    <p>Firestore por usuário (<code>users/{uid}/…</code>) com <code>onSnapshot</code> em tempo real. Sem Redux, sem Context.</p>
+  </div>
+  <div class="card">
+    <h4>Saída</h4>
+    <p>Fila de atividades, calendário mensal, histórico, notas, listas, e exportações em JSON / CSV / PDF / PNG.</p>
+  </div>
+</div>
+
+<h3>Escopo funcional</h3>
+<ul>
+  <li><strong>Tarefas</strong> — criação por voz/texto/manual, categorias customizáveis, prioridade, subtarefas, tags, notas, arquivamento, foco, recorrência.</li>
+  <li><strong>Lembretes</strong> — alarme por horário <code>HH:MM</code>, dias da semana, soneca, notificação do SO, vibração, janela "não perturbe".</li>
+  <li><strong>Notas</strong> — texto livre ou nota de voz transcrita.</li>
+  <li><strong>Listas</strong> — checklist, numerada ou mista, com ícone.</li>
+  <li><strong>Analytics</strong> — meta diária, progresso semanal, distribuição por categoria, tempo médio de conclusão, dicas contextuais.</li>
+</ul>
+
+<div class="note">
+  <b class="tag">Contexto de origem</b>
+  <p>
+    <code>metadata.json</code> declara <code>requestFramePermissions: ["microphone"]</code> e a capacidade
+    <code>MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API</code>. Isso significa que o AI Studio injeta
+    <code>GEMINI_API_KEY</code> e <code>APP_URL</code> em runtime e concede o microfone ao iframe.
+    Rodando localmente, essas variáveis vêm do <code>.env</code>.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="stack">2. Stack e dependências</h2>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Camada</th><th>Tecnologia</th><th>Versão</th><th>Papel</th></tr></thead>
+  <tbody>
+    <tr><td>UI</td><td>React</td><td>^19.0.1</td><td>Componentes; <code>StrictMode</code> ligado em <code>main.tsx</code></td></tr>
+    <tr><td>Build</td><td>Vite</td><td>^6.2.3</td><td>Dev server em middleware mode + bundle de produção</td></tr>
+    <tr><td>Estilo</td><td>Tailwind CSS</td><td>^4.1.14</td><td>Via <code>@tailwindcss/vite</code>, sem <code>tailwind.config</code></td></tr>
+    <tr><td>Backend</td><td>Express</td><td>^4.21.2</td><td>API + host do front no mesmo processo/porta</td></tr>
+    <tr><td>IA</td><td><code>@google/genai</code></td><td>^1.29.0</td><td>SDK do Gemini, usado só no servidor</td></tr>
+    <tr><td>Dados</td><td>Firebase</td><td>^12.15.0</td><td>Auth (Google popup) + Firestore</td></tr>
+    <tr><td>Gráficos</td><td>Recharts</td><td>^3.8.1</td><td>Pie chart de categorias, barras de progresso semanal</td></tr>
+    <tr><td>Animação</td><td>motion</td><td>^12.23.24</td><td><code>motion/react</code> — transições de abas, modais, confete</td></tr>
+    <tr><td>Ícones</td><td>lucide-react</td><td>^0.546.0</td><td>Ícone por categoria, navegação, ações</td></tr>
+    <tr><td>PDF</td><td>jspdf</td><td>^4.2.1</td><td>Relatório semanal A4 gerado no cliente</td></tr>
+    <tr><td>Dev</td><td>tsx / esbuild / typescript</td><td>—</td><td><code>tsx</code> roda o server em dev; <code>esbuild</code> empacota em prod</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note warn">
+  <b class="tag">Sem testes</b>
+  <p>
+    O projeto não tem suíte de testes. A única verificação automatizada é
+    <code>npm run lint</code>, que é <code>tsc --noEmit</code>. Qualquer alteração deve passar por esse comando.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="inicio-rapido">3. Início rápido</h2>
+
+<pre><code><span class="tok-c"># 1. dependências</span>
+npm install
+
+<span class="tok-c"># 2. configure a chave (copie de .env.example)</span>
+<span class="tok-c">#    .env → GEMINI_API_KEY="sua-chave"</span>
+
+<span class="tok-c"># 3. dev — Express + Vite middleware na porta 3000</span>
+npm run dev
+
+<span class="tok-c"># verificação de tipos (única checagem automatizada)</span>
+npm run lint</code></pre>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Script</th><th>Comando real</th><th>O que faz</th></tr></thead>
+  <tbody>
+    <tr><td><code>dev</code></td><td><code>tsx server.ts</code></td><td>Sobe o Express na porta 3000 e injeta <code>vite.middlewares</code>. API e front no mesmo host — sem CORS, sem proxy.</td></tr>
+    <tr><td><code>lint</code></td><td><code>tsc --noEmit</code></td><td>Checagem de tipos. Não há ESLint configurado apesar do plugin de regras de segurança do Firebase estar em <code>devDependencies</code>.</td></tr>
+    <tr><td><code>build</code></td><td><code>vite build</code> + <code>esbuild server.ts …</code></td><td>Gera <code>dist/</code> (front) e <code>dist/server.cjs</code> (servidor CJS, <code>--packages=external</code>).</td></tr>
+    <tr><td><code>start</code></td><td><code>node dist/server.cjs</code></td><td>Produção. <strong>Exige <code>NODE_ENV=production</code></strong> — sem isso o servidor tenta subir o Vite em middleware mode.</td></tr>
+    <tr><td><code>clean</code></td><td><code>rm -rf dist server.js</code></td><td>Limpeza. Comando POSIX — no Windows use Git Bash.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Variáveis de ambiente</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Variável</th><th>Obrigatória</th><th>Efeito</th></tr></thead>
+  <tbody>
+    <tr><td><code>GEMINI_API_KEY</code></td><td>Não (degrada)</td><td>Ausente, vazia ou igual ao placeholder <code>MY_GEMINI_API_KEY</code> ⇒ endpoints de áudio retornam <code>403</code> e <code>analyze-text</code> cai no parser heurístico local.</td></tr>
+    <tr><td><code>APP_URL</code></td><td>Não</td><td>Injetada pelo AI Studio com a URL do Cloud Run. Não é lida pelo código atual.</td></tr>
+    <tr><td><code>NODE_ENV</code></td><td>Em produção sim</td><td><code>production</code> serve <code>dist/</code> estático com fallback SPA; qualquer outro valor sobe o Vite.</td></tr>
+    <tr><td><code>DISABLE_HMR</code></td><td>Não</td><td><code>true</code> desliga HMR <em>e</em> file watching em <code>vite.config.ts</code>. Usado pelo AI Studio durante edições de agente para evitar flicker.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note danger">
+  <b class="tag">Não commitar</b>
+  <p>
+    <code>.env</code> está no <code>.gitignore</code>. Já <code>firebase-applet-config.json</code> é versionado
+    <strong>de propósito</strong> — é a config web pública do Firebase (projeto <code>app-tarefas-500823</code>),
+    protegida pelas <code>firestore.rules</code>, não por obscuridade.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="arquitetura">4. Arquitetura</h2>
+
+<p>Três camadas, com uma regra central: <strong>o front nunca fala com o Gemini diretamente</strong>.</p>
+
+<div class="layers">
+  <div class="layer">
+    <div class="lbl">Camada 1 · Servidor</div>
+    <b><code>server.ts</code> — Express, arquivo único (~540 linhas)</b>
+    <p>Hospeda API e front no mesmo processo e porta. Existe para manter a <code>GEMINI_API_KEY</code> fora do browser. Contém os prompts, os <code>responseSchema</code> e o parser heurístico de fallback.</p>
+  </div>
+  <div class="layer">
+    <div class="lbl">Camada 2 · Dados</div>
+    <b><code>src/hooks/useFirebase.ts</code> — única camada de dados</b>
+    <p>Listeners <code>onSnapshot</code> em <code>tasks</code>, <code>notes</code>, <code>lists</code> e no doc de preferências, mais os CRUDs. Sem Redux, sem Context — o hook é chamado uma vez em <code>App.tsx</code> e os dados descem por props.</p>
+  </div>
+  <div class="layer">
+    <div class="lbl">Camada 3 · UI</div>
+    <b><code>src/App.tsx</code> — monolito (~2.580 linhas)</b>
+    <p>Concentra estado de UI, todos os <code>handleX</code>, filtros, abas, exportações, import de backup, drag-and-drop e o loop de lembretes. Os 29 componentes em <code>src/components/</code> são apresentacionais e recebem callbacks.</p>
+  </div>
+</div>
+
+<h3>Fluxo de uma captura por voz</h3>
+<div class="flow">
+  <div class="step"><b>AudioRecorder</b>MediaRecorder grava; Web Speech API roda em paralelo</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>base64</b>Blob → dataURL → payload JSON</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>POST /api/tasks/analyze-audio</b>Express injeta a chave</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>Gemini</b><code>inlineData</code> + prompt + <code>responseSchema</code></div>
+  <div class="arrow">→</div>
+  <div class="step"><b>handleAIRecovery</b>Sanitiza categoria e subtarefas</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>Firestore</b><code>addTask</code> por tarefa; <code>onSnapshot</code> repinta a UI</div>
+</div>
+
+<div class="note">
+  <b class="tag">Por que um servidor para um SPA</b>
+  <p>
+    Não é por SSR. É porque a chave do Gemini precisa ficar do lado do servidor e porque o áudio
+    base64 exige <code>limit: "50mb"</code> nos body parsers — algo que um host estático não oferece.
+    Em dev o mesmo processo serve o Vite, o que elimina CORS e configuração de proxy.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="servidor">5. Servidor Express</h2>
+
+<h3>Ordem dos middlewares</h3>
+<p>A ordem importa e não deve ser alterada sem cuidado:</p>
+<ol>
+  <li><code>express.json({ limit: "50mb" })</code> e <code>express.urlencoded({ limit: "50mb", extended: true })</code> — o limite alto existe por causa do áudio em base64.</li>
+  <li>Logger de requisições — imprime <code>[HTTP] MÉTODO /caminho</code>.</li>
+  <li>Rotas <code>/api/*</code>.</li>
+  <li>Error handler global — se o caminho começa com <code>/api</code>, responde JSON estruturado (<code>{ error, message }</code>) em vez de stack trace HTML; caso contrário delega.</li>
+  <li>Vite middleware (dev) <em>ou</em> <code>express.static("dist")</code> + fallback SPA (prod).</li>
+</ol>
+
+<div class="note warn">
+  <b class="tag">Vite depois da API</b>
+  <p>
+    O middleware do Vite é registrado <strong>após</strong> as rotas <code>/api</code>. Invertendo a ordem, o Vite
+    capturaria as chamadas de API e devolveria o <code>index.html</code> — que é exatamente a origem da mensagem
+    de erro "o servidor de áudio está se inicializando" tratada no <code>AudioRecorder</code>.
+  </p>
+</div>
+
+<h3>Porta e bind</h3>
+<pre><code>app.listen(3000, <span class="tok-s">"0.0.0.0"</span>, …)</code></pre>
+<p>A porta é fixa em <code>3000</code> — não lê <code>process.env.PORT</code>. O bind em <code>0.0.0.0</code> é necessário para container/Cloud Run.</p>
+
+<!-- ============================================================ -->
+<h2 id="api">6. Referência da API</h2>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Método</th><th>Rota</th><th>Corpo</th><th>Resposta 200</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><span class="pill get">GET</span></td>
+      <td><code>/api/health</code></td>
+      <td>—</td>
+      <td><code>{ status: "ok" }</code></td>
+    </tr>
+    <tr>
+      <td><span class="pill post">POST</span></td>
+      <td><code>/api/tasks/analyze-audio</code></td>
+      <td><code>{ audioData: base64, mimeType?: string }</code></td>
+      <td><code>{ transcription, tasks[] }</code></td>
+    </tr>
+    <tr>
+      <td><span class="pill post">POST</span></td>
+      <td><code>/api/tasks/transcribe-audio</code></td>
+      <td><code>{ audioData: base64, mimeType?: string }</code></td>
+      <td><code>{ transcription }</code></td>
+    </tr>
+    <tr>
+      <td><span class="pill post">POST</span></td>
+      <td><code>/api/tasks/analyze-text</code></td>
+      <td><code>{ text: string }</code></td>
+      <td><code>{ tasks[], isLocalFallback?, message? }</code></td>
+    </tr>
+    <tr>
+      <td><span class="pill post">POST</span></td>
+      <td><code>/api/tasks/suggest-subtasks</code></td>
+      <td><code>{ taskTitle: string }</code></td>
+      <td><code>{ subtasks: string[] }</code> (3 itens)</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Códigos de erro</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Status</th><th>Quando</th><th>Corpo</th></tr></thead>
+  <tbody>
+    <tr><td><code>400</code></td><td>Campo obrigatório ausente ou vazio</td><td><code>{ error: "Dados de áudio não fornecidos." }</code> / <code>"Texto não fornecido."</code> / <code>"Título da tarefa não fornecido."</code></td></tr>
+    <tr><td><code>403</code></td><td>Chave ausente/placeholder — só nos 3 endpoints que exigem Gemini</td><td><code>{ error: "GEMINI_API_KEY_NOT_CONFIGURED", message }</code></td></tr>
+    <tr><td><code>413</code></td><td>Payload acima de 50 MB (gerado pelo body parser)</td><td>Tratado no cliente com a mensagem "grave de 15 a 25 segundos"</td></tr>
+    <tr><td><code>500</code></td><td>Falha no Gemini ou JSON inválido</td><td><code>{ error: "Falha ao …: " + error.message }</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note">
+  <b class="tag">Assimetria proposital</b>
+  <p>
+    <code>analyze-text</code> é o único endpoint que <strong>não</strong> retorna 403 sem chave: ele degrada para o
+    parser local e sinaliza com <code>isLocalFallback: true</code>. Os três endpoints que dependem de áudio ou
+    de geração criativa não têm equivalente local.
+  </p>
+</div>
+
+<h3>Exemplo de resposta — <code>analyze-audio</code></h3>
+<pre><code>{
+  <span class="tok-s">"transcription"</span>: <span class="tok-s">"Preciso pagar o boleto da luz hoje e ligar pra Maria no final da tarde"</span>,
+  <span class="tok-s">"tasks"</span>: [
+    {
+      <span class="tok-s">"title"</span>: <span class="tok-s">"Pagar boleto de luz"</span>,
+      <span class="tok-s">"category"</span>: <span class="tok-s">"Finanças"</span>,
+      <span class="tok-s">"priority"</span>: <span class="tok-s">"Alta"</span>,
+      <span class="tok-s">"reminderTime"</span>: <span class="tok-k">null</span>,
+      <span class="tok-s">"notes"</span>: <span class="tok-s">"Vence hoje"</span>,
+      <span class="tok-s">"tags"</span>: [<span class="tok-s">"boleto"</span>, <span class="tok-s">"urgente"</span>],
+      <span class="tok-s">"subtasks"</span>: [
+        { <span class="tok-s">"title"</span>: <span class="tok-s">"Abrir o internet banking"</span>, <span class="tok-s">"completed"</span>: <span class="tok-k">false</span> }
+      ]
+    },
+    {
+      <span class="tok-s">"title"</span>: <span class="tok-s">"Ligar para Maria"</span>,
+      <span class="tok-s">"category"</span>: <span class="tok-s">"Pessoal"</span>,
+      <span class="tok-s">"priority"</span>: <span class="tok-s">"Média"</span>,
+      <span class="tok-s">"reminderTime"</span>: <span class="tok-s">"18:00"</span>,
+      <span class="tok-s">"tags"</span>: [<span class="tok-s">"contato"</span>],
+      <span class="tok-s">"subtasks"</span>: []
+    }
+  ]
+}</code></pre>
+
+<p>
+  Note que <code>"final da tarde"</code> virou <code>"18:00"</code> — esse mapeamento está codificado
+  no prompt, não no código. Ver seção 7.
+</p>
+
+<!-- ============================================================ -->
+<h2 id="prompts">7. Prompts e schemas Gemini</h2>
+
+<p>
+  Modelo: <code>gemini-3.5-flash</code> em todos os endpoints, com
+  <code>responseMimeType: "application/json"</code>. Os três endpoints de extração também passam um
+  <code>responseSchema</code> explícito; <code>suggest-subtasks</code> confia apenas no formato descrito no prompt.
+</p>
+
+<h3>Regras de negócio embutidas no prompt de áudio</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>#</th><th>Regra</th><th>Efeito</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Resiliência a ruído</td><td>Filtra hesitações e marcadores de fala ("ééé", "tipo assim", "né", "então").</td></tr>
+    <tr><td>2</td><td>Correção de coloquialismos</td><td>"dar um tapa no quarto" → "Arrumar e limpar o quarto".</td></tr>
+    <tr><td>3</td><td>Detecção de desistência</td><td>Tarefa mencionada e cancelada em seguida é descartada.</td></tr>
+    <tr><td>4</td><td>Prazos vagos → <code>HH:MM</code></td><td>"hora do almoço"→12:00 · "final da tarde"→18:00 · "à noite"→20:00 · "logo cedo"→08:00 · "3 da tarde"→15:00.</td></tr>
+    <tr><td>5</td><td>Extração de notas</td><td>A parte explicativa vira <code>notes</code>, não fica no título.</td></tr>
+    <tr><td>6</td><td>Subtarefas inteligentes</td><td>Quebra tarefas compostas; pode propor de 2 a 3 subtarefas mesmo sem serem ditas.</td></tr>
+    <tr><td>7</td><td>Categorias fechadas</td><td><code>Trabalho · Pessoal · Estudos · Saúde · Finanças · Casa · Geral · Outros</code>.</td></tr>
+    <tr><td>8</td><td>Tags</td><td>De 1 a 3 tags curtas e semânticas.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Restrições estruturais adicionais: título com no máximo 8 palavras; prioridade em <code>Alta | Média | Baixa</code>; <code>completed</code> das subtarefas sempre <code>false</code>.</p>
+
+<div class="note danger">
+  <b class="tag">Regra de manutenção crítica</b>
+  <p>
+    A lista de categorias e prioridades aparece <strong>duplicada em três lugares</strong>: no texto do prompt,
+    na <code>description</code> do <code>responseSchema</code> e no parser <code>fallbackParseText</code>. Existe ainda uma
+    quarta cópia no front — <code>DEFAULT_CATEGORIES</code> em <code>App.tsx</code> e nos defaults de
+    <code>useFirebase.ts</code>. Ao mudar categorias ou prioridades, <strong>atualize todas em conjunto</strong>,
+    senão a IA devolve valores que o front rebaixa silenciosamente para <code>"Geral"</code>.
+  </p>
+</div>
+
+<h3>Envio do áudio</h3>
+<pre><code><span class="tok-k">const</span> cleanMimeType = (mimeType || <span class="tok-s">"audio/webm"</span>).split(<span class="tok-s">";"</span>)[<span class="tok-k">0</span>].trim();
+
+<span class="tok-k">await</span> ai.models.generateContent({
+  model: <span class="tok-s">"gemini-3.5-flash"</span>,
+  contents: { parts: [
+    { inlineData: { data: audioData, mimeType: cleanMimeType } },
+    { text: prompt },
+  ]},
+  config: { responseMimeType: <span class="tok-s">"application/json"</span>, responseSchema },
+});</code></pre>
+<p>
+  O <code>split(";")[0]</code> remove o sufixo de codec que o navegador anexa
+  (<code>audio/webm;codecs=opus</code>) — o Gemini rejeita o mimeType completo.
+  O SDK é instanciado com o header <code>User-Agent: aistudio-build</code>.
+</p>
+
+<!-- ============================================================ -->
+<h2 id="fallback">8. Fallback sem Gemini</h2>
+
+<p>Há <strong>dois níveis</strong> de degradação, em camadas diferentes.</p>
+
+<h3>Nível 1 — servidor: <code>fallbackParseText</code></h3>
+<p>
+  Parser heurístico em pt-BR, puro regex, dentro do <code>server.ts</code>. Aciona quando
+  <code>analyze-text</code> é chamado sem chave válida. Pipeline:
+</p>
+<ol>
+  <li><strong>Segmentação</strong> — divide o texto em <code>. ; \n</code> e na conjunção <code> e </code> com limite de palavra; descarta pedaços com ≤3 caracteres.</li>
+  <li><strong>Limpeza do título</strong> — remove verbos de obrigação iniciais (<code>preciso</code>, <code>tenho que</code>, <code>lembrar de</code>, <code>não esquecer de</code>, <code>devo</code>, <code>vou</code>, <code>gostaria de</code>), capitaliza e trunca em 8 palavras com <code>...</code>.</li>
+  <li><strong>Categoria</strong> — seis blocos de regex por vocabulário; ordem de teste: Trabalho → Saúde → Finanças → Estudos → Casa → Pessoal → Outros. Default: <code>"Geral"</code>.</li>
+  <li><strong>Prioridade</strong> — <code>Alta</code> por gatilhos como <code>urgente</code>, <code>prazo</code>, <code>hoje</code>, <code>agora</code>; <code>Baixa</code> por <code>depois</code>, <code>quando der</code>, <code>lazer</code>, <code>tranquilo</code>. Default: <code>Média</code>.</li>
+  <li><strong>Horário</strong> — tenta padrões numéricos (<code>às 15h30</code>, <code>15:30</code>, <code>15h</code>); se falhar, mapeia por extenso ("três da tarde"→15:00, "meio-dia"→12:00, "meia-noite"→00:00).</li>
+</ol>
+<p>A resposta inclui <code>isLocalFallback: true</code> e uma mensagem, que a UI exibe num banner informativo.</p>
+
+<div class="note warn">
+  <b class="tag">Limitação do parser local</b>
+  <p>
+    O fallback não gera <code>notes</code>, <code>tags</code> nem <code>subtasks</code> — devolve apenas
+    <code>title</code>, <code>category</code>, <code>priority</code> e <code>reminderTime</code>.
+    A divisão por <code>" e "</code> também quebra frases legítimas ("arroz e feijão" vira duas tarefas).
+  </p>
+</div>
+
+<h3>Nível 2 — cliente: transcrição do navegador</h3>
+<p>
+  Durante a gravação, o <code>AudioRecorder</code> roda a <code>SpeechRecognition</code> do navegador
+  (<code>lang: "pt-BR"</code>, <code>continuous</code>, <code>interimResults</code>) <strong>em paralelo</strong> ao
+  <code>MediaRecorder</code>. Se o upload do áudio falhar — JSON inválido, resposta não-OK, 403 — e houver
+  texto capturado em <code>transcriptText</code>, o componente chama <code>useTranscriptFallback()</code>, que
+  reenvia esse texto para <code>/api/tasks/analyze-text</code>. Na prática o usuário ainda consegue criar tarefas
+  mesmo sem chave do Gemini e sem digitar.
+</p>
+
+<div class="flow">
+  <div class="step"><b>Gravar</b>MediaRecorder + SpeechRecognition juntos</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>POST analyze-audio</b>falhou (403 / HTML / JSON inválido)</div>
+  <div class="arrow">→</div>
+  <div class="step"><b>Tem <code>transcriptText</code>?</b>Sim → <code>useTranscriptFallback()</code></div>
+  <div class="arrow">→</div>
+  <div class="step"><b>POST analyze-text</b>Gemini ou parser heurístico</div>
+</div>
+
+<p>
+  Sem transcrição local, o erro é traduzido para uma mensagem específica: payload grande
+  ("grave de 15 a 25 segundos"), 403 (chave não configurada), ou resposta HTML
+  ("o servidor está reiniciando, aguarde 5 a 10 segundos").
+</p>
+
+<!-- ============================================================ -->
+<h2 id="modelo-dados">9. Modelo de dados</h2>
+
+<p>Tipos em <code>src/types.ts</code>. O contrato equivalente para o AI Studio está em <code>firebase-blueprint.json</code>.</p>
+
+<h3><code>Task</code></h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Campo</th><th>Tipo</th><th>Obrigatório</th><th>Notas</th></tr></thead>
+  <tbody>
+    <tr><td><code>id</code></td><td><code>string</code></td><td>sim</td><td>Gerado pelo Firestore via <code>doc(collectionRef)</code> antes do write; duplicado dentro do documento.</td></tr>
+    <tr><td><code>title</code></td><td><code>string</code></td><td>sim</td><td>Máx. 8 palavras quando vindo da IA.</td></tr>
+    <tr><td><code>category</code></td><td><code>string</code></td><td>sim</td><td>String livre no tipo, mas validada contra as categorias do usuário no <code>handleAIRecovery</code>.</td></tr>
+    <tr><td><code>priority</code></td><td><code>"Alta" | "Média" | "Baixa"</code></td><td>sim</td><td>Comparada literalmente, com acento.</td></tr>
+    <tr><td><code>completed</code></td><td><code>boolean</code></td><td>sim</td><td>Concluída sai da fila e entra no histórico.</td></tr>
+    <tr><td><code>reminderTime</code></td><td><code>string | null</code></td><td>sim</td><td>Formato <code>"HH:MM"</code> 24h. Comparação de string, não de <code>Date</code>.</td></tr>
+    <tr><td><code>reminderTriggered</code></td><td><code>boolean</code></td><td>sim</td><td>Trava anti-repetição dentro do mesmo minuto. Resetada pelo próprio loop.</td></tr>
+    <tr><td><code>reminderDays</code></td><td><code>number[]</code></td><td>não</td><td><code>0</code>=domingo … <code>6</code>=sábado. Vazio/ausente = todos os dias.</td></tr>
+    <tr><td><code>createdAt</code></td><td><code>string</code> ISO</td><td>sim</td><td>Definido no cliente com <code>new Date().toISOString()</code>.</td></tr>
+    <tr><td><code>updatedAt</code></td><td><code>string</code> ISO</td><td>não</td><td>Escrito em todo <code>updateTask</code>. <strong>É o proxy de "data de conclusão"</strong> nas métricas.</td></tr>
+    <tr><td><code>notes</code></td><td><code>string</code></td><td>não</td><td>Detalhamento extraído pela IA ou digitado.</td></tr>
+    <tr><td><code>subtasks</code></td><td><code>Subtask[]</code></td><td>não</td><td><code>{ id, title, completed }</code>. <code>id</code> gerado com <code>Math.random().toString(36)</code>.</td></tr>
+    <tr><td><code>archived</code></td><td><code>boolean</code></td><td>não</td><td>Move para a aba "Banco de Tarefas"; excluída de todas as métricas.</td></tr>
+    <tr><td><code>tags</code></td><td><code>string[]</code></td><td>não</td><td>Buscáveis junto com título, categoria, notas e subtarefas.</td></tr>
+    <tr><td><code>isRecurring</code></td><td><code>boolean</code></td><td>não</td><td>Ao concluir, clona a tarefa imediatamente.</td></tr>
+    <tr><td><code>recurrence</code></td><td><code>"diario"|"semanal"|"mensal"|null</code></td><td>não</td><td><strong>Metadado descritivo</strong> — não há scheduler que o interprete.</td></tr>
+    <tr><td><code>userId</code></td><td><code>string</code></td><td>no write</td><td>Gravado por <code>useFirebase</code>; não existe no tipo <code>Task</code>, mas está no blueprint.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3><code>Note</code> e <code>List</code></h3>
+<div class="grid">
+  <div class="card">
+    <h4>Note</h4>
+    <p><code>{ id, userId, content, transcription?, audioUrl?, createdAt, updatedAt?, tags? }</code></p>
+    <p style="font-size:13px">Nota de voz preenche <code>transcription</code> via <code>/api/tasks/transcribe-audio</code>. <code>audioUrl</code> existe no tipo mas o áudio não é enviado a nenhum storage — a URL é um object URL efêmero.</p>
+  </div>
+  <div class="card">
+    <h4>List</h4>
+    <p><code>{ id, userId, title, icon?, type, items, createdAt, updatedAt?, tags? }</code></p>
+    <p style="font-size:13px"><code>type</code> ∈ <code>numbered | checklist | mixed</code>. <code>items: ListEntry[]</code> = <code>{ id, text, completed }</code>, com <code>id</code> no formato <code>item-&lt;timestamp&gt;</code>.</p>
+  </div>
+</div>
+
+<h3>Preferências do usuário (doc <code>users/{uid}</code>)</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Campo</th><th>Default na criação</th></tr></thead>
+  <tbody>
+    <tr><td><code>categories: string[]</code></td><td><code>["Trabalho","Pessoal","Estudos","Saúde","Finanças","Casa","Geral","Outros"]</code></td></tr>
+    <tr><td><code>dndSettings.enabled</code></td><td><code>false</code></td></tr>
+    <tr><td><code>dndSettings.startTime / endTime</code></td><td><code>"22:00"</code> / <code>"07:00"</code></td></tr>
+    <tr><td><code>dndSettings.muteLowPriority</code></td><td><code>false</code></td></tr>
+    <tr><td><code>dndSettings.activeRemindersEnabled</code></td><td><code>false</code></td></tr>
+    <tr><td><code>dndSettings.activeRemindersStartTime / EndTime</code></td><td><code>"08:00"</code> / <code>"18:00"</code></td></tr>
+    <tr><td><code>dndSettings.activeRemindersDays</code></td><td><code>[1,2,3,4,5]</code> (seg–sex)</td></tr>
+    <tr><td><code>visibleCards</code></td><td>seis flags, todas <code>true</code>: <code>categoryPieChart</code>, <code>dicasHoje</code>, <code>dailyGoal</code>, <code>weeklyProgress</code>, <code>productivitySummary</code>, <code>sugestaoTarefa</code></td></tr>
+    <tr><td><code>darkMode</code></td><td><code>false</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="firestore">10. Firestore e segurança</h2>
+
+<h3>Estrutura de coleções</h3>
+<pre><code>users/{uid}                    <span class="tok-c">← doc de preferências</span>
+users/{uid}/tasks/{taskId}
+users/{uid}/notes/{noteId}
+users/{uid}/lists/{listId}</code></pre>
+
+<p>
+  Banco nomeado: <code>firestoreDatabaseId</code> = <code>ai-studio-remixorganizador-76782a1b-…</code>,
+  passado como segundo argumento de <code>getFirestore(app, id)</code>. Não é o banco <code>(default)</code>.
+</p>
+
+<h3>Regras (<code>firestore.rules</code>)</h3>
+<pre><code>match /{document=**} { allow read, write: <span class="tok-k">if false</span>; }   <span class="tok-c">// rede de segurança global</span>
+
+<span class="tok-k">function</span> isOwner(userId) {
+  <span class="tok-k">return</span> request.auth != <span class="tok-k">null</span> && request.auth.uid == userId;
+}
+
+match /users/{userId} {
+  allow get, create, update: <span class="tok-k">if</span> isOwner(userId);
+  match /tasks/{taskId} { allow read, write: <span class="tok-k">if</span> isOwner(userId); }
+  match /notes/{noteId} { allow read, write: <span class="tok-k">if</span> isOwner(userId); }
+  match /lists/{listId} { allow read, write: <span class="tok-k">if</span> isOwner(userId); }
+}</code></pre>
+
+<p>Observações relevantes:</p>
+<ul>
+  <li><code>delete</code> <strong>não</strong> é permitido no doc <code>users/{userId}</code> — só <code>get</code>, <code>create</code>, <code>update</code>. As subcoleções permitem <code>write</code> completo, incluindo delete.</li>
+  <li><code>list</code> no doc de usuário não é concedido (queries na coleção <code>users</code> são bloqueadas) — o app só faz <code>get</code> do próprio doc.</li>
+  <li>Existem os helpers <code>isSignedIn()</code>, <code>isValidId()</code> e <code>incoming()</code> declarados; apenas <code>isSignedIn</code> é usado (via <code>isOwner</code>). <code>isValidId</code> e <code>incoming</code> estão sem uso — ganchos para validação de schema que nunca foi escrita.</li>
+  <li>Não há validação de conteúdo: um cliente autenticado pode gravar qualquer campo nas suas próprias coleções.</li>
+</ul>
+
+<h3>Autenticação</h3>
+<p>
+  Único método: popup do Google (<code>signInWithPopup</code> com <code>GoogleAuthProvider</code>).
+  <code>App.tsx</code> renderiza <code>&lt;Login /&gt;</code> quando <code>user === null</code> e um spinner enquanto
+  <code>loading === true</code>. Não há login anônimo, e-mail/senha nem persistência customizada.
+</p>
+
+<!-- ============================================================ -->
+<h2 id="usefirebase">11. Hook <code>useFirebase</code></h2>
+
+<p>Retorna: <code>{ user, loading, tasks, notes, lists, userPrefs, addTask, updateTask, deleteTask, addNote, updateNote, deleteNote, addList, updateList, deleteList, updateUserPrefs }</code>.</p>
+
+<h3>Listeners</h3>
+<p>
+  Quatro <code>useEffect</code> com dependência <code>[user]</code>. Os três de coleção usam
+  <code>query(ref, orderBy("createdAt", "desc"))</code>. Ao deslogar, cada um zera seu array.
+  O listener de preferências <strong>cria o documento com defaults</strong> se ele não existir
+  (<code>setDoc</code>) e já popula o estado local para não haver flash de tela vazia.
+</p>
+
+<h3>Contratos de escrita</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Função</th><th>Comportamento</th></tr></thead>
+  <tbody>
+    <tr><td><code>addTask</code> / <code>addNote</code> / <code>addList</code></td><td>Cria a ref com <code>doc(collectionRef)</code> para obter o ID <em>antes</em> do write, e grava <code>{ ...payload, id, userId, createdAt }</code> passando por <code>stripUndefined</code>.</td></tr>
+    <tr><td><code>updateX</code></td><td><code>updateDoc</code> com <code>{ ...updates, updatedAt: new Date().toISOString() }</code>, também via <code>stripUndefined</code>.</td></tr>
+    <tr><td><code>deleteX</code></td><td><code>deleteDoc</code> direto.</td></tr>
+    <tr><td><code>updateUserPrefs</code></td><td><strong>Único write que não passa por <code>stripUndefined</code></strong> e não carimba <code>updatedAt</code>.</td></tr>
+    <tr><td>Todas</td><td>Retornam cedo (<code>if (!user) return;</code>) quando não há sessão — falham em silêncio.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Utilitários em <code>src/lib/firebase.ts</code></h3>
+<div class="card">
+  <h4><code>stripUndefined(obj)</code></h4>
+  <p>Remove chaves com valor <code>undefined</code> — o Firestore rejeita <code>undefined</code> com erro em runtime. É uma cópia rasa: <code>undefined</code> aninhado dentro de <code>subtasks[]</code> ou <code>items[]</code> passaria.</p>
+</div>
+<div class="card">
+  <h4><code>handleFirestoreError(error, operationType, path)</code></h4>
+  <p>
+    Monta um objeto <code>FirestoreErrorInfo</code> com mensagem, tipo de operação, caminho e um bloco
+    <code>authInfo</code> (uid, e-mail, <code>emailVerified</code>, <code>isAnonymous</code>, <code>tenantId</code>,
+    <code>providerInfo[]</code>), loga como JSON e <strong>relança um <code>Error</code> cujo <code>message</code> é esse JSON</strong>.
+  </p>
+  <p class="note danger" style="margin-top:.7rem">
+    Esse formato é esperado pelo tooling do AI Studio. <strong>Não altere a forma do objeto.</strong>
+    Consequência prática: nenhum <code>catch</code> no app consegue tratar o erro sem fazer <code>JSON.parse</code> da
+    mensagem, e o relance dentro do callback de erro do <code>onSnapshot</code> vira uma rejeição não tratada.
+  </p>
+</div>
+
+<h3><code>OperationType</code></h3>
+<p><code>create · update · delete · list · get · write</code> — enum usado só para rotular o diagnóstico.</p>
+
+<!-- ============================================================ -->
+<h2 id="app">12. <code>App.tsx</code></h2>
+
+<p>Monolito de ~2.580 linhas. Responsabilidades, em ordem no arquivo:</p>
+
+<h3>Constantes de topo</h3>
+<ul>
+  <li><code>DEFAULT_CATEGORIES</code> — fallback quando <code>userPrefs</code> ainda não carregou.</li>
+  <li><code>SAMPLE_TASKS</code> — cinco tarefas de demonstração inseridas por "Carregar exemplos".</li>
+  <li><code>sortAltaToTop(list)</code> — reordena: ativas <code>Alta</code> → demais ativas → concluídas. Aplicado a <em>toda</em> leitura de <code>tasks</code>.</li>
+  <li><code>LOCAL_STORAGE_KEY</code> / <code>LOCAL_STORAGE_CATEGORIES_KEY</code> — <strong>legado morto</strong>, sobras da fase pré-Firestore; não são lidos em lugar nenhum.</li>
+</ul>
+
+<h3>Preferências sem estado local</h3>
+<p>
+  <code>categories</code>, <code>dndSettings</code>, <code>visibleCards</code> e <code>darkMode</code> não têm
+  <code>useState</code>. São lidos de <code>userPrefs</code> com fallback de default, e os "setters"
+  (<code>setCategories</code>, <code>setDndSettings</code>, <code>setVisibleCards</code>, <code>setDarkMode</code>)
+  escrevem direto em <code>updateUserPrefs</code>. Cada um aceita valor ou função updater, imitando a API do
+  <code>useState</code>. Persistência é imediata; a UI atualiza quando o <code>onSnapshot</code> retorna.
+</p>
+
+<h3>Estado local relevante</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Estado</th><th>Uso</th></tr></thead>
+  <tbody>
+    <tr><td><code>activeTab</code></td><td><code>diarias | calendario | historico | arquivadas | notas | listas</code></td></tr>
+    <tr><td><code>searchQuery</code>, <code>selectedCategory</code>, <code>selectedPriority</code></td><td>Filtros; <code>"Todas"</code> é o valor neutro dos dois selects</td></tr>
+    <tr><td><code>historyDate</code></td><td>Filtro de data da aba histórico (também alimentado pelo clique no calendário)</td></tr>
+    <tr><td><code>focusedTaskId</code></td><td>Modo foco — esconde todas as outras tarefas da fila</td></tr>
+    <tr><td><code>activeReminders</code></td><td>Fila de lembretes disparados que alimenta o <code>ReminderModal</code></td></tr>
+    <tr><td><code>alertBanner</code></td><td>Banner <code>error | success | info</code>, auto-fecha em 4s</td></tr>
+    <tr><td><code>recentTranscription</code></td><td>Última transcrição, exibida após a captura por voz</td></tr>
+    <tr><td><code>isConfettiActive</code></td><td>Confete ao concluir tarefa de prioridade <code>Alta</code></td></tr>
+    <tr><td><code>draggedTaskId</code>, <code>draggedOverTaskId</code></td><td>Drag-and-drop de reordenação</td></tr>
+    <tr><td>Flags de layout</td><td><code>isSidebarCollapsed</code>, <code>isSidebarHidden</code>, <code>isMobileMenuOpen</code>, <code>isMobileAddOpen</code>, modais</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3>Filtros derivados</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Derivado</th><th>Regra</th></tr></thead>
+  <tbody>
+    <tr><td><code>filteredTasks</code></td><td>Exclui concluídas e arquivadas. Se há foco, mantém só a tarefa focada. Busca casa com título, categoria, tags, notas e títulos de subtarefas. Aplica os filtros de categoria e prioridade.</td></tr>
+    <tr><td><code>completedHistoryFiltered</code></td><td>Exclui arquivadas. Com <code>historyDate</code> preenchida, compara <code>getLocalDateStringFromISO(updatedAt ?? createdAt)</code> com a data.</td></tr>
+    <tr><td><code>archivedTasks</code></td><td>Só arquivadas, com os mesmos filtros de busca/categoria/prioridade.</td></tr>
+    <tr><td><code>totalCount</code></td><td>Não arquivadas <em>criadas hoje</em>.</td></tr>
+    <tr><td><code>completedCount</code></td><td>Concluídas, não arquivadas, cuja <code>updatedAt ?? createdAt</code> é hoje.</td></tr>
+    <tr><td><code>highPriorityCount</code></td><td><code>Alta</code>, pendentes, não arquivadas, criadas hoje.</td></tr>
+    <tr><td><code>completedGroupedByDate</code></td><td><code>Record&lt;YYYY-MM-DD, número de concluídas&gt;</code>, alimenta o <code>ProgressChart</code>.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<div class="note warn">
+  <b class="tag">Datas locais, não UTC</b>
+  <p>
+    Todas as comparações de dia usam <code>getLocalDateString()</code> / <code>getLocalDateStringFromISO()</code>
+    de <code>src/lib/dateUtils.ts</code>, que montam <code>YYYY-MM-DD</code> a partir de
+    <code>getFullYear/getMonth/getDate</code> — nunca <code>toISOString().split("T")[0]</code>, que deslocaria o dia
+    em fusos negativos como o do Brasil. <strong>Use sempre esses helpers ao adicionar métricas.</strong>
+  </p>
+</div>
+
+<h3>Atalhos de teclado</h3>
+<p>
+  <span class="kbd">Ctrl</span>+<span class="kbd">N</span> (ou <span class="kbd">⌘</span>+<span class="kbd">N</span>):
+  muda para a aba <code>diarias</code>, faz scroll até <code>#new-task-title-input</code> e foca o campo após 150 ms.
+  É o único atalho global registrado.
+</p>
+
+<!-- ============================================================ -->
+<h2 id="componentes">13. Catálogo de componentes</h2>
+
+<p>Todos em <code>src/components/</code>, todos apresentacionais — recebem dados e callbacks de <code>App.tsx</code>.</p>
+
+<h4>Entrada e edição</h4>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Componente</th><th>Linhas</th><th>Props principais</th><th>Responsabilidade</th></tr></thead>
+  <tbody>
+    <tr><td><code>AudioRecorder</code></td><td>518</td><td><code>onTasksExtracted</code>, <code>onError</code></td><td>Gravação, transcrição paralela, upload, modo "Digitar", cadeia de fallback.</td></tr>
+    <tr><td><code>TaskForm</code></td><td>369</td><td><code>onAddTask</code>, <code>categories</code></td><td>Criação manual: título, notas, categoria, prioridade, lembrete com dias da semana, tags.</td></tr>
+    <tr><td><code>TaskItem</code></td><td>1.688</td><td><code>task</code>, <code>onToggleComplete</code>, <code>onUpdate</code>, <code>onDelete</code>, <code>onToggleFocus</code>, <code>onToggleArchive</code>, handlers de drag</td><td>Maior componente do projeto: exibição, edição inline, subtarefas, sugestão de subtarefas via IA, nota de voz na tarefa, ícone por categoria.</td></tr>
+    <tr><td><code>NoteForm</code></td><td>305</td><td><code>onAddNote</code>, <code>onCancel</code></td><td>Nota em texto ou áudio; áudio vai para <code>/api/tasks/transcribe-audio</code>.</td></tr>
+    <tr><td><code>ListForm</code></td><td>302</td><td><code>onAddList</code>, <code>onUpdateList</code>, <code>initialData</code></td><td>Criação e edição de listas; serve os dois fluxos via <code>initialData</code>.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h4>Visões</h4>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Componente</th><th>Linhas</th><th>Responsabilidade</th></tr></thead>
+  <tbody>
+    <tr><td><code>CalendarView</code></td><td>514</td><td>Grade mensal; clicar num dia seta <code>historyDate</code> e navega para a aba histórico.</td></tr>
+    <tr><td><code>NotesView</code></td><td>215</td><td>Busca, filtro <code>all|text|audio</code>, alternância grade/lista.</td></tr>
+    <tr><td><code>ListView</code></td><td>208</td><td>Busca, filtro por <code>type</code>, alternância grade/lista.</td></tr>
+    <tr><td><code>NoteItem</code> / <code>ListItem</code></td><td>186 / 244</td><td>Cartão individual com expansão e edição inline.</td></tr>
+    <tr><td><code>TaskFilter</code></td><td>318</td><td>Busca, selects de categoria e prioridade, métricas do dia, ações "Limpar tudo" e "Carregar exemplos".</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h4>Analytics e cartões (controlados por <code>visibleCards</code>)</h4>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Componente</th><th>Cálculo</th></tr></thead>
+  <tbody>
+    <tr><td><code>DailyGoal</code></td><td>Meta dinâmica = concluídas hoje + ativas restantes.</td></tr>
+    <tr><td><code>WeeklyProgress</code></td><td>Últimos 7 dias, média, dias que bateram a meta. Gera o <strong>PDF A4</strong> via jsPDF.</td></tr>
+    <tr><td><code>CategoryPieChart</code></td><td>Distribuição do dia por categoria, com paleta fixa por nome de categoria.</td></tr>
+    <tr><td><code>ProductivitySummary</code></td><td>Tempo entre <code>createdAt</code> e <code>updatedAt</code> das concluídas (só durações positivas).</td></tr>
+    <tr><td><code>PriorityDurationCard</code></td><td>Idade das tarefas por prioridade; pendentes contam até <em>agora</em>.</td></tr>
+    <tr><td><code>ProgressChart</code></td><td>Série temporal de conclusões a partir de <code>completedGroupedByDate</code>.</td></tr>
+    <tr><td><code>DicasHoje</code></td><td>Dicas por faixa de taxa de conclusão.</td></tr>
+    <tr><td><code>SugestaoTarefa</code></td><td>Sugere a próxima tarefa entre as pendentes; renderiza <code>null</code> se não houver nenhuma.</td></tr>
+    <tr><td><code>ProductivityTip</code> / <code>EmptyStateProductivityTip</code></td><td>Mensagens contextuais, inclusive no estado vazio.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h4>Modais e chrome</h4>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Componente</th><th>Responsabilidade</th></tr></thead>
+  <tbody>
+    <tr><td><code>ReminderModal</code></td><td>Mostra um lembrete por vez (o primeiro da fila), toca alerta sonoro, e oferece dispensar / concluir / soneca.</td></tr>
+    <tr><td><code>SettingsModal</code> (579 linhas)</td><td>DND, janela de lembretes ativos com dias da semana, visibilidade de cartões, atalho para categorias, backup agendado.</td></tr>
+    <tr><td><code>CategoryManagerModal</code></td><td>Adicionar, renomear e excluir categorias.</td></tr>
+    <tr><td><code>ConfirmationModal</code></td><td>Confirmação genérica com textos parametrizáveis. <em>Não</em> é usado no "limpar tudo", que ainda chama <code>window.confirm</code>.</td></tr>
+    <tr><td><code>ConfettiEffect</code></td><td>Partículas ao concluir tarefa <code>Alta</code>.</td></tr>
+    <tr><td><code>Tooltip</code></td><td>Tooltip com posição, delay e exibição de atalho.</td></tr>
+    <tr><td><code>Login</code></td><td>Tela única de entrada com o botão do Google.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="funcionalidades">14. Funcionalidades em detalhe</h2>
+
+<h3>14.1 Captura por voz</h3>
+<p>
+  <code>startRecording()</code> negocia o mimeType em cascata:
+  <code>audio/webm</code> → <code>audio/ogg</code> → padrão do navegador (Safari). Ao parar, junta os chunks num
+  <code>Blob</code>, converte para base64 com <code>FileReader</code> e envia. Um timer de 1s exibe a duração.
+</p>
+
+<h4>Sanitização da resposta — <code>handleAIRecovery</code></h4>
+<ul>
+  <li><strong>Nenhuma tarefa extraída</strong> ⇒ banner de erro orientando a falar ações claras.</li>
+  <li><strong>Categoria desconhecida</strong> ⇒ casa case-insensitive com as categorias do usuário; se não achar, rebaixa para <code>"Geral"</code>. Isso protege contra categorias que o usuário excluiu.</li>
+  <li><strong>Subtarefas</strong> ⇒ aceita <code>string</code> ou objeto, e sempre gera um <code>id</code> local.</li>
+  <li><strong>Fallback local</strong> ⇒ banner informativo mencionando a <code>GEMINI_API_KEY</code>; caso contrário, banner de sucesso.</li>
+</ul>
+
+<h3 id="lembretes">14.2 Lembretes e "não perturbe"</h3>
+<p>
+  <code>App.tsx</code> mantém um <code>setInterval</code> de <strong>1 segundo</strong> que compara
+  <code>task.reminderTime</code> com o <code>HH:MM</code> atual. A cada tick ele também
+  <strong>reseta <code>reminderTriggered</code> no Firestore</strong> para tarefas cujo minuto já passou — ou seja,
+  <strong>o loop escreve no banco</strong>.
+</p>
+
+<h4>Os três portões de silenciamento</h4>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Portão</th><th>Condição</th><th>Detalhe</th></tr></thead>
+  <tbody>
+    <tr><td>Janela DND</td><td><code>dndSettings.enabled</code> + <code>startTime</code>/<code>endTime</code></td><td>Trata virada de meia-noite: se <code>start &gt; end</code>, a janela é <code>t &gt;= start || t &lt;= end</code>.</td></tr>
+    <tr><td>Janela de lembretes ativos</td><td><code>activeRemindersEnabled</code> + horário + dias</td><td>Fora da janela <em>ou</em> em dia não marcado ⇒ silencia. Default de dias: <code>[1,2,3,4,5]</code>.</td></tr>
+    <tr><td>Silenciar baixa prioridade</td><td><code>muteLowPriority</code></td><td>Aplicado por tarefa, não pela janela.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Uma tarefa dispara quando: <code>reminderTime === HH:MM atual</code> <strong>e</strong> está agendada para o dia da semana atual (ou <code>reminderDays</code> vazio) <strong>e</strong> não está concluída <strong>e</strong> <code>reminderTriggered === false</code> <strong>e</strong> não caiu em nenhum portão.</p>
+
+<h4>Ao disparar</h4>
+<ol>
+  <li><code>new Notification("Lembrete: …")</code> se a permissão foi concedida (pedida na montagem do app).</li>
+  <li><code>updateTask(id, { reminderTriggered: true })</code>.</li>
+  <li>Empilha em <code>activeReminders</code> sem duplicar IDs; o <code>ReminderModal</code> mostra um por vez.</li>
+</ol>
+
+<h4>Soneca</h4>
+<p>
+  <code>handleSnoozeReminder(taskId, minutes)</code> soma os minutos ao horário atual, grava o novo
+  <code>reminderTime</code> e zera <code>reminderTriggered</code> para o alarme poder disparar de novo.
+</p>
+
+<div class="note danger">
+  <b class="tag">Custo do design</b>
+  <p>
+    O intervalo de 1 s roda <code>updateTask</code> para cada tarefa com <code>reminderTriggered</code> pendente de
+    reset. Com muitas tarefas isso gera escrita constante no Firestore. O <code>useEffect</code> depende de
+    <code>[tasks, dndSettings]</code>, então cada snapshot recria o intervalo. É a área mais sensível a mudanças
+    do código.
+  </p>
+</div>
+
+<h3 id="recorrencia">14.3 Recorrência</h3>
+<p>
+  <strong>Não existe scheduler.</strong> Ao concluir uma tarefa com <code>isRecurring</code>,
+  <code>handleToggleComplete</code> cria <strong>imediatamente</strong> uma cópia nova (título, categoria,
+  prioridade, lembrete, dias, tags, notas, <code>isRecurring</code>, <code>recurrence</code>) com
+  <code>completed: false</code>. O campo <code>recurrence</code> (<code>diario|semanal|mensal</code>) é
+  <strong>apenas descritivo</strong> — nada no código altera o intervalo de recriação.
+</p>
+
+<h4>Efeitos colaterais da conclusão</h4>
+<ul>
+  <li>Sai do modo foco se era a tarefa focada.</li>
+  <li>Banner de parabéns com o título.</li>
+  <li>Vibração: <code>[120, 60, 120]</code> para <code>Alta</code>, <code>50 ms</code> para as demais.</li>
+  <li>Confete se prioridade <code>Alta</code>.</li>
+  <li>Reativar (desmarcar) devolve à fila com banner informativo.</li>
+</ul>
+
+<h4>Categorias — efeito cascata</h4>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Ação</th><th>Efeito nas tarefas</th></tr></thead>
+  <tbody>
+    <tr><td><code>handleAddCategory</code></td><td>Só acrescenta ao array de preferências.</td></tr>
+    <tr><td><code>handleRenameCategory</code></td><td>Renomeia na lista <strong>e</strong> faz <code>updateTask</code> em toda tarefa com a categoria antiga (um write por tarefa).</td></tr>
+    <tr><td><code>handleDeleteCategory</code></td><td>Remove da lista e <strong>migra as tarefas afetadas para <code>"Geral"</code></strong>.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h3 id="exportacoes">14.4 Exportações e backup</h3>
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Formato</th><th>Função</th><th>Conteúdo</th><th>Nome do arquivo</th></tr></thead>
+  <tbody>
+    <tr><td>JSON</td><td><code>handleExportBackup</code></td><td><code>{ tasks, categories }</code></td><td><code>echoplan-backup-AAAA-MM-DD.json</code></td></tr>
+    <tr><td>JSON (agendado)</td><td><code>downloadBackup</code> em <code>lib/backup.ts</code></td><td><code>{ tasks, categories, exportedAt }</code></td><td><code>backup_tarefas_AAAA-MM-DD.json</code></td></tr>
+    <tr><td>CSV</td><td><code>handleExportCompletedCSV</code></td><td>Só concluídas. Colunas: Título, Categoria, Prioridade, Notas, Subtarefas (feitas/total), Criado Em, Concluído Em, Tags. Datas em <code>pt-BR</code>, BOM <code>﻿</code> para o Excel, escape de aspas correto.</td><td><code>historico-tarefas-concluidas-AAAA-MM-DD.csv</code></td></tr>
+    <tr><td>PDF</td><td><code>generatePDFReport</code> em <code>WeeklyProgress</code></td><td>Relatório A4 retrato dos últimos 7 dias com paleta indigo/slate.</td><td>gerado pelo jsPDF</td></tr>
+    <tr><td>PNG</td><td><code>generatePlannerImage</code></td><td>Planner imprimível 1200×1700 desenhado à mão no <code>&lt;canvas&gt;</code>: cabeçalho com gradiente, onda de áudio decorativa, data/hora em pt-BR, <strong>até 8 tarefas</strong> com cor por prioridade, até 3 subtarefas por tarefa, notas truncadas em 95 caracteres e uma área de anotações livres.</td><td>PNG via <code>toDataURL</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<h4>Importação</h4>
+<p>
+  <code>handleImportBackup</code> lê o arquivo com <code>FileReader</code>, exige <code>tasks</code> e
+  <code>categories</code> no JSON, descarta o <code>id</code> antigo de cada tarefa e chama <code>addTask</code>
+  uma a uma (sem batch), depois substitui a lista de categorias. Não há deduplicação — <strong>importar o mesmo
+  arquivo duas vezes duplica todas as tarefas</strong>.
+</p>
+
+<h4>Backup agendado — <code>useBackupScheduler</code></h4>
+<p>
+  Único uso real de <code>localStorage</code> no app. Lê <code>backup_schedule</code>
+  (<code>{ frequency, time }</code>), checa a cada 60 s se o <code>HH:MM</code> atual bate com o agendado e,
+  se sim, expõe um alerta clicável. O download é disparado pelo clique do usuário (não pode ser automático),
+  e grava <code>last_backup_downloaded</code>. O campo <code>frequency</code> é lido mas não influencia a decisão —
+  o alerta dispara todo dia no horário marcado.
+</p>
+
+<h4>Limpar tudo</h4>
+<p>
+  <code>handleClearAll</code> pede confirmação com <code>window.confirm</code> e apaga apenas as tarefas
+  <strong>criadas hoje</strong>, uma por uma.
+</p>
+
+<h4>Reordenação por drag-and-drop</h4>
+<div class="note warn">
+  <b class="tag">Não implementado de fato</b>
+  <p>
+    Os handlers de drag existem e a UI responde visualmente, mas <code>handleReorderTasks</code> apenas exibe o
+    banner <em>"Ordenação manual no Banco de Dados requer campo de posição (não implementado)"</em>. Implementar
+    exige um campo <code>position</code> em <code>Task</code>, gravado no write e usado no <code>orderBy</code>.
+    A ordem efetiva hoje é <code>createdAt desc</code> reordenada por <code>sortAltaToTop</code>.
+  </p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="estilo">15. Estilo e tema</h2>
+
+<p>
+  Tailwind v4 <strong>sem <code>tailwind.config</code></strong>. Toda a configuração vive em
+  <code>src/index.css</code>:
+</p>
+
+<pre><code><span class="tok-k">@import</span> <span class="tok-s">"tailwindcss"</span>;
+
+<span class="tok-k">@theme</span> {
+  --font-sans: <span class="tok-s">"Inter"</span>, ui-sans-serif, system-ui, sans-serif;
+  --font-display: <span class="tok-s">"Space Grotesk"</span>, sans-serif;
+  --color-indigo-650: #493fdf;
+}
+
+<span class="tok-k">@variant</span> dark (&:where(.dark, .dark *));</code></pre>
+
+<div class="note danger">
+  <b class="tag">Três armadilhas de tema</b>
+  <p>
+    <strong>1.</strong> A classe <code>dark</code> é aplicada a um <strong><code>div</code> raiz</strong> em
+    <code>App.tsx</code>, não ao <code>&lt;html&gt;</code>. Por isso a regra <code>html.dark body</code> em
+    <code>index.css</code> <strong>nunca dispara</strong> — o fundo escuro vem das classes Tailwind do próprio div.
+  </p>
+  <p>
+    <strong>2.</strong> Há classes inexistentes espalhadas pelo JSX: <code>slate-655</code>, <code>indigo-550</code>,
+    <code>indigo-455</code>, <code>slate-850</code>, <code>indigo-150</code>. Só <code>--color-indigo-650</code> está
+    definido no <code>@theme</code>. As demais <strong>não geram CSS e falham em silêncio</strong> — o elemento
+    simplesmente herda a cor.
+  </p>
+  <p>
+    <strong>3.</strong> As fontes vêm de um <code>@import</code> do Google Fonts. Sem internet, o app cai para as
+    fontes de sistema.
+  </p>
+</div>
+
+<h3>Alias <code>@</code></h3>
+<p>
+  Aponta para a <strong>raiz do projeto</strong>, não para <code>src/</code>. Configurado em
+  <code>vite.config.ts</code> (<code>path.resolve(__dirname, ".")</code>) e em <code>tsconfig.json</code>
+  (<code>"@/*": ["./*"]</code>). Uso real: <code>import firebaseConfig from '@/firebase-applet-config.json'</code>,
+  que depende de <code>resolveJsonModule</code>.
+</p>
+
+<!-- ============================================================ -->
+<h2 id="build">16. Build e deploy</h2>
+
+<h3>Produção</h3>
+<pre><code>npm run build          <span class="tok-c"># vite build → dist/ ; esbuild → dist/server.cjs</span>
+NODE_ENV=production npm start</code></pre>
+
+<p>Em modo produção o <code>server.ts</code>:</p>
+<ul>
+  <li>Serve <code>dist/</code> com <code>express.static</code>, resolvido a partir de <code>process.cwd()</code> — o processo precisa iniciar na raiz do projeto.</li>
+  <li>Registra <code>app.get("*")</code> devolvendo <code>dist/index.html</code> (fallback SPA).</li>
+</ul>
+
+<div class="note warn">
+  <b class="tag">Esquecer <code>NODE_ENV</code> quebra silenciosamente</b>
+  <p>
+    Sem <code>NODE_ENV=production</code>, o binário empacotado tenta chamar <code>createViteServer</code>. Como o
+    build usa <code>--packages=external</code>, isso só funciona se as <code>devDependencies</code> estiverem
+    instaladas no ambiente de destino.
+  </p>
+</div>
+
+<h3>HMR</h3>
+<p>
+  <code>vite.config.ts</code> desliga HMR <em>e</em> file watching quando <code>DISABLE_HMR=true</code>
+  (o AI Studio faz isso durante edições de agente, para evitar flicker e economizar CPU).
+  O comentário no arquivo pede explicitamente para não alterar.
+</p>
+
+<!-- ============================================================ -->
+<h2 id="armadilhas">17. Armadilhas conhecidas</h2>
+
+<div class="grid">
+  <div class="card">
+    <h4>Acentos são parte do domínio</h4>
+    <p>
+      <code>Saúde</code>, <code>Finanças</code>, <code>Média</code> são <strong>persistidos no Firestore</strong> e
+      comparados literalmente em JS e nos prompts. Perder um acento em qualquer cópia quebra o casamento
+      silenciosamente.
+    </p>
+  </div>
+  <div class="card">
+    <h4>Loop de lembretes escreve no banco</h4>
+    <p>
+      Intervalo de 1 s fazendo <code>updateTask</code> para resetar <code>reminderTriggered</code>. Custo de
+      escrita proporcional ao número de tarefas com lembrete.
+    </p>
+  </div>
+  <div class="card">
+    <h4><code>updatedAt</code> é sobrecarregado</h4>
+    <p>
+      Serve como "data de conclusão" nas métricas, mas é reescrito por <strong>qualquer</strong> update — inclusive
+      pelo reset de <code>reminderTriggered</code>. Editar uma tarefa antiga a move para o histórico de hoje.
+    </p>
+  </div>
+  <div class="card">
+    <h4><code>handleFirestoreError</code> relança</h4>
+    <p>
+      Relança um <code>Error</code> com JSON como mensagem, inclusive de dentro de callbacks de
+      <code>onSnapshot</code>. Manter a forma é obrigatório para o tooling do AI Studio.
+    </p>
+  </div>
+  <div class="card">
+    <h4>Reordenação é decorativa</h4>
+    <p>
+      Falta o campo <code>position</code>. O drag responde visualmente e depois exibe um banner explicando que
+      não persiste.
+    </p>
+  </div>
+  <div class="card">
+    <h4>Import duplica</h4>
+    <p>
+      Sem deduplicação nem batch. Cada tarefa é um write individual; reimportar o mesmo backup duplica tudo.
+    </p>
+  </div>
+  <div class="card">
+    <h4>Legado de <code>localStorage</code></h4>
+    <p>
+      <code>LOCAL_STORAGE_KEY</code> e <code>LOCAL_STORAGE_CATEGORIES_KEY</code> em <code>App.tsx</code> são código
+      morto. <code>localStorage</code> só é usado de verdade em <code>useBackupScheduler</code>.
+    </p>
+  </div>
+  <div class="card">
+    <h4>Porta fixa</h4>
+    <p>
+      <code>PORT = 3000</code> hardcoded; <code>process.env.PORT</code> é ignorado. Relevante em plataformas que
+      injetam a porta.
+    </p>
+  </div>
+  <div class="card">
+    <h4><code>audioUrl</code> não persiste</h4>
+    <p>
+      O tipo <code>Note</code> tem <code>audioUrl</code>, mas o áudio nunca vai para storage — só a transcrição
+      sobrevive ao reload.
+    </p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="estender">18. Como estender</h2>
+
+<h3>Adicionar uma coleção Firestore</h3>
+<p>Quatro lugares precisam mudar <strong>em sincronia</strong>:</p>
+<ol>
+  <li><code>src/types.ts</code> — a interface.</li>
+  <li><code>src/hooks/useFirebase.ts</code> — listener <code>onSnapshot</code> + <code>add/update/delete</code>.</li>
+  <li><code>firestore.rules</code> — bloco <code>match</code> sob <code>users/{userId}/…</code> com <code>isOwner(userId)</code>.</li>
+  <li><code>firebase-blueprint.json</code> — schema da entidade e o caminho em <code>firestore</code> (documento de contrato do AI Studio).</li>
+</ol>
+
+<h3>Mudar categorias ou prioridades</h3>
+<p>Cinco pontos, todos com a mesma lista:</p>
+<ol>
+  <li><code>server.ts</code> — texto do prompt de <code>analyze-audio</code>.</li>
+  <li><code>server.ts</code> — texto do prompt de <code>analyze-text</code>.</li>
+  <li><code>server.ts</code> — <code>description</code> nos dois <code>responseSchema</code>.</li>
+  <li><code>server.ts</code> — regexes de <code>fallbackParseText</code>.</li>
+  <li><code>App.tsx</code> (<code>DEFAULT_CATEGORIES</code>) e <code>useFirebase.ts</code> (defaults do doc de usuário).</li>
+</ol>
+<p>
+  Se a categoria for exibida com cor ou ícone, atualize também os mapas
+  <code>CATEGORY_COLORS</code> (<code>CategoryPieChart</code>), <code>CATEGORY_ICONS</code>
+  (<code>TaskItem</code>) e <code>getCategoryDotColor</code> (<code>App.tsx</code>) — todos com fallback,
+  então a omissão passa despercebida em revisão.
+</p>
+
+<h3>Adicionar um endpoint de IA</h3>
+<ol>
+  <li>Registre a rota <strong>antes</strong> do middleware do Vite em <code>server.ts</code>.</li>
+  <li>Faça a mesma checagem de chave (<code>!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey.trim() === ""</code>) e devolva <code>403</code> com <code>error: "GEMINI_API_KEY_NOT_CONFIGURED"</code>, ou implemente um fallback local.</li>
+  <li>Use <code>responseMimeType: "application/json"</code> + <code>responseSchema</code> — evita ter que limpar cercas de markdown da resposta.</li>
+  <li>No cliente, leia com <code>response.text()</code> e faça <code>JSON.parse</code> dentro de <code>try/catch</code>: quando o servidor está reiniciando, a resposta é HTML, e é isso que os demais componentes já tratam.</li>
+</ol>
+
+<h3>Antes de entregar</h3>
+<pre><code>npm run lint   <span class="tok-c"># tsc --noEmit — a única rede de segurança do projeto</span></code></pre>
+
+<!-- ============================================================ -->
+<h2 id="glossario">19. Glossário</h2>
+
+<div class="tablewrap">
+<table>
+  <thead><tr><th>Termo</th><th>Significado no código</th></tr></thead>
+  <tbody>
+    <tr><td>Fila de Atividades</td><td>Aba <code>diarias</code> — tarefas pendentes, não arquivadas.</td></tr>
+    <tr><td>Banco de Tarefas</td><td>Aba <code>arquivadas</code> — <code>archived: true</code>.</td></tr>
+    <tr><td>Modo foco</td><td><code>focusedTaskId</code> — esconde todas as tarefas menos uma.</td></tr>
+    <tr><td>DND</td><td>Janela "não perturbe" em <code>dndSettings.enabled/startTime/endTime</code>.</td></tr>
+    <tr><td>Lembretes ativos</td><td>Janela <em>positiva</em> (horário + dias) fora da qual nada dispara.</td></tr>
+    <tr><td>Fallback local</td><td><code>fallbackParseText</code> no servidor; sinalizado por <code>isLocalFallback: true</code>.</td></tr>
+    <tr><td>Planner</td><td>PNG imprimível gerado em canvas por <code>generatePlannerImage</code>.</td></tr>
+    <tr><td>Applet</td><td>Unidade de deploy do Google AI Studio; define permissões e injeta segredos.</td></tr>
+  </tbody>
+</table>
+</div>
+
+<footer>
+  Documentação gerada a partir da leitura do código-fonte —
+  <code>server.ts</code>, <code>src/App.tsx</code>, <code>src/hooks/</code>, <code>src/lib/</code>,
+  <code>src/components/</code>, <code>firestore.rules</code>, <code>firebase-blueprint.json</code> e configs.
+  Ao alterar comportamento descrito aqui, atualize a seção correspondente.
+</footer>
+
+</main>
+</div>
+
+<script>
+  (function () {
+    var btn = document.getElementById('themeToggle');
+    var root = document.documentElement;
+    var saved = null;
+    try { saved = localStorage.getItem('echoplan-docs-theme'); } catch (e) {}
+    if (saved) root.setAttribute('data-theme', saved);
+    btn.addEventListener('click', function () {
+      var current = root.getAttribute('data-theme');
+      if (!current) {
+        current = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      var next = current === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('echoplan-docs-theme', next); } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>

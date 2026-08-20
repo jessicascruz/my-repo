@@ -1,0 +1,10 @@
+{
+  "name": "Remix: Organizador de Tarefas ",
+  "description": "Grave um áudio com as suas tarefas do dia. O app transcreve, categoriza, define prioridades e configura lembretes de forma inteligente.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
