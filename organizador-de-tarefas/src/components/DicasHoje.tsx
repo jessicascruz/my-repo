@@ -61,7 +61,7 @@ export function DicasHoje({ tasks }: DicasHojeProps) {
     if (completionRate < 35) {
       currentTips = LOW_COMPLETION_TIPS;
       statusLabel = "Foco Inicial";
-      statusColor = "text-amber-650 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900/40";
+      statusColor = "text-amber-700 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900/40";
       statusIcon = <AlertCircle className="w-3.5 h-3.5" />;
       progressColor = "bg-amber-500";
     } else if (completionRate < 75) {
@@ -136,7 +136,7 @@ export function DicasHoje({ tasks }: DicasHojeProps) {
       <div className="absolute right-0 top-0 w-32 h-32 bg-indigo-500/5 dark:bg-indigo-400/5 rounded-full blur-2xl pointer-events-none" />
 
       {/* Top Bar inside Card */}
-      <div className="flex items-center justify-between gap-2 mb-3.5 pb-2.5 border-b border-slate-50 dark:border-slate-850">
+      <div className="flex items-center justify-between gap-2 mb-3.5 pb-2.5 border-b border-slate-50 dark:border-slate-900">
         <div className="flex items-center space-x-2">
           <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 shrink-0">
             <Lightbulb className="w-4 h-4 animate-pulse [animation-duration:3s]" />
@@ -159,12 +159,12 @@ export function DicasHoje({ tasks }: DicasHojeProps) {
           </div>
 
           {/* Navigation Controls */}
-          <div className="flex items-center space-x-1 border border-slate-150 dark:border-slate-800 rounded-lg p-0.5 bg-slate-50/50 dark:bg-slate-950/30">
+          <div className="flex items-center space-x-1 border border-slate-200 dark:border-slate-800 rounded-lg p-0.5 bg-slate-50/50 dark:bg-slate-950/30">
             <button
               onClick={handlePrev}
               title="Dica Anterior"
               type="button"
-              className="p-1 rounded-md text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-850 hover:text-slate-800 dark:hover:text-slate-200 transition-all cursor-pointer"
+              className="p-1 rounded-md text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-slate-800 dark:hover:text-slate-200 transition-all cursor-pointer"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
             </button>
@@ -172,7 +172,7 @@ export function DicasHoje({ tasks }: DicasHojeProps) {
               onClick={handleShuffle}
               title="Outra sugestão"
               type="button"
-              className="p-1 rounded-md text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-850 hover:text-slate-800 dark:hover:text-slate-200 transition-all cursor-pointer"
+              className="p-1 rounded-md text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-slate-800 dark:hover:text-slate-200 transition-all cursor-pointer"
             >
               <RefreshCw className="w-3 h-3" />
             </button>
@@ -180,7 +180,7 @@ export function DicasHoje({ tasks }: DicasHojeProps) {
               onClick={handleNext}
               title="Próxima Dica"
               type="button"
-              className="p-1 rounded-md text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-850 hover:text-slate-800 dark:hover:text-slate-200 transition-all cursor-pointer"
+              className="p-1 rounded-md text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-slate-800 dark:hover:text-slate-200 transition-all cursor-pointer"
             >
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
@@ -213,7 +213,7 @@ export function DicasHoje({ tasks }: DicasHojeProps) {
                     </span>
                   )}
                 </div>
-                <p className="text-slate-700 dark:text-slate-250 text-xs sm:text-sm font-medium leading-relaxed">
+                <p className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-medium leading-relaxed">
                   "{currentTip.text}"
                 </p>
               </>

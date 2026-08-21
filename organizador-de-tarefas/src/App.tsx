@@ -216,6 +216,11 @@ export default function App() {
   // Confetti active state
   const [isConfettiActive, setIsConfettiActive] = useState<boolean>(false);
 
+  // Dark mode mora no <html>: é o que faz `html.dark body` e o color-scheme nativo valerem
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", darkMode);
+  }, [darkMode]);
+
   // Request notification permission on mount
   useEffect(() => {
     if (typeof window !== "undefined" && "Notification" in window) {
@@ -1244,8 +1249,8 @@ export default function App() {
   }
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 font-sans ${darkMode ? "dark" : ""}`}>
-      <div className="flex min-h-screen bg-[#F8FAFC] dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans overflow-hidden">
+    <div className="min-h-screen transition-colors duration-300 font-sans">
+      <div className="flex min-h-screen bg-pauta dark:bg-tinta-fundo text-tinta dark:text-pauta font-sans overflow-hidden">
       <ReminderModal
         activeReminders={activeReminders}
         onDismiss={handleDismissReminder}
@@ -1290,7 +1295,7 @@ export default function App() {
         <div className={`border-b border-slate-100 dark:border-slate-800 ${isSidebarCollapsed ? "py-4 px-1" : "p-6"}`}>
           <div className={`flex ${isSidebarCollapsed ? "flex-col items-center gap-4" : "items-center justify-between"}`}>
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-indigo-650 rounded-xl flex items-center justify-center text-white shadow-md shadow-indigo-150 shrink-0">
+              <div className="w-9 h-9 bg-indigo-650 rounded-xl flex items-center justify-center text-white shadow-md shadow-indigo-200 shrink-0">
                 <Mic className="w-5 h-5" />
               </div>
               {!isSidebarCollapsed && (
@@ -1303,7 +1308,7 @@ export default function App() {
             <div className={`flex ${isSidebarCollapsed ? "flex-col gap-2" : "items-center gap-1.5"}`}>
               <button
                 onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                className="p-1.5 bg-slate-100 dark:bg-slate-850 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-500 cursor-pointer"
+                className="p-1.5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-500 cursor-pointer"
                 title={isSidebarCollapsed ? "Expandir menu" : "Encolher menu"}
               >
                 {isSidebarCollapsed ? (
@@ -1314,7 +1319,7 @@ export default function App() {
               </button>
               <button
                 onClick={() => setIsSidebarHidden(true)}
-                className="p-1.5 bg-slate-100 dark:bg-slate-850 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-rose-500 cursor-pointer"
+                className="p-1.5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-rose-500 cursor-pointer"
                 title="Esconder menu"
               >
                 <X className="w-4 h-4" />
@@ -1335,7 +1340,7 @@ export default function App() {
               setActiveTab("diarias");
             }}
             className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold text-xs transition-colors cursor-pointer text-left ${
-              activeTab === "diarias" ? "bg-slate-100/80 dark:bg-slate-800 text-indigo-650 dark:text-indigo-400 font-extrabold" : "text-slate-655 dark:text-slate-400"
+              activeTab === "diarias" ? "bg-slate-100/80 dark:bg-slate-800 text-indigo-650 dark:text-indigo-400 font-extrabold" : "text-slate-700 dark:text-slate-400"
             }`}
             title="Fila de Atividades"
           >
@@ -1348,11 +1353,11 @@ export default function App() {
               setActiveTab("calendario");
             }}
             className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold text-xs transition-colors cursor-pointer text-left ${
-              activeTab === "calendario" ? "bg-slate-100/80 dark:bg-slate-800 text-indigo-650 dark:text-indigo-400 font-extrabold" : "text-slate-655 dark:text-slate-400"
+              activeTab === "calendario" ? "bg-slate-100/80 dark:bg-slate-800 text-indigo-650 dark:text-indigo-400 font-extrabold" : "text-slate-700 dark:text-slate-400"
             }`}
             title="Calendário Mensal"
           >
-            <Calendar className="w-4 h-4 text-indigo-655 dark:text-indigo-455 shrink-0" />
+            <Calendar className="w-4 h-4 text-indigo-700 dark:text-indigo-500 shrink-0" />
             {!isSidebarCollapsed && <span>Calendário Mensal</span>}
           </button>
 
@@ -1374,7 +1379,7 @@ export default function App() {
               setActiveTab("arquivadas");
             }}
             className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold text-xs transition-colors cursor-pointer text-left ${
-              activeTab === "arquivadas" ? "bg-slate-100/80 dark:bg-slate-800 text-amber-750 dark:text-amber-500 font-extrabold" : "text-slate-655 dark:text-slate-450"
+              activeTab === "arquivadas" ? "bg-slate-100/80 dark:bg-slate-800 text-amber-800 dark:text-amber-500 font-extrabold" : "text-slate-700 dark:text-slate-500"
             }`}
             title="Banco de Tarefas"
           >
@@ -1405,7 +1410,7 @@ export default function App() {
             className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 text-indigo-650 dark:text-indigo-400 hover:text-indigo-700 border border-indigo-100 dark:border-indigo-900/35 bg-white dark:bg-slate-900 shadow-xs rounded-xl font-bold text-xs transition-colors cursor-pointer text-left`}
             title="Baixar planilha de Planner de tarefas para imprimir"
           >
-            <Printer className="w-4 h-4 text-indigo-550 dark:text-indigo-455 shrink-0" />
+            <Printer className="w-4 h-4 text-indigo-600 dark:text-indigo-500 shrink-0" />
             {!isSidebarCollapsed && <span>Imprimir Planner</span>}
           </button>
 
@@ -1424,7 +1429,7 @@ export default function App() {
             className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-700 border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-xs rounded-xl font-bold text-xs transition-colors cursor-pointer text-left`}
             title="Copiar resumo de tarefas do dia"
           >
-            <FileDown className="w-4 h-4 text-indigo-555 dark:text-indigo-455 shrink-0" />
+            <FileDown className="w-4 h-4 text-indigo-600 dark:text-indigo-500 shrink-0" />
             {!isSidebarCollapsed && <span>Copiar Resumo</span>}
           </button>
 
@@ -1433,7 +1438,7 @@ export default function App() {
             className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-700 border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-xs rounded-xl font-bold text-xs transition-colors cursor-pointer text-left`}
             title="Importar backup de tarefas"
           >
-            <Upload className="w-4 h-4 text-indigo-555 dark:text-indigo-455 shrink-0" />
+            <Upload className="w-4 h-4 text-indigo-600 dark:text-indigo-500 shrink-0" />
             {!isSidebarCollapsed && <span>Importar Backup</span>}
           </button>
           
@@ -1450,7 +1455,7 @@ export default function App() {
             className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-700 border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-xs rounded-xl font-bold text-xs transition-colors cursor-pointer text-left`}
             title="Exportar backup de tarefas para JSON local"
           >
-            <Download className="w-4 h-4 text-indigo-555 dark:text-indigo-455 shrink-0" />
+            <Download className="w-4 h-4 text-indigo-600 dark:text-indigo-500 shrink-0" />
             {!isSidebarCollapsed && <span>Exportar Backup</span>}
           </button>
 
@@ -1459,7 +1464,7 @@ export default function App() {
             className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-700 border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-xs rounded-xl font-bold text-xs transition-colors cursor-pointer text-left`}
             title="Exportar histórico de tarefas concluídas em formato CSV"
           >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-550 shrink-0" />
+            <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-600 shrink-0" />
             {!isSidebarCollapsed && <span>Exportar Histórico (CSV)</span>}
           </button>
 
@@ -1473,7 +1478,7 @@ export default function App() {
               {!isSidebarCollapsed && <span>Categorias Personalizadas</span>}
             </span>
             {!isSidebarCollapsed && (
-              <span className="text-[9px] bg-indigo-100 dark:bg-indigo-900 text-indigo-805 dark:text-indigo-305 hover:bg-indigo-200 px-1 py-0.2 rounded">+</span>
+              <span className="text-[9px] bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 hover:bg-indigo-200 px-1 py-0.2 rounded">+</span>
             )}
           </button>
         </nav>
@@ -1504,20 +1509,20 @@ export default function App() {
             {isSidebarHidden && (
               <button
                 onClick={() => setIsSidebarHidden(false)}
-                className="hidden md:flex p-1.5 text-slate-600 dark:text-slate-350 hover:text-indigo-650 dark:hover:text-indigo-400 rounded-full border border-slate-150 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 items-center justify-center cursor-pointer transition-colors"
+                className="hidden md:flex p-1.5 text-slate-600 dark:text-slate-400 hover:text-indigo-650 dark:hover:text-indigo-400 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 items-center justify-center cursor-pointer transition-colors"
                 title="Mostrar menu lateral"
               >
                 <Menu className="w-4 h-4" />
               </button>
             )}
             <h1 className="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100 font-display flex items-center gap-2">
-              <span className="md:hidden w-8 h-8 bg-indigo-650 rounded-xl flex items-center justify-center text-white shrink-0 shadow-md shadow-indigo-150">
+              <span className="md:hidden w-8 h-8 bg-indigo-650 rounded-xl flex items-center justify-center text-white shrink-0 shadow-md shadow-indigo-200">
                 <Mic className="w-4 h-4" />
               </span>
               <span className="truncate max-w-[140px] sm:max-w-none">EchoPlan</span>
             </h1>
             <div className="hidden xs:flex items-center space-x-1 py-0.5 px-2 bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/40 rounded-lg text-[10px] font-semibold text-indigo-650 dark:text-indigo-400">
-              <Sparkles className="w-3 h-3 text-indigo-550" />
+              <Sparkles className="w-3 h-3 text-indigo-600" />
               <span>Gemini Pro</span>
             </div>
           </div>
@@ -1535,15 +1540,15 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setDarkMode(!darkMode)}
-                className="p-1.5 text-slate-600 dark:text-slate-350 hover:text-indigo-650 dark:hover:text-indigo-400 rounded-full border border-slate-150 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-center cursor-pointer transition-colors"
+                className="p-1.5 text-slate-600 dark:text-slate-400 hover:text-indigo-650 dark:hover:text-indigo-400 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-center cursor-pointer transition-colors"
                 title={darkMode ? "Ativar Modo Claro" : "Ativar Modo Escuro"}
               >
-                {darkMode ? <Sun className="w-4 h-4 text-theme-dark-sun text-amber-500 animate-none" /> : <Moon className="w-4 h-4 text-indigo-550 animate-none" />}
+                {darkMode ? <Sun className="w-4 h-4 text-amber-500 animate-none" /> : <Moon className="w-4 h-4 text-indigo-600 animate-none" />}
               </button>
 
               <button
                 onClick={() => setIsSettingsModalOpen(true)}
-                className="p-1.5 text-slate-600 dark:text-slate-300 hover:text-indigo-650 dark:hover:text-indigo-400 rounded-full border border-slate-150 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-center cursor-pointer transition-colors"
+                className="p-1.5 text-slate-600 dark:text-slate-300 hover:text-indigo-650 dark:hover:text-indigo-400 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-center cursor-pointer transition-colors"
                 title="Configurações"
               >
                 <Settings className="w-4 h-4" />
@@ -1551,13 +1556,13 @@ export default function App() {
 
               <button
                 onClick={logout}
-                className="p-1.5 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-full border border-slate-150 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-center cursor-pointer transition-colors"
+                className="p-1.5 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-center cursor-pointer transition-colors"
                 title="Sair"
               >
                 <LogOut className="w-4 h-4" />
               </button>
 
-              <div className="relative p-1.5 text-slate-600 dark:text-slate-300 hover:text-indigo-650 dark:hover:text-indigo-400 rounded-full border border-slate-150 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-center">
+              <div className="relative p-1.5 text-slate-600 dark:text-slate-300 hover:text-indigo-650 dark:hover:text-indigo-400 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-center">
                 <Bell className="w-4 h-4" />
                 {activeReminders.length > 0 && (
                   <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping" />
@@ -1576,10 +1581,10 @@ export default function App() {
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
               className={`fixed top-4 left-1/2 -translate-x-1/2 z-45 px-5 py-3 rounded-xl shadow-lg border text-sm font-semibold flex items-center space-x-2.5 max-w-md w-full shrink-0 ${
                 alertBanner.type === "success"
-                  ? "bg-emerald-50 text-emerald-800 border-emerald-250"
+                  ? "bg-emerald-50 text-emerald-800 border-emerald-300"
                   : alertBanner.type === "error"
-                  ? "bg-rose-50 text-rose-800 border-rose-250"
-                  : "bg-indigo-50 text-indigo-800 border-indigo-250"
+                  ? "bg-rose-50 text-rose-800 border-rose-300"
+                  : "bg-indigo-50 text-indigo-800 border-indigo-300"
               }`}
             >
               <span className="flex-1 leading-snug">{alertBanner.message}</span>
@@ -1612,10 +1617,10 @@ export default function App() {
                     exit={{ opacity: 0, height: 0 }}
                     className="bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100/60 dark:border-indigo-900/40 rounded-2xl p-5"
                   >
-                    <h4 className="text-xs font-bold text-indigo-550 dark:text-indigo-400 uppercase tracking-wider flex items-center mb-1.5">
+                    <h4 className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center mb-1.5">
                       <Volume2 className="w-3.5 h-3.5 mr-1" /> Transcrição do seu relato
                     </h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-350 italic leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 italic leading-relaxed">
                       "{recentTranscription}"
                     </p>
                   </motion.div>
@@ -1684,7 +1689,7 @@ export default function App() {
                   className={`py-3 px-6 text-sm font-semibold border-b-2 cursor-pointer transition-all ${
                     activeTab === "diarias"
                       ? "border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 font-bold"
-                      : "border-transparent text-slate-550 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                   }`}
                 >
                   Fila de Atividades
@@ -1694,7 +1699,7 @@ export default function App() {
                   className={`py-3 px-6 text-sm font-semibold border-b-2 cursor-pointer transition-all flex items-center gap-2 ${
                     activeTab === "historico"
                       ? "border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 font-bold"
-                      : "border-transparent text-slate-550 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                   }`}
                 >
                   <History className="w-4 h-4 shrink-0" />
@@ -1708,7 +1713,7 @@ export default function App() {
                   className={`py-3 px-6 text-sm font-semibold border-b-2 cursor-pointer transition-all flex items-center gap-2 ${
                     activeTab === "arquivadas"
                       ? "border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 font-bold"
-                      : "border-transparent text-slate-550 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                   }`}
                 >
                   <Archive className="w-4 h-4 shrink-0 text-amber-500 animate-none" />
@@ -1722,7 +1727,7 @@ export default function App() {
                   className={`py-3 px-6 text-sm font-semibold border-b-2 cursor-pointer transition-all flex items-center gap-2 ${
                     activeTab === "calendario"
                       ? "border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 font-bold"
-                      : "border-transparent text-slate-550 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                   }`}
                 >
                   <Calendar className="w-4 h-4 shrink-0" />
@@ -1733,7 +1738,7 @@ export default function App() {
                   className={`py-3 px-6 text-sm font-semibold border-b-2 cursor-pointer transition-all flex items-center gap-2 ${
                     activeTab === "notas"
                       ? "border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 font-bold"
-                      : "border-transparent text-slate-550 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                   }`}
                 >
                   <StickyNote className="w-4 h-4 shrink-0" />
@@ -1744,7 +1749,7 @@ export default function App() {
                   className={`py-3 px-6 text-sm font-semibold border-b-2 cursor-pointer transition-all flex items-center gap-2 ${
                     activeTab === "listas"
                       ? "border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 font-bold"
-                      : "border-transparent text-slate-550 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
                   }`}
                 >
                   <ListTodo className="w-4 h-4 shrink-0" />
@@ -1805,10 +1810,10 @@ export default function App() {
                       )}
 
                       {filteredTasks.length > 5 && (
-                        <div className="bg-indigo-50/60 border border-indigo-100 rounded-2xl p-4 text-xs text-slate-650 flex gap-3 shadow-xs">
-                          <Sparkles className="w-4 h-4 text-indigo-550 shrink-0 mt-0.5 animate-pulse" />
+                        <div className="bg-indigo-50/60 border border-indigo-100 rounded-2xl p-4 text-xs text-slate-700 flex gap-3 shadow-xs">
+                          <Sparkles className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5 animate-pulse" />
                           <div>
-                            <p className="font-bold text-slate-850">Visualização Focada (Máximo 5 tarefas)</p>
+                            <p className="font-bold text-slate-900">Visualização Focada (Máximo 5 tarefas)</p>
                             <p className="mt-0.5 leading-relaxed text-slate-600">
                               Sua tela inicial exibe no máximo as 5 primeiras tarefas ativas. Conclua tarefas para carregar as próximas {filteredTasks.length - 5} automaticamente ou envie-as para o <strong>Banco de Tarefas (arquivando)</strong> para tirá-las da fila!
                             </p>
@@ -1955,10 +1960,10 @@ export default function App() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-xs">
                     <div className="space-y-1">
                       <h4 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-1.5">
-                        <History className="w-4 h-4 text-indigo-505" />
+                        <History className="w-4 h-4 text-indigo-500" />
                         Histórico de Tarefas
                       </h4>
-                      <p className="text-xs text-slate-400 dark:text-slate-450">
+                      <p className="text-xs text-slate-400 dark:text-slate-500">
                         Busque e filtre todas as suas atividades ativas ou concluídas por data
                       </p>
                     </div>
@@ -1983,10 +1988,10 @@ export default function App() {
                   {/* Visual Completion Progress Over Time Dashboard */}
                   {Object.keys(completedGroupedByDate).length === 0 ? (
                     <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-5 shadow-xs">
-                      <h4 className="text-xs font-bold text-slate-750 dark:text-slate-200 uppercase tracking-wider mb-2">
+                      <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-2">
                         Desempenho por Dia
                       </h4>
-                      <p className="text-xs text-slate-400 dark:text-slate-555 italic">
+                      <p className="text-xs text-slate-400 dark:text-slate-600 italic">
                         Nenhum progresso de tarefa concluída computado ainda. Complete atividades do menu diário para preencher seu gráfico de produtividade!
                       </p>
                     </div>
@@ -2056,10 +2061,10 @@ export default function App() {
                 // Tab 3: Archived / Banco de Tarefas View
                 <div className="space-y-6">
                   {/* Archived Info Header Banner */}
-                  <div className="bg-amber-55/10 dark:bg-amber-955/10 border border-amber-200/60 dark:border-amber-900/40 rounded-2xl p-5 shadow-xs flex gap-4">
+                  <div className="bg-amber-50/10 dark:bg-amber-950/10 border border-amber-200/60 dark:border-amber-900/40 rounded-2xl p-5 shadow-xs flex gap-4">
                     <Archive className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                     <div>
-                      <h4 className="text-sm font-bold text-amber-850 dark:text-amber-500 uppercase tracking-wide flex items-center gap-2 mb-1 font-display">
+                      <h4 className="text-sm font-bold text-amber-900 dark:text-amber-500 uppercase tracking-wide flex items-center gap-2 mb-1 font-display">
                         Banco de Tarefas (Arquivadas)
                       </h4>
                       <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-sans">
@@ -2080,7 +2085,7 @@ export default function App() {
                             setSelectedCategory("Todas");
                             setSelectedPriority("Todas");
                           }}
-                          className="text-xs text-indigo-150 hover:underline font-semibold cursor-pointer"
+                          className="text-xs text-indigo-200 hover:underline font-semibold cursor-pointer"
                         >
                           Limpar Filtros
                         </button>
@@ -2103,7 +2108,7 @@ export default function App() {
                           ))
                         ) : (
                           <div className="border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-10 text-center flex flex-col items-center justify-center min-h-[220px]">
-                            <Archive className="w-10 h-10 text-slate-350 dark:text-slate-500 shrink-0 mb-3" />
+                            <Archive className="w-10 h-10 text-slate-400 dark:text-slate-500 shrink-0 mb-3" />
                             <h4 className="font-bold font-display text-slate-500 dark:text-slate-400 text-sm">
                               Nenhuma tarefa no seu banco
                             </h4>
@@ -2124,7 +2129,7 @@ export default function App() {
         {/* Floating Action Button (FAB) for mobile additions */}
         <button
           onClick={() => setIsMobileAddOpen(true)}
-          className="lg:hidden fixed bottom-20 right-6 z-40 w-14 h-14 bg-indigo-600 hover:bg-indigo-750 text-white rounded-full shadow-lg shadow-indigo-200 dark:shadow-none flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
+          className="lg:hidden fixed bottom-20 right-6 z-40 w-14 h-14 bg-indigo-600 hover:bg-indigo-800 text-white rounded-full shadow-lg shadow-indigo-200 dark:shadow-none flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
           title="Adicionar Tarefa ou Gravar Áudio"
         >
           <Mic className="w-5 h-5" />
@@ -2162,7 +2167,7 @@ export default function App() {
                   </div>
                   <button
                     onClick={() => setIsMobileAddOpen(false)}
-                    className="p-1.5 bg-slate-150 dark:bg-slate-850 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-500 cursor-pointer"
+                    className="p-1.5 bg-slate-200 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-500 cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -2181,10 +2186,10 @@ export default function App() {
 
                   {recentTranscription && (
                     <div className="bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100/60 dark:border-indigo-900/40 rounded-2xl p-5">
-                      <h4 className="text-xs font-bold text-indigo-550 dark:text-indigo-400 uppercase tracking-wider flex items-center mb-1.5">
+                      <h4 className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center mb-1.5">
                         <Volume2 className="w-3.5 h-3.5 mr-1" /> Transcrição do seu relato
                       </h4>
-                      <p className="text-xs text-slate-600 dark:text-slate-350 italic leading-relaxed">
+                      <p className="text-xs text-slate-600 dark:text-slate-400 italic leading-relaxed">
                         "{recentTranscription}"
                       </p>
                     </div>
@@ -2320,7 +2325,7 @@ export default function App() {
                   <div className={`flex ${isMobileMenuCollapsed ? "flex-col gap-2" : "items-center gap-1.5"}`}>
                     <button
                       onClick={() => setIsMobileMenuCollapsed(!isMobileMenuCollapsed)}
-                      className="p-1.5 bg-slate-100 dark:bg-slate-850 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-500 cursor-pointer"
+                      className="p-1.5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-500 cursor-pointer"
                       title={isMobileMenuCollapsed ? "Expandir menu" : "Encolher menu"}
                     >
                       {isMobileMenuCollapsed ? (
@@ -2331,7 +2336,7 @@ export default function App() {
                     </button>
                     <button
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="p-1.5 bg-slate-100 dark:bg-slate-850 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-rose-500 cursor-pointer"
+                      className="p-1.5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-rose-500 cursor-pointer"
                       title="Esconder menu"
                     >
                       <X className="w-4 h-4" />
@@ -2340,7 +2345,7 @@ export default function App() {
                 </div>
 
                 {/* User profile */}
-                <div className={`${isMobileMenuCollapsed ? "p-1 justify-center" : "p-3 gap-3"} bg-slate-50 dark:bg-slate-950/40 rounded-2xl border border-slate-150 dark:border-slate-800/80 flex items-center`}>
+                <div className={`${isMobileMenuCollapsed ? "p-1 justify-center" : "p-3 gap-3"} bg-slate-50 dark:bg-slate-950/40 rounded-2xl border border-slate-200 dark:border-slate-800/80 flex items-center`}>
                   {user.photoURL ? (
                     <img src={user.photoURL} alt={user.displayName || "User"} className="w-10 h-10 rounded-xl shadow-sm object-cover" referrerPolicy="no-referrer" />
                   ) : (
@@ -2428,7 +2433,7 @@ export default function App() {
                     {!isMobileMenuCollapsed && (
                       <>
                         <span>Banco de Tarefas</span>
-                        <span className="bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-250 text-[10px] font-bold px-2 py-0.5 rounded-full ml-auto">
+                        <span className="bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full ml-auto">
                           {tasks.filter((t) => t.archived).length}
                         </span>
                       </>
@@ -2467,10 +2472,10 @@ export default function App() {
                       navigator.clipboard.writeText(summary);
                       triggerBanner("Resumo copiado para a área de transferência!", "success");
                     }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-slate-150 dark:border-slate-800 cursor-pointer`}
+                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-slate-200 dark:border-slate-800 cursor-pointer`}
                     title="Copiar Resumo"
                   >
-                    <FileDown className="w-4 h-4 shrink-0 text-indigo-550" />
+                    <FileDown className="w-4 h-4 shrink-0 text-indigo-600" />
                     {!isMobileMenuCollapsed && <span>Copiar Resumo</span>}
                   </button>
 
@@ -2479,10 +2484,10 @@ export default function App() {
                       if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
                       fileInputRef.current?.click();
                     }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-slate-150 dark:border-slate-800 cursor-pointer`}
+                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-slate-200 dark:border-slate-800 cursor-pointer`}
                     title="Importar Backup"
                   >
-                    <Upload className="w-4 h-4 shrink-0 text-indigo-555" />
+                    <Upload className="w-4 h-4 shrink-0 text-indigo-600" />
                     {!isMobileMenuCollapsed && <span>Importar Backup</span>}
                   </button>
 
@@ -2491,10 +2496,10 @@ export default function App() {
                       if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
                       handleExportBackup();
                     }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-slate-150 dark:border-slate-800 cursor-pointer`}
+                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-slate-200 dark:border-slate-800 cursor-pointer`}
                     title="Exportar Backup"
                   >
-                    <Download className="w-4 h-4 shrink-0 text-indigo-555" />
+                    <Download className="w-4 h-4 shrink-0 text-indigo-600" />
                     {!isMobileMenuCollapsed && <span>Exportar Backup</span>}
                   </button>
 
@@ -2503,10 +2508,10 @@ export default function App() {
                       if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
                       handleExportCompletedCSV();
                     }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-slate-150 dark:border-slate-800 cursor-pointer`}
+                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-slate-200 dark:border-slate-800 cursor-pointer`}
                     title="Exportar Histórico (CSV)"
                   >
-                    <FileSpreadsheet className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-505" />
+                    <FileSpreadsheet className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-500" />
                     {!isMobileMenuCollapsed && <span>Exportar Histórico (CSV)</span>}
                   </button>
 
@@ -2518,13 +2523,13 @@ export default function App() {
                     className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-indigo-650 dark:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-dashed border-indigo-200 dark:border-indigo-900/45 cursor-pointer bg-indigo-50/10`}
                     title="Categorias Personalizadas"
                   >
-                    <Settings className="w-4 h-4 shrink-0 text-indigo-550" />
+                    <Settings className="w-4 h-4 shrink-0 text-indigo-600" />
                     {!isMobileMenuCollapsed && <span>Categorias Personalizadas</span>}
                   </button>
                 </div>
 
                 {/* Settings & Logout */}
-                <div className="space-y-1 pt-3 border-t border-slate-150 dark:border-slate-800">
+                <div className="space-y-1 pt-3 border-t border-slate-200 dark:border-slate-800">
                   <button
                     onClick={() => {
                       if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
@@ -2540,7 +2545,7 @@ export default function App() {
                       </>
                     ) : (
                       <>
-                        <Moon className="w-4 h-4 text-indigo-550 shrink-0" />
+                        <Moon className="w-4 h-4 text-indigo-600 shrink-0" />
                         {!isMobileMenuCollapsed && <span>Modo Escuro</span>}
                       </>
                     )}

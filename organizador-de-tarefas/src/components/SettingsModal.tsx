@@ -273,7 +273,7 @@ export function SettingsModal({
                         onChange={(e) =>
                           onUpdateDndSettings({ ...dndSettings, startTime: e.target.value })
                         }
-                        className="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-750 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                        className="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
                       />
                     </div>
                     <div>
@@ -285,7 +285,7 @@ export function SettingsModal({
                         onChange={(e) =>
                           onUpdateDndSettings({ ...dndSettings, endTime: e.target.value })
                         }
-                        className="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-755 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                        className="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
                       />
                     </div>
                   </div>
@@ -294,8 +294,8 @@ export function SettingsModal({
                 {/* Silenciar Lembretes de Prioridade Baixa */}
                 <div className="flex items-center justify-between mt-4 pt-3 border-t border-slate-100/70 dark:border-slate-800/60">
                   <div className="flex flex-col pr-2">
-                    <span className="text-xs font-semibold text-slate-705 dark:text-slate-250">Silenciar Prioridade Baixa</span>
-                    <span className="text-[9px] text-slate-405 dark:text-slate-500">Nunca receber lembretes de tarefas de prioridade Baixa.</span>
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Silenciar Prioridade Baixa</span>
+                    <span className="text-[9px] text-slate-400 dark:text-slate-500">Nunca receber lembretes de tarefas de prioridade Baixa.</span>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer select-none shrink-0">
                     <input
@@ -315,8 +315,8 @@ export function SettingsModal({
                 <div className="mt-4 pt-3 border-t border-slate-100/70 dark:border-slate-800/60">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex flex-col pr-2">
-                      <span className="text-xs font-semibold text-slate-705 dark:text-slate-250">Período de Lembretes Ativos</span>
-                      <span className="text-[9px] text-slate-405 dark:text-slate-500">Permitir lembretes apenas em horários e dias da semana específicos.</span>
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Período de Lembretes Ativos</span>
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500">Permitir lembretes apenas em horários e dias da semana específicos.</span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer select-none shrink-0">
                       <input
@@ -344,7 +344,7 @@ export function SettingsModal({
                             onChange={(e) =>
                               onUpdateDndSettings({ ...dndSettings, activeRemindersStartTime: e.target.value })
                             }
-                            className="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-755 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                            className="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
                           />
                         </div>
                         <div>
@@ -356,7 +356,7 @@ export function SettingsModal({
                             onChange={(e) =>
                               onUpdateDndSettings({ ...dndSettings, activeRemindersEndTime: e.target.value })
                             }
-                            className="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-755 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                            className="w-full p-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
                           />
                         </div>
                       </div>
@@ -409,8 +409,8 @@ export function SettingsModal({
                   {/* Category Pie Chart */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col pr-2">
-                      <span className="text-xs font-semibold text-slate-705 dark:text-slate-200">Distribuição de Categorias</span>
-                      <span className="text-[9px] text-slate-405 dark:text-slate-500">Gráfico circular das tarefas realizadas hoje.</span>
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">Distribuição de Categorias</span>
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500">Gráfico circular das tarefas realizadas hoje.</span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer select-none shrink-0">
                       <input
@@ -428,8 +428,8 @@ export function SettingsModal({
                   {/* Dicas de Hoje */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col pr-2">
-                      <span className="text-xs font-semibold text-slate-705 dark:text-slate-200">Dicas e Insights de Foco</span>
-                      <span className="text-[9px] text-slate-405 dark:text-slate-500">Sugestões e conselhos diários de produtividade.</span>
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">Dicas e Insights de Foco</span>
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500">Sugestões e conselhos diários de produtividade.</span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer select-none shrink-0">
                       <input
@@ -447,8 +447,8 @@ export function SettingsModal({
                   {/* Daily Goal */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col pr-2">
-                      <span className="text-xs font-semibold text-slate-705 dark:text-slate-200">Barra de Meta Diária</span>
-                      <span className="text-[9px] text-slate-405 dark:text-slate-500">Exibe a porcentagem atual concluída do objetivo do dia.</span>
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">Barra de Meta Diária</span>
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500">Exibe a porcentagem atual concluída do objetivo do dia.</span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer select-none shrink-0">
                       <input
@@ -466,8 +466,8 @@ export function SettingsModal({
                   {/* Weekly Progress */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col pr-2">
-                      <span className="text-xs font-semibold text-slate-705 dark:text-slate-200">Histórico de 7 Dias</span>
-                      <span className="text-[9px] text-slate-405 dark:text-slate-500">Gráfico de barras vertical do progresso semanal comparativo.</span>
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">Histórico de 7 Dias</span>
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500">Gráfico de barras vertical do progresso semanal comparativo.</span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer select-none shrink-0">
                       <input
@@ -485,8 +485,8 @@ export function SettingsModal({
                   {/* Productivity Summary */}
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col pr-2">
-                      <span className="text-xs font-semibold text-slate-705 dark:text-slate-200">Resumo de Produtividade</span>
-                      <span className="text-[9px] text-slate-405 dark:text-slate-500">Resumo analítico das maiores conquistas e desempenho.</span>
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">Resumo de Produtividade</span>
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500">Resumo analítico das maiores conquistas e desempenho.</span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer select-none shrink-0">
                       <input
@@ -504,8 +504,8 @@ export function SettingsModal({
                   {/* Sugestão de Tarefas */}
                   <div className="flex items-center justify-between font-normal">
                     <div className="flex flex-col pr-2">
-                      <span className="text-xs font-semibold text-slate-705 dark:text-slate-200">Sugestão Automática de Foco</span>
-                      <span className="text-[9px] text-slate-405 dark:text-slate-500">Recomendação dinâmica de tarefa prioritária para focar agora.</span>
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">Sugestão Automática de Foco</span>
+                      <span className="text-[9px] text-slate-400 dark:text-slate-500">Recomendação dinâmica de tarefa prioritária para focar agora.</span>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer select-none shrink-0">
                       <input
@@ -546,19 +546,19 @@ export function SettingsModal({
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-slate-600 dark:text-slate-400">Criar Nova Tarefa</span>
-                    <kbd className="px-1.5 py-0.5 text-[9px] font-mono font-bold bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-250 dark:border-slate-700 rounded-md">
+                    <kbd className="px-1.5 py-0.5 text-[9px] font-mono font-bold bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded-md">
                       Ctrl + N
                     </kbd>
                   </div>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-slate-600 dark:text-slate-400">Salvar durante edição</span>
-                    <kbd className="px-1.5 py-0.5 text-[9px] font-mono font-bold bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-250 dark:border-slate-700 rounded-md">
+                    <kbd className="px-1.5 py-0.5 text-[9px] font-mono font-bold bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded-md">
                       Ctrl + Enter
                     </kbd>
                   </div>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-slate-600 dark:text-slate-400">Cancelar edição / Fechar</span>
-                    <kbd className="px-1.5 py-0.5 text-[9px] font-mono font-bold bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-250 dark:border-slate-700 rounded-md">
+                    <kbd className="px-1.5 py-0.5 text-[9px] font-mono font-bold bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-700 rounded-md">
                       Esc
                     </kbd>
                   </div>

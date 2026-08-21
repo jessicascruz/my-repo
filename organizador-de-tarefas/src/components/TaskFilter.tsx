@@ -178,12 +178,12 @@ export function TaskFilter({
             <span className="text-2xl font-bold font-display text-rose-600 dark:text-rose-500 block mt-1">
               {highPriorityCount}
             </span>
-            <span className="text-[11px] text-rose-450 dark:text-rose-400 block mt-0.5">
+            <span className="text-[11px] text-rose-500 dark:text-rose-400 block mt-0.5">
               {highPriorityCount > 0 ? "⚠️ Exige atenção prioritária" : "✅ Nada urgente pedindo foco"}
             </span>
           </div>
           <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-            highPriorityCount > 0 ? "bg-rose-50 dark:bg-rose-950/40 text-rose-500 dark:text-rose-450" : "bg-slate-50 dark:bg-slate-950/20 text-slate-455 dark:text-slate-500"
+            highPriorityCount > 0 ? "bg-rose-50 dark:bg-rose-950/40 text-rose-500 dark:text-rose-500" : "bg-slate-50 dark:bg-slate-950/20 text-slate-500 dark:text-slate-500"
           }`}>
             <AlertCircle className="w-6 h-6" />
           </div>
@@ -211,7 +211,7 @@ export function TaskFilter({
               className={`absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-all cursor-pointer flex items-center justify-center ${
                 isListening
                   ? "bg-rose-500 text-white animate-pulse shadow-[0_0_8px_rgba(244,63,94,0.6)]"
-                  : "text-slate-450 hover:text-indigo-650 dark:text-slate-500 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-900"
+                  : "text-slate-500 hover:text-indigo-650 dark:text-slate-500 dark:hover:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-900"
               }`}
             >
               {isListening ? (
@@ -225,7 +225,7 @@ export function TaskFilter({
 
         {/* Status indicator on listening or error */}
         {(isListening || errorMessage) && (
-          <div id="voice-status-feedback" className="flex items-center space-x-2 text-xs px-3 py-1.5 rounded-xl bg-indigo-50/55 dark:bg-indigo-950/25 text-indigo-700 dark:text-indigo-455 animate-fadeIn">
+          <div id="voice-status-feedback" className="flex items-center space-x-2 text-xs px-3 py-1.5 rounded-xl bg-indigo-50/55 dark:bg-indigo-950/25 text-indigo-700 dark:text-indigo-500 animate-fadeIn">
             {errorMessage ? (
               <>
                 <Info className="w-3.5 h-3.5 text-rose-500 shrink-0" />
@@ -259,7 +259,7 @@ export function TaskFilter({
             >
               <option value="Todas" className="dark:bg-slate-950">Todas as Categorias</option>
               {categories.map((cat) => (
-                <option key={cat} value={cat} className="dark:bg-slate-955">
+                <option key={cat} value={cat} className="dark:bg-slate-950">
                   {cat}
                 </option>
               ))}
@@ -276,7 +276,7 @@ export function TaskFilter({
               className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-950 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
             >
               {PRIORITIES.map((prio) => (
-                <option key={prio} value={prio} className="dark:bg-slate-955">
+                <option key={prio} value={prio} className="dark:bg-slate-950">
                   {prio === "Todas" ? "Todas as Prioridades" : `${prio}`}
                 </option>
               ))}
@@ -306,7 +306,7 @@ export function TaskFilter({
             <button
               onClick={onClearAll}
               disabled={totalCount === 0}
-              className="text-rose-600 dark:text-rose-450 hover:text-rose-700 dark:hover:text-rose-400 font-semibold disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+              className="text-rose-600 dark:text-rose-500 hover:text-rose-700 dark:hover:text-rose-400 font-semibold disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
             >
               Limpar Minhas Tarefas
             </button>

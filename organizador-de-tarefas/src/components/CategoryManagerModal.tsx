@@ -123,7 +123,7 @@ export function CategoryManagerModal({
                   value={newCatName}
                   onChange={(e) => setNewCatName(e.target.value)}
                   maxLength={25}
-                  className="flex-1 px-3.5 py-2 text-xs border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder:text-slate-450 dark:placeholder:text-slate-600"
+                  className="flex-1 px-3.5 py-2 text-xs border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder:text-slate-500 dark:placeholder:text-slate-600"
                 />
                 <button
                   type="submit"
@@ -156,7 +156,7 @@ export function CategoryManagerModal({
                               value={editingValue}
                               onChange={(e) => setEditingValue(e.target.value)}
                               maxLength={25}
-                              className="w-full px-2 py-1 text-xs border border-slate-200 dark:border-slate-705 rounded text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-955 focus:outline-none focus:ring-1 focus:ring-indigo-505"
+                              className="w-full px-2 py-1 text-xs border border-slate-200 dark:border-slate-700 rounded text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-950 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                               autoFocus
                             />
                             <button
@@ -192,7 +192,7 @@ export function CategoryManagerModal({
                                 </button>
                                 <button
                                   onClick={() => setCategoryToDelete(cat)}
-                                  className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-400 hover:text-rose-600 dark:hover:text-rose-450 transition-colors cursor-pointer"
+                                  className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded text-slate-400 hover:text-rose-600 dark:hover:text-rose-500 transition-colors cursor-pointer"
                                   title="Excluir"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -209,8 +209,8 @@ export function CategoryManagerModal({
             </div>
 
             {/* Footer info banner */}
-            <div className="bg-slate-50 dark:bg-slate-950/20 border-t border-slate-100 dark:border-slate-800 p-4 text-[11px] text-slate-400 dark:text-slate-555 flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 text-slate-450 dark:text-slate-500 shrink-0 mt-0.5" />
+            <div className="bg-slate-50 dark:bg-slate-950/20 border-t border-slate-100 dark:border-slate-800 p-4 text-[11px] text-slate-400 dark:text-slate-600 flex items-start gap-2">
+              <AlertCircle className="w-4 h-4 text-slate-500 dark:text-slate-500 shrink-0 mt-0.5" />
               <span>
                 Ao excluir uma categoria, todas as tarefas vinculadas a ela serão automaticamente transferidas para o grupo <strong>Geral</strong>. Ao renomear, as tarefas serão atualizadas automaticamente.
               </span>

@@ -329,7 +329,7 @@ export function AudioRecorder({ onTasksExtracted, onError }: AudioRecorderProps)
       <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-50/50 dark:bg-amber-950/10 rounded-full blur-2xl pointer-events-none" />
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-100 dark:border-slate-850 pb-3 mb-6 items-center justify-between">
+      <div className="flex border-b border-slate-100 dark:border-slate-900 pb-3 mb-6 items-center justify-between">
         <h3 className="font-bold text-slate-800 dark:text-slate-100 font-display flex items-center">
           <Sparkles className="w-5 h-5 text-indigo-500 mr-2" />
           Como planejar hoje?
@@ -373,7 +373,7 @@ export function AudioRecorder({ onTasksExtracted, onError }: AudioRecorderProps)
       {isProcessing && (
         <div className="absolute inset-0 bg-white/90 dark:bg-slate-900/95 backdrop-blur-xs flex flex-col items-center justify-center z-10 p-6 text-center">
           <Loader2 className="w-12 h-12 text-indigo-500 animate-spin mb-4" />
-          <h4 className="font-bold text-slate-800 dark:text-slate-150 font-display text-lg">
+          <h4 className="font-bold text-slate-800 dark:text-slate-200 font-display text-lg">
             O Gemini está organizando o seu dia...
           </h4>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-xs">
@@ -430,8 +430,8 @@ export function AudioRecorder({ onTasksExtracted, onError }: AudioRecorderProps)
             </div>
           ) : (
             <div className="w-full">
-              <div className="bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-850 rounded-xl p-4 mb-4">
-                <p className="text-xs font-bold text-slate-400 dark:text-slate-550 uppercase tracking-widest mb-2">
+              <div className="bg-slate-50 dark:bg-slate-950/40 border border-slate-100 dark:border-slate-900 rounded-xl p-4 mb-4">
+                <p className="text-xs font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest mb-2">
                   Áudio Gravado com Sucesso
                 </p>
                 <div className="flex items-center justify-between">
@@ -447,10 +447,10 @@ export function AudioRecorder({ onTasksExtracted, onError }: AudioRecorderProps)
 
                 {transcriptText && (
                   <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800">
-                    <p className="text-xs font-bold text-slate-400 dark:text-slate-550 uppercase tracking-widest mb-1">
+                    <p className="text-xs font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest mb-1">
                       Transcrição local (tempo real):
                     </p>
-                    <p className="text-sm text-slate-600 dark:text-slate-300 bg-white/70 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-855 p-2.5 rounded-lg italic select-text">
+                    <p className="text-sm text-slate-600 dark:text-slate-300 bg-white/70 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-900 p-2.5 rounded-lg italic select-text">
                       "{transcriptText}"
                     </p>
                   </div>
@@ -494,7 +494,7 @@ export function AudioRecorder({ onTasksExtracted, onError }: AudioRecorderProps)
             onChange={(e) => setManualText(e.target.value)}
             placeholder="Ex: Fazer relatório semanal às 11:30, passar no mercado para comprar leite de tarde, e às 19:00 caminhar no parque por 30 minutos."
             rows={4}
-            className="w-full p-4 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder:text-slate-400 dark:placeholder:text-slate-650 resize-none"
+            className="w-full p-4 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder:text-slate-400 dark:placeholder:text-slate-700 resize-none"
           />
           <div className="flex justify-end mt-3">
             <Tooltip

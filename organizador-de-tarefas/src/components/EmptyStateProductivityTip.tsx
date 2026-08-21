@@ -107,7 +107,7 @@ export function EmptyStateProductivityTip() {
   };
 
   return (
-    <div className="bg-slate-50/55 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-850 rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center text-center max-w-xl mx-auto my-6 shadow-sm">
+    <div className="bg-slate-50/55 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-900 rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center text-center max-w-xl mx-auto my-6 shadow-sm">
       <div className="relative mb-5 flex items-center justify-center">
         <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 opacity-20 blur-md animate-pulse duration-3000" />
         <div className="relative p-3 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-full shadow-sm text-indigo-500">
@@ -143,11 +143,11 @@ export function EmptyStateProductivityTip() {
             </span>
           </div>
 
-          <div className="space-y-1 bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-850 shadow-xs max-w-md mx-auto">
-            <h4 className="font-bold text-sm text-slate-750 dark:text-slate-250 flex items-center justify-center gap-1.5">
+          <div className="space-y-1 bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-900 shadow-xs max-w-md mx-auto">
+            <h4 className="font-bold text-sm text-slate-800 dark:text-slate-300 flex items-center justify-center gap-1.5">
               <span>{currentTip.title}</span>
             </h4>
-            <p className="text-xs text-slate-600 dark:text-slate-350 italic leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-slate-400 italic leading-relaxed">
               "{currentTip.text}"
             </p>
           </div>

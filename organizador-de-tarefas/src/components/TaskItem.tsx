@@ -66,14 +66,14 @@ const CATEGORY_ICONS: Record<string, any> = {
 };
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Trabalho: "bg-blue-50 text-blue-600 border-blue-105",
-  Pessoal: "bg-purple-50 text-purple-600 border-purple-105",
-  Estudos: "bg-indigo-50 text-indigo-600 border-indigo-105",
-  Saúde: "bg-rose-50 text-rose-600 border-rose-105",
-  Finanças: "bg-emerald-50 text-emerald-600 border-emerald-105",
-  Casa: "bg-amber-50 text-amber-600 border-amber-105",
-  Geral: "bg-slate-50 text-slate-600 border-slate-105",
-  Outros: "bg-teal-50 text-teal-600 border-teal-105",
+  Trabalho: "bg-blue-50 text-blue-600 border-blue-100",
+  Pessoal: "bg-purple-50 text-purple-600 border-purple-100",
+  Estudos: "bg-indigo-50 text-indigo-600 border-indigo-100",
+  Saúde: "bg-rose-50 text-rose-600 border-rose-100",
+  Finanças: "bg-emerald-50 text-emerald-600 border-emerald-100",
+  Casa: "bg-amber-50 text-amber-600 border-amber-100",
+  Geral: "bg-slate-50 text-slate-600 border-slate-100",
+  Outros: "bg-teal-50 text-teal-600 border-teal-100",
 };
 
 const PRIORITY_BADGES: Record<Priority, string> = {
@@ -557,13 +557,13 @@ export function TaskItem({
     }
     // Dynamic naming fallback colors
     const colors = [
-      "bg-teal-50 text-teal-600 border-teal-105",
-      "bg-cyan-50 text-cyan-600 border-cyan-105",
-      "bg-emerald-50 text-emerald-600 border-emerald-105",
-      "bg-orange-50 text-orange-650 border-orange-105",
-      "bg-pink-50 text-pink-600 border-pink-105",
-      "bg-fuchsia-50 text-fuchsia-600 border-fuchsia-105",
-      "bg-sky-50 text-sky-600 border-sky-105",
+      "bg-teal-50 text-teal-600 border-teal-100",
+      "bg-cyan-50 text-cyan-600 border-cyan-100",
+      "bg-emerald-50 text-emerald-600 border-emerald-100",
+      "bg-orange-50 text-orange-700 border-orange-100",
+      "bg-pink-50 text-pink-600 border-pink-100",
+      "bg-fuchsia-50 text-fuchsia-600 border-fuchsia-100",
+      "bg-sky-50 text-sky-600 border-sky-100",
     ];
     let hash = 0;
     for (let i = 0; i < cat.length; i++) {
@@ -727,7 +727,7 @@ export function TaskItem({
           ? "border-amber-400 bg-amber-50/15 dark:bg-amber-950/20 ring-2 ring-amber-400/25 shadow-md"
           : isOverdue
           ? "border-rose-500 bg-rose-50/5 dark:bg-rose-950/10 ring-1 ring-rose-500/20 shadow-xs hover:border-rose-600"
-          : "border-slate-150 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-indigo-100 dark:hover:border-indigo-900"
+          : "border-slate-200 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-indigo-100 dark:hover:border-indigo-900"
       } ${!task.completed && isDraggable ? "hover:cursor-default" : ""}`}
     >
       {showAnimation && (
@@ -774,7 +774,7 @@ export function TaskItem({
               type="text"
               value={editTitle}
               onChange={(e) => setEditTitle(e.target.value)}
-              className="w-full px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-555 focus:border-transparent"
+              className="w-full px-3 py-1.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
             />
           </div>
 
@@ -818,7 +818,7 @@ export function TaskItem({
               <Tag className="w-3.5 h-3.5 text-indigo-500" />
               Tags / Marcadores (Enter ou vírgula para cadastrar)
             </label>
-            <div className="flex border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 rounded-lg px-2 py-1 items-center focus-within:ring-1 focus-within:ring-indigo-550 transition-all">
+            <div className="flex border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 rounded-lg px-2 py-1 items-center focus-within:ring-1 focus-within:ring-indigo-600 transition-all">
               <input
                 type="text"
                 value={editTagInput}
@@ -845,7 +845,7 @@ export function TaskItem({
                   }
                 }}
                 placeholder="Adicionar nova tag..."
-                className="w-full text-xs bg-transparent border-none p-0.5 focus:outline-none focus:ring-0 text-slate-700 dark:text-slate-200 placeholder:text-slate-450 dark:placeholder:text-slate-600"
+                className="w-full text-xs bg-transparent border-none p-0.5 focus:outline-none focus:ring-0 text-slate-700 dark:text-slate-200 placeholder:text-slate-500 dark:placeholder:text-slate-600"
               />
               {editTagInput.trim() && (
                 <button
@@ -869,13 +869,13 @@ export function TaskItem({
                 {editTags.map((tg) => (
                   <span
                     key={tg}
-                    className="inline-flex items-center text-[10px] font-bold bg-indigo-50/70 dark:bg-indigo-950/45 text-indigo-700 dark:text-indigo-400 border border-indigo-105 dark:border-indigo-900/40 rounded-full px-2 py-0.5"
+                    className="inline-flex items-center text-[10px] font-bold bg-indigo-50/70 dark:bg-indigo-950/45 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/40 rounded-full px-2 py-0.5"
                   >
                     #{tg}
                     <button
                       type="button"
                       onClick={() => setEditTags(editTags.filter((tKey) => tKey !== tg))}
-                      className="ml-1 text-indigo-405 hover:text-indigo-650 dark:hover:text-indigo-200 transition-colors focus:outline-none"
+                      className="ml-1 text-indigo-400 hover:text-indigo-650 dark:hover:text-indigo-200 transition-colors focus:outline-none"
                     >
                       <X className="w-2.5 h-2.5" />
                     </button>
@@ -1004,7 +1004,7 @@ export function TaskItem({
               {!task.completed && isDraggable && (
                 <Tooltip content="Clique e arraste este marcador para reordenar esta tarefa manualmente." position="top">
                   <div 
-                    className="mt-1.5 flex-shrink-0 cursor-grab active:cursor-grabbing text-slate-350 hover:text-slate-650 p-0.5 select-none transition-colors duration-150"
+                    className="mt-1.5 flex-shrink-0 cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-700 p-0.5 select-none transition-colors duration-150"
                   >
                     <GripVertical className="w-4 h-4" />
                   </div>
@@ -1130,7 +1130,7 @@ export function TaskItem({
                   {/* Warning Badge for Due Soon (< 1h) */}
                   {!task.completed && isDueSoon && (
                     <span
-                      className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full border bg-amber-50 dark:bg-amber-950/30 text-amber-650 dark:text-amber-400 border-amber-200 dark:border-amber-900/50 animate-pulse"
+                      className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full border bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/50 animate-pulse"
                     >
                       <AlertTriangle className="w-3.5 h-3.5 mr-1 text-amber-500 dark:text-amber-400 shrink-0" />
                       <span>Lembrete em breve! (&lt; 1h)</span>
@@ -1157,7 +1157,7 @@ export function TaskItem({
                   {task.tags && task.tags.length > 0 && task.tags.map((tg) => (
                     <span
                       key={tg}
-                      className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full border bg-slate-50/50 dark:bg-slate-900 border-slate-200/60 dark:border-slate-800 text-slate-600 dark:text-slate-355 shadow-xs leading-none"
+                      className="inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full border bg-slate-50/50 dark:bg-slate-900 border-slate-200/60 dark:border-slate-800 text-slate-600 dark:text-slate-400 shadow-xs leading-none"
                     >
                       <Tag className="w-2.5 h-2.5 mr-1 text-indigo-400 dark:text-indigo-500 shrink-0" />
                       {tg}
@@ -1174,7 +1174,7 @@ export function TaskItem({
 
                   {/* Subtasks Progress Badge */}
                   {task.subtasks && task.subtasks.length > 0 && (
-                    <span className="bg-emerald-50/70 text-emerald-700 border border-emerald-105 inline-flex items-center text-[9px] font-bold px-1.5 py-0.5 rounded">
+                    <span className="bg-emerald-50/70 text-emerald-700 border border-emerald-100 inline-flex items-center text-[9px] font-bold px-1.5 py-0.5 rounded">
                       <ListTodo className="w-2.5 h-2.5 mr-1 text-emerald-500" />
                       {task.subtasks.filter((st) => st.completed).length}/{task.subtasks.length} subtarefas
                     </span>
@@ -1241,7 +1241,7 @@ export function TaskItem({
                     }`}
                     title={isFocused ? "Parar de focar nesta atividade" : "Focar nesta atividade"}
                   >
-                    <Target className={`w-3.5 h-3.5 ${isFocused ? "animate-pulse text-amber-650" : ""}`} />
+                    <Target className={`w-3.5 h-3.5 ${isFocused ? "animate-pulse text-amber-700" : ""}`} />
                     <span className="text-[10px] hidden sm:inline select-none">
                       {isFocused ? "Focado" : "Focar"}
                     </span>
@@ -1266,7 +1266,7 @@ export function TaskItem({
                   }}
                   className={`p-1 px-1.5 rounded-lg transition-colors cursor-pointer ${
                     task.archived
-                      ? "text-amber-650 hover:text-amber-700 bg-amber-50 hover:bg-amber-100"
+                      ? "text-amber-700 hover:text-amber-700 bg-amber-50 hover:bg-amber-100"
                       : "text-slate-400 hover:text-slate-600 hover:bg-slate-50"
                   }`}
                   title={task.archived ? "Desarquivar (mover de volta)" : "Arquivar tarefa"}
@@ -1337,7 +1337,7 @@ export function TaskItem({
                         className="text-[10px] text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-bold flex items-center gap-1 px-2 py-0.5 bg-indigo-50 dark:bg-indigo-950/30 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 rounded-lg transition-colors cursor-pointer border border-indigo-100 dark:border-indigo-900/40"
                         title="Gravar nota de voz rápida e anexar à descrição"
                       >
-                        <Mic className="w-3 h-3 text-indigo-550" />
+                        <Mic className="w-3 h-3 text-indigo-600" />
                         <span>Gravar Nota Rápida</span>
                       </button>
                     )}
@@ -1371,7 +1371,7 @@ export function TaskItem({
                         <button
                           type="button"
                           onClick={cancelNoteRecording}
-                          className="p-1 text-slate-400 hover:text-slate-650 rounded-lg transition-colors cursor-pointer"
+                          className="p-1 text-slate-400 hover:text-slate-700 rounded-lg transition-colors cursor-pointer"
                           title="Cancelar gravação"
                         >
                           <X className="w-4 h-4" />
@@ -1383,7 +1383,7 @@ export function TaskItem({
                   {isTranscribingNote && (
                     <div className="bg-indigo-50/70 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 rounded-xl p-3 mb-2 flex items-center gap-2.5 shadow-xs animate-pulse">
                       <Loader2 className="w-4 h-4 text-indigo-500 animate-spin shrink-0" />
-                      <span className="text-[11px] font-bold text-slate-650 dark:text-slate-350">
+                      <span className="text-[11px] font-bold text-slate-700 dark:text-slate-400">
                         O Gemini está transcrevendo e anexando sua nota de voz...
                       </span>
                     </div>
@@ -1392,14 +1392,14 @@ export function TaskItem({
                   {noteError && (
                     <div className="bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/40 rounded-xl p-3 mb-2 flex items-center justify-between gap-2.5 shadow-xs">
                       <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-[11px] font-medium text-rose-700 dark:text-rose-450 leading-relaxed">
+                        <span className="text-[11px] font-medium text-rose-700 dark:text-rose-500 leading-relaxed">
                           {noteError}
                         </span>
                       </div>
                       <button
                         type="button"
                         onClick={() => setNoteError(null)}
-                        className="text-rose-500 hover:text-rose-705 p-1 transition-colors rounded-lg flex-shrink-0 cursor-pointer"
+                        className="text-rose-500 hover:text-rose-700 p-1 transition-colors rounded-lg flex-shrink-0 cursor-pointer"
                         title="Fechar aviso"
                       >
                         <X className="w-4 h-4" />
@@ -1428,7 +1428,7 @@ export function TaskItem({
                     <button
                       type="submit"
                       onClick={handleSaveNotes}
-                      className="px-3 py-1 bg-slate-900 dark:bg-slate-800 hover:bg-slate-805 text-white rounded-lg text-[10px] font-bold transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
+                      className="px-3 py-1 bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 text-white rounded-lg text-[10px] font-bold transition-all cursor-pointer shadow-xs flex items-center gap-1.5"
                       title="Ctrl + Enter para Salvar Descrição"
                     >
                       <span>Salvar Descrição</span>
@@ -1449,7 +1449,7 @@ export function TaskItem({
                   {/* Tags list inside expanded panel */}
                   <div className="flex flex-wrap gap-1.5 mb-2.5">
                     {(!task.tags || task.tags.length === 0) ? (
-                      <p className="text-xs text-slate-450 dark:text-slate-500 italic py-1 font-sans">
+                      <p className="text-xs text-slate-500 dark:text-slate-500 italic py-1 font-sans">
                         Nenhuma tag associada a esta tarefa. Adicione abaixo para melhor organização!
                       </p>
                     ) : (
@@ -1462,7 +1462,7 @@ export function TaskItem({
                           <button
                             type="button"
                             onClick={() => handleRemoveTagFromTask(tg)}
-                            className="ml-1 text-slate-450 hover:text-rose-500 transition-colors focus:outline-none"
+                            className="ml-1 text-slate-500 hover:text-rose-500 transition-colors focus:outline-none"
                             title={`Excluir tag ${tg}`}
                           >
                             <X className="w-2.5 h-2.5 hover:scale-110" />
@@ -1500,7 +1500,7 @@ export function TaskItem({
                         }
                       }}
                       placeholder="Nova tag... (pressione Enter ou vírgula)"
-                      className="flex-1 px-3 py-1.5 text-xs border border-slate-200 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-650"
+                      className="flex-1 px-3 py-1.5 text-xs border border-slate-200 dark:border-slate-800 rounded-lg focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-700"
                     />
                     {newTagText.trim() && (
                       <button
@@ -1512,7 +1512,7 @@ export function TaskItem({
                           }
                           setNewTagText("");
                         }}
-                        className="px-3 py-1.5 bg-slate-900 dark:bg-slate-850 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 border border-transparent"
+                        className="px-3 py-1.5 bg-slate-900 dark:bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 border border-transparent"
                       >
                         Vincular
                       </button>
@@ -1525,7 +1525,7 @@ export function TaskItem({
                   {subtaskError && (
                     <div className="bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/40 rounded-xl p-3 mb-2 flex items-center justify-between gap-2.5 shadow-xs">
                       <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-[11px] font-medium text-rose-700 dark:text-rose-450 leading-relaxed">
+                        <span className="text-[11px] font-medium text-rose-700 dark:text-rose-500 leading-relaxed">
                           {subtaskError}
                         </span>
                       </div>
@@ -1546,7 +1546,7 @@ export function TaskItem({
                       Subtarefas ({(task.subtasks || []).filter(s => s.completed).length}/{(task.subtasks || []).length})
                     </label>
                     {(task.subtasks || []).length > 0 && (
-                      <span className="text-[10px] font-bold text-slate-500 dark:text-slate-450 bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5">
+                      <span className="text-[10px] font-bold text-slate-500 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5">
                         {Math.round(
                           (((task.subtasks || []).filter(s => s.completed).length) /
                             (task.subtasks || []).length) *
@@ -1590,7 +1590,7 @@ export function TaskItem({
                             setEditingSubtaskId(sub.id);
                             setEditingSubtaskTitle(sub.title);
                           }}
-                          className="flex items-center justify-between gap-2 p-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-850 border border-transparent hover:border-slate-100 dark:hover:border-slate-800 group/sub transition-all cursor-pointer"
+                          className="flex items-center justify-between gap-2 p-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900 border border-transparent hover:border-slate-100 dark:hover:border-slate-800 group/sub transition-all cursor-pointer"
                         >
                           {editingSubtaskId === sub.id ? (
                             <div className="flex-1 flex items-center gap-2 min-w-0" onDoubleClick={(e) => e.stopPropagation()}>
@@ -1606,7 +1606,7 @@ export function TaskItem({
                                   }
                                 }}
                                 onBlur={() => handleUpdateSubtaskTitle(sub.id, editingSubtaskTitle)}
-                                className="flex-1 px-2 py-0.5 text-xs border border-indigo-400 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white dark:bg-slate-900 text-slate-750 dark:text-slate-200 font-medium"
+                                className="flex-1 px-2 py-0.5 text-xs border border-indigo-400 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-medium"
                                 autoFocus
                               />
                             </div>
@@ -1618,7 +1618,7 @@ export function TaskItem({
                                 className={`w-4 h-4 rounded border transition-all flex items-center justify-center shrink-0 cursor-pointer ${
                                   sub.completed
                                     ? "bg-emerald-500 border-emerald-500 text-white"
-                                    : "border-slate-350 dark:border-slate-705 bg-white dark:bg-slate-950 hover:border-indigo-505 dark:hover:border-indigo-400"
+                                    : "border-slate-400 dark:border-slate-700 bg-white dark:bg-slate-950 hover:border-indigo-500 dark:hover:border-indigo-400"
                                 }`}
                               >
                                 {sub.completed && <Check className="w-2.5 h-2.5 stroke-[3]" />}
@@ -1626,7 +1626,7 @@ export function TaskItem({
                               <span
                                 onClick={() => handleToggleSubtask(sub.id)}
                                 className={`text-xs select-none cursor-pointer truncate flex-1 ${
-                                  sub.completed ? "line-through text-slate-400 dark:text-slate-550" : "text-slate-750 dark:text-slate-300 font-medium"
+                                  sub.completed ? "line-through text-slate-400 dark:text-slate-600" : "text-slate-800 dark:text-slate-300 font-medium"
                                 }`}
                                 title="De dois cliques para editar"
                               >
@@ -1637,7 +1637,7 @@ export function TaskItem({
                           <button
                             type="button"
                             onClick={() => handleDeleteSubtask(sub.id)}
-                            className="p-1 text-slate-355 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-md opacity-0 group-hover/sub:opacity-100 focus:opacity-100 transition-opacity cursor-pointer shrink-0"
+                            className="p-1 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-md opacity-0 group-hover/sub:opacity-100 focus:opacity-100 transition-opacity cursor-pointer shrink-0"
                             title="Excluir subtarefa"
                           >
                             <Trash2 className="w-3.5 h-3.5" />

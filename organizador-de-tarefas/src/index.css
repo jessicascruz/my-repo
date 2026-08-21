@@ -1,27 +1,65 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Space Grotesk", sans-serif;
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+
+  /* Papel de pauta — claro */
+  --color-pauta: #e9e6dd;
+  --color-pauta-alta: #f4f2ec;
+  --color-pauta-baixa: #dcd8cc;
+  --color-linha: #c6c1b3;
+
+  /* Tinta — texto no claro, fundo no escuro */
+  --color-tinta: #16181d;
+  --color-tinta-fundo: #101216;
+  --color-tinta-alta: #171a1f;
+  --color-tinta-linha: #2a2e35;
+
+  /* Acentos: fita, dial, gravando (variante -clara para o escuro) */
+  --color-fita: #0e5c4a;
+  --color-fita-clara: #34a98b;
+  --color-dial: #f0a828;
+  --color-dial-clara: #f5be55;
+  --color-gravando: #e2453a;
+  --color-gravando-clara: #ff6b5e;
+
+  /* Quase reto: um raio para toda a interface */
+  --radius-pauta: 3px;
+
+  /* Alias temporário da paleta antiga — removido na F7 */
   --color-indigo-650: #493fdf;
 }
 
 @variant dark (&:where(.dark, .dark *));
 
 @layer base {
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
   body {
     font-family: var(--font-sans);
-    background-color: #f8fafc; /* slate-50 */
-    color: #0f172a; /* slate-900 */
+    background-color: var(--color-pauta);
+    color: var(--color-tinta);
   }
 
   html.dark body {
-    background-color: #0b0f19;
-    color: #f1f5f9;
+    background-color: var(--color-tinta-fundo);
+    color: var(--color-pauta);
   }
 
-  h1, h2, h3, h4, .font-display {
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-display {
     font-family: var(--font-display);
   }
 }

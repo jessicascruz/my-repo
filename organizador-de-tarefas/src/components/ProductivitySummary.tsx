@@ -82,11 +82,11 @@ export function ProductivitySummary({ tasks }: ProductivitySummaryProps) {
     const mins = avgDurationMs / 60000;
     if (mins < 15) {
       levelTitle = "Ultra Sônico";
-      levelColor = "text-amber-600 bg-amber-50 dark:bg-amber-955/30 border border-amber-200/50";
+      levelColor = "text-amber-600 bg-amber-50 dark:bg-amber-950/30 border border-amber-200/50";
       message = "Você está voando! Conclusão quase instantânea das atividades. ⚡";
     } else if (mins < 120) {
       levelTitle = "Foco Produtivo";
-      levelColor = "text-emerald-700 bg-emerald-50 dark:bg-emerald-955/30 border border-emerald-200/50";
+      levelColor = "text-emerald-700 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/50";
       message = "Excelente ritmo de execução! Resolução dinâmica de pendências. 🚀";
     } else if (mins < 720) {
       levelTitle = "Consistente";
@@ -126,7 +126,7 @@ export function ProductivitySummary({ tasks }: ProductivitySummaryProps) {
 
       {count === 0 ? (
         <div className="py-4 text-center border border-dashed border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/40 dark:bg-slate-950/30">
-          <Clock className="w-8 h-8 text-slate-350 dark:text-slate-600 mx-auto mb-2 stroke-[1.5]" />
+          <Clock className="w-8 h-8 text-slate-400 dark:text-slate-600 mx-auto mb-2 stroke-[1.5]" />
           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium px-4">
             {message}
           </p>
@@ -134,7 +134,7 @@ export function ProductivitySummary({ tasks }: ProductivitySummaryProps) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           {/* Average Duration Box */}
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/45 border border-slate-100/60 dark:border-slate-850/40 flex flex-col justify-between">
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/45 border border-slate-100/60 dark:border-slate-900/40 flex flex-col justify-between">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1 mb-2">
               <Clock className="w-3.5 h-3.5 text-indigo-500" />
               Tempo Médio
@@ -160,7 +160,7 @@ export function ProductivitySummary({ tasks }: ProductivitySummaryProps) {
                 <p className="text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight mb-1 line-clamp-1">
                   &ldquo;{fastestTask.task.title}&rdquo;
                 </p>
-                <p className="text-[11px] font-mono font-bold text-emerald-650 dark:text-emerald-400">
+                <p className="text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400">
                   Resolvido em {formatDurationReadable(fastestTask.duration)}
                 </p>
               </div>
@@ -216,7 +216,7 @@ export function ProductivitySummary({ tasks }: ProductivitySummaryProps) {
 
       {/* Motivational / Hint Bar */}
       {count > 0 && (
-        <div className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/25 p-3 rounded-xl border border-slate-100/40 dark:border-slate-850/20">
+        <div className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/25 p-3 rounded-xl border border-slate-100/40 dark:border-slate-900/20">
           <TrendingUp className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
           <span>{message}</span>
         </div>

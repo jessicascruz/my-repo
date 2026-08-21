@@ -84,7 +84,7 @@ export function ReminderModal({
           {/* Body */}
           <div className="p-6">
             <div className="mb-6">
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-855 text-slate-600 dark:text-slate-300 uppercase tracking-wider">
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 uppercase tracking-wider">
                 {currentReminder.category}
               </span>
               <h4 className="mt-3 text-xl font-bold text-slate-800 dark:text-slate-100 leading-snug">
@@ -131,7 +131,7 @@ export function ReminderModal({
               </button>
               <button
                 onClick={() => onDismiss(currentReminder.id)}
-                className="flex items-center justify-center px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 text-rose-600 dark:text-rose-450 rounded-lg text-xs transition-colors cursor-pointer"
+                className="flex items-center justify-center px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 text-rose-600 dark:text-rose-500 rounded-lg text-xs transition-colors cursor-pointer"
               >
                 <BellOff className="w-3.5 h-3.5 mr-1" /> Silenciar hoje
               </button>

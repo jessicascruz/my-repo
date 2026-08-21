@@ -278,7 +278,7 @@ export function TaskForm({ onAddTask, categories }: TaskFormProps) {
 
               {/* Specific days option */}
               <div className="space-y-1.5 pt-1">
-                <span className="block text-[11px] font-bold text-slate-450 dark:text-slate-500 uppercase tracking-wider">
+                <span className="block text-[11px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">
                   Repetir nos dias:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -307,7 +307,7 @@ export function TaskForm({ onAddTask, categories }: TaskFormProps) {
                     );
                   })}
                 </div>
-                <p className="text-[10px] text-slate-450 dark:text-slate-500 italic mt-1 font-mono">
+                <p className="text-[10px] text-slate-500 dark:text-slate-500 italic mt-1 font-mono">
                   {reminderDays.length === 0
                     ? "✓ Todos os dias"
                     : `✓ Apenas: ${reminderDays

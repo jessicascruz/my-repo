@@ -66,7 +66,7 @@ export function ProgressChart({ completedGroupedByDate }: ProgressChartProps) {
             {data.fullLabel}
           </p>
           <div className="flex items-center gap-1.5 font-sans font-semibold pt-0.5 text-xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-450 shrink-0" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
             <span className="text-emerald-400">
               {data.quantidade} {data.quantidade === 1 ? "tarefa concluída" : "tarefas concluídas"}
             </span>
@@ -82,7 +82,7 @@ export function ProgressChart({ completedGroupedByDate }: ProgressChartProps) {
       {/* Chart Header Info */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="space-y-1">
-          <h4 className="text-xs font-bold text-slate-755 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+          <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
             <LineChart className="w-4 h-4 text-indigo-500" />
             Estatísticas de Desempenho Diário
           </h4>
@@ -100,7 +100,7 @@ export function ProgressChart({ completedGroupedByDate }: ProgressChartProps) {
           <div className="bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 px-3 py-1 rounded-xl text-center">
             <span className="block text-[9px] font-bold text-indigo-400 uppercase tracking-widest">Recorde Diário</span>
             <span className="text-sm font-extrabold text-indigo-600 dark:text-indigo-400 flex items-center justify-center gap-0.5">
-              <TrendingUp className="w-3 h-3 text-indigo-505 inline shrink-0" />
+              <TrendingUp className="w-3 h-3 text-indigo-500 inline shrink-0" />
               {maxCompletedInOneDay}
             </span>
           </div>
@@ -163,7 +163,7 @@ export function ProgressChart({ completedGroupedByDate }: ProgressChartProps) {
       </div>
 
       {/* Visual spark legend details */}
-      <div className="flex items-center gap-6 text-[10px] text-slate-450 dark:text-slate-400 pt-1 border-t border-slate-50 dark:border-slate-800">
+      <div className="flex items-center gap-6 text-[10px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-50 dark:border-slate-800">
         <div className="flex items-center gap-1.5 font-medium">
           <div className="w-2.5 h-2.5 rounded bg-indigo-600" />
           <span>Atividades concluídas no dia</span>

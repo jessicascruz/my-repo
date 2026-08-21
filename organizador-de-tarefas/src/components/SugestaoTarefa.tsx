@@ -70,11 +70,11 @@ export function SugestaoTarefa({
   // Render priority color accent
   let priorityBadgeColor = "text-slate-500 bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700";
   if (task.priority === "Alta") {
-    priorityBadgeColor = "text-red-650 bg-red-50/50 border-red-100 dark:text-red-400 dark:bg-red-950/20 dark:border-red-900/30";
+    priorityBadgeColor = "text-red-700 bg-red-50/50 border-red-100 dark:text-red-400 dark:bg-red-950/20 dark:border-red-900/30";
   } else if (task.priority === "Média") {
-    priorityBadgeColor = "text-amber-650 bg-amber-50/50 border-amber-100 dark:text-amber-400 dark:bg-amber-950/20 dark:border-amber-900/30";
+    priorityBadgeColor = "text-amber-700 bg-amber-50/50 border-amber-100 dark:text-amber-400 dark:bg-amber-950/20 dark:border-amber-900/30";
   } else if (task.priority === "Baixa") {
-    priorityBadgeColor = "text-emerald-750 bg-emerald-50/50 border-emerald-100 dark:text-emerald-400 dark:bg-emerald-950/20 dark:border-emerald-900/30";
+    priorityBadgeColor = "text-emerald-800 bg-emerald-50/50 border-emerald-100 dark:text-emerald-400 dark:bg-emerald-950/20 dark:border-emerald-900/30";
   }
 
   return (
@@ -140,7 +140,7 @@ export function SugestaoTarefa({
       {/* Top Tagline */}
       <div className="flex items-center justify-between mb-3 text-[10px]">
         <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-400">
-          <Sparkles className="w-3.5 h-3.5 animate-pulse text-indigo-505" />
+          <Sparkles className="w-3.5 h-3.5 animate-pulse text-indigo-500" />
           <span>Foco Recomendado</span>
         </div>
         <span className="text-slate-400 dark:text-slate-500 font-mono">
@@ -153,11 +153,11 @@ export function SugestaoTarefa({
         <div className="space-y-1.5 flex-1 min-w-0">
           <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal flex flex-wrap items-center gap-1.5 font-sans">
             Com base em prioridade e foco dominante em{" "}
-            <span className="font-bold text-slate-700 dark:text-slate-350 bg-white/70 dark:bg-slate-900 px-1.5 py-0.5 rounded-md border border-slate-100 dark:border-slate-800">
+            <span className="font-bold text-slate-700 dark:text-slate-400 bg-white/70 dark:bg-slate-900 px-1.5 py-0.5 rounded-md border border-slate-100 dark:border-slate-800">
               {mostFrequentCategory}
             </span>:
           </p>
-          <h4 className="font-extrabold text-slate-850 dark:text-slate-100 text-sm sm:text-base leading-snug tracking-tight break-words group-hover:text-indigo-950 dark:group-hover:text-indigo-300 transition-colors">
+          <h4 className="font-extrabold text-slate-900 dark:text-slate-100 text-sm sm:text-base leading-snug tracking-tight break-words group-hover:text-indigo-950 dark:group-hover:text-indigo-300 transition-colors">
             {task.title}
           </h4>
 
@@ -186,7 +186,7 @@ export function SugestaoTarefa({
             onClick={() => onToggleComplete(task.id)}
             title="Concluir tarefa recomendada"
             type="button"
-            className="p-2.5 bg-white dark:bg-slate-850 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 border border-slate-150 dark:border-slate-800 rounded-xl transition-all cursor-pointer shadow-xs focus:ring-1 focus:ring-emerald-500"
+            className="p-2.5 bg-white dark:bg-slate-900 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 rounded-xl transition-all cursor-pointer shadow-xs focus:ring-1 focus:ring-emerald-500"
           >
             <CheckCircle className="w-4 h-4" />
           </button>
@@ -197,8 +197,8 @@ export function SugestaoTarefa({
             type="button"
             className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs ${
               isCurrentlyFocused
-                ? "bg-amber-500 hover:bg-amber-450 text-white "
-                : "bg-indigo-600 hover:bg-indigo-550 text-white hover:shadow-md"
+                ? "bg-amber-500 hover:bg-amber-500 text-white "
+                : "bg-indigo-600 hover:bg-indigo-600 text-white hover:shadow-md"
             }`}
           >
             {isCurrentlyFocused ? (

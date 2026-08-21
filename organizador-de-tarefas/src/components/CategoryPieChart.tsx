@@ -97,7 +97,7 @@ export function CategoryPieChart({ tasks }: CategoryPieChartProps) {
 
       {totalCompletedToday === 0 ? (
         <div className="py-6 text-center border border-dashed border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/40 dark:bg-slate-950/30 flex flex-col items-center justify-center min-h-[140px]">
-          <CheckCircle2 className="w-8 h-8 text-slate-350 dark:text-slate-600 mb-2 stroke-[1.5]" />
+          <CheckCircle2 className="w-8 h-8 text-slate-400 dark:text-slate-600 mb-2 stroke-[1.5]" />
           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium px-4">
             Nenhuma tarefa concluída hoje ainda para gerar a proporção por categorias.
           </p>
@@ -130,7 +130,7 @@ export function CategoryPieChart({ tasks }: CategoryPieChartProps) {
             
             {/* Center Absolute Label */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none select-none">
-              <span className="text-lg font-black text-slate-805 dark:text-slate-100 leading-none">
+              <span className="text-lg font-black text-slate-800 dark:text-slate-100 leading-none">
                 {totalCompletedToday}
               </span>
               <span className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">
@@ -146,20 +146,20 @@ export function CategoryPieChart({ tasks }: CategoryPieChartProps) {
               return (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-2 rounded-xl bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100/60 dark:border-slate-850/40"
+                  className="flex items-center justify-between p-2 rounded-xl bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100/60 dark:border-slate-900/40"
                 >
                   <div className="flex items-center gap-1.5 min-w-0">
                     <span
                       className="w-2.5 h-2.5 rounded-full shrink-0"
                       style={{ backgroundColor: data.color }}
                     />
-                    <span className="font-semibold text-slate-700 dark:text-slate-350 truncate pr-1">
+                    <span className="font-semibold text-slate-700 dark:text-slate-400 truncate pr-1">
                       {data.name}
                     </span>
                   </div>
                   <div className="flex items-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 font-mono">
                     <span>{data.value}</span>
-                    <span className="text-slate-350 dark:text-slate-655">|</span>
+                    <span className="text-slate-400 dark:text-slate-700">|</span>
                     <span className="text-indigo-650 dark:text-indigo-400 pr-1">{pct}%</span>
                   </div>
                 </div>

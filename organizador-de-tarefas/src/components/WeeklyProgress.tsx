@@ -402,7 +402,7 @@ export function WeeklyProgress({ tasks }: WeeklyProgressProps) {
             {data.dayLabel} - {data.dateLabel}{isTodayText}
           </p>
           <div className="flex items-center gap-1.5 font-sans font-semibold pt-0.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-450 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
             <span className="text-emerald-400">
               {data.completas} {data.completas === 1 ? "tarefa" : "tarefas"}
             </span>
@@ -467,7 +467,7 @@ export function WeeklyProgress({ tasks }: WeeklyProgressProps) {
 
       {/* Grid of Mini Stats Cards prior to Chart */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="p-3 rounded-xl bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100/60 dark:border-slate-850/40 flex items-center justify-between">
+        <div className="p-3 rounded-xl bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100/60 dark:border-slate-900/40 flex items-center justify-between">
           <div>
             <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">
               Total Concluído (7d)
@@ -479,7 +479,7 @@ export function WeeklyProgress({ tasks }: WeeklyProgressProps) {
           <CheckCircle2 className="w-5 h-5 text-indigo-500/80" />
         </div>
 
-        <div className="p-3 rounded-xl bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100/60 dark:border-slate-850/40 flex items-center justify-between">
+        <div className="p-3 rounded-xl bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100/60 dark:border-slate-900/40 flex items-center justify-between">
           <div>
             <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">
               Média Diária
@@ -492,7 +492,7 @@ export function WeeklyProgress({ tasks }: WeeklyProgressProps) {
           <TrendingUp className="w-5 h-5 text-emerald-500/80" />
         </div>
 
-        <div className="p-3 rounded-xl bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100/60 dark:border-slate-850/40 flex items-center">
+        <div className="p-3 rounded-xl bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100/60 dark:border-slate-900/40 flex items-center">
           <div className="flex items-start gap-2">
             <Info className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
             <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
@@ -583,7 +583,7 @@ export function WeeklyProgress({ tasks }: WeeklyProgressProps) {
       </div>
 
       {/* Visual map legend helper */}
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[10px] text-slate-450 dark:text-slate-400 pt-2 border-t border-slate-50 dark:border-slate-800">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[10px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-50 dark:border-slate-800">
         <div className="flex items-center gap-1.5 font-medium">
           <div className="w-2.5 h-2.5 rounded bg-emerald-500" />
           <span>Meta diária atingida</span>

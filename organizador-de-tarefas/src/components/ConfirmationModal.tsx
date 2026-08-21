@@ -43,7 +43,7 @@ export function ConfirmationModal({
           >
             {/* Upper alert icon indicator */}
             <div className="flex items-start justify-between">
-              <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center text-rose-600 dark:text-rose-450">
+              <div className="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center text-rose-600 dark:text-rose-500">
                 <AlertTriangle className="w-5 h-5 focus:outline-none" />
               </div>
               <button

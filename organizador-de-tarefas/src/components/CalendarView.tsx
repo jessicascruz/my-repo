@@ -203,13 +203,13 @@ export function CalendarView({
             <Calendar className="w-5 h-5 text-indigo-500" />
             Calendário de Atividades
           </h3>
-          <p className="text-xs text-slate-400 dark:text-slate-450">
+          <p className="text-xs text-slate-400 dark:text-slate-500">
             Acompanhe a constância de tarefas concluídas por dia através do mapa de bolinhas.
           </p>
         </div>
 
         <div className="flex items-center gap-3 bg-indigo-50/40 dark:bg-indigo-950/20 px-4 py-2.5 rounded-xl border border-indigo-100/40 dark:border-indigo-900/10">
-          <Sparkles className="w-4 h-4 text-indigo-550 dark:text-indigo-400 animate-pulse" />
+          <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400 animate-pulse" />
           <div className="text-xs leading-none">
             <span className="block font-bold text-slate-700 dark:text-slate-300">
               Concluídas em {monthNames[currentMonth]}
@@ -235,21 +235,21 @@ export function CalendarView({
                 <button
                   type="button"
                   onClick={handlePrevMonth}
-                  className="p-1 px-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300 border border-slate-150 dark:border-slate-750 rounded-lg text-xs cursor-pointer inline-flex items-center"
+                  className="p-1 px-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300 border border-slate-200 dark:border-slate-800 rounded-lg text-xs cursor-pointer inline-flex items-center"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   type="button"
                   onClick={handleJumpToToday}
-                  className="text-[10px] font-bold px-2 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-slate-150 dark:border-slate-750 rounded-lg cursor-pointer transition-colors"
+                  className="text-[10px] font-bold px-2 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-slate-200 dark:border-slate-800 rounded-lg cursor-pointer transition-colors"
                 >
                   Hoje
                 </button>
                 <button
                   type="button"
                   onClick={handleNextMonth}
-                  className="p-1 px-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300 border border-slate-150 dark:border-slate-750 rounded-lg text-xs cursor-pointer inline-flex items-center"
+                  className="p-1 px-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-300 border border-slate-200 dark:border-slate-800 rounded-lg text-xs cursor-pointer inline-flex items-center"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -312,15 +312,15 @@ export function CalendarView({
                     type="button"
                     className={`relative rounded-xl p-2.5 flex flex-col justify-between items-center transition-all h-14 min-w-0 select-none cursor-pointer border ${
                       cell.monthOffset !== 0
-                        ? "text-slate-350 dark:text-slate-600 bg-slate-50/20 dark:bg-slate-950/5 border-transparent opacity-40 hover:opacity-100"
+                        ? "text-slate-400 dark:text-slate-600 bg-slate-50/20 dark:bg-slate-950/5 border-transparent opacity-40 hover:opacity-100"
                         : "text-slate-700 dark:text-slate-200"
                     } ${
                       isToday
                         ? "bg-indigo-50/70 dark:bg-indigo-950/25 border-indigo-400/70"
-                        : "border-slate-100/40 dark:border-slate-850/60"
+                        : "border-slate-100/40 dark:border-slate-900/60"
                     } ${
                       isSelected
-                        ? "ring-2 ring-indigo-550 border-indigo-500 scale-102 bg-white dark:bg-slate-900 shadow-md font-bold"
+                        ? "ring-2 ring-indigo-600 border-indigo-500 scale-102 bg-white dark:bg-slate-900 shadow-md font-bold"
                         : "hover:bg-slate-50 dark:hover:bg-slate-800/60"
                     }`}
                   >
@@ -366,7 +366,7 @@ export function CalendarView({
           </div>
 
           {/* Color legend guide */}
-          <div className="flex flex-wrap items-center mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 gap-x-4 gap-y-1 text-[10px] text-slate-450 dark:text-slate-400 select-none">
+          <div className="flex flex-wrap items-center mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 gap-x-4 gap-y-1 text-[10px] text-slate-500 dark:text-slate-400 select-none">
             <span className="font-bold uppercase tracking-wider text-[9px] mr-1 block">Legenda:</span>
             <div className="flex items-center gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
@@ -385,7 +385,7 @@ export function CalendarView({
               <span>Saúde</span>
             </div>
             <div className="flex items-center gap-1 flex-1 min-w-[50px] justify-end">
-              <div className="w-1.5 h-1.5 rounded-full animate-ping bg-indigo-550 absolute inline-flex opacity-75" />
+              <div className="w-1.5 h-1.5 rounded-full animate-ping bg-indigo-600 absolute inline-flex opacity-75" />
               <div className="w-1.5 h-1.5 rounded-full bg-indigo-650" />
               <span className="ml-1 font-semibold text-[9px]">Hoje</span>
             </div>
@@ -413,19 +413,19 @@ export function CalendarView({
 
               {/* Basic Stats row */}
               <div className="grid grid-cols-2 gap-3 mb-4 select-none">
-                <div className="bg-slate-50 dark:bg-slate-950/30 border border-slate-100/50 dark:border-slate-850 p-2.5 rounded-xl text-center">
+                <div className="bg-slate-50 dark:bg-slate-950/30 border border-slate-100/50 dark:border-slate-900 p-2.5 rounded-xl text-center">
                   <span className="block text-[8px] font-bold text-slate-400 uppercase tracking-wider">
                     Concluídas
                   </span>
-                  <span className="block text-lg font-extrabold text-emerald-600 dark:text-emerald-450 mt-0.5">
+                  <span className="block text-lg font-extrabold text-emerald-600 dark:text-emerald-500 mt-0.5">
                     {completedCountForDay}
                   </span>
                 </div>
-                <div className="bg-slate-50 dark:bg-slate-950/30 border border-slate-100/50 dark:border-slate-850 p-2.5 rounded-xl text-center">
+                <div className="bg-slate-50 dark:bg-slate-950/30 border border-slate-100/50 dark:border-slate-900 p-2.5 rounded-xl text-center">
                   <span className="block text-[8px] font-bold text-slate-400 uppercase tracking-wider">
                     Fila Ativa
                   </span>
-                  <span className="block text-lg font-extrabold text-indigo-550 dark:text-indigo-400 mt-0.5">
+                  <span className="block text-lg font-extrabold text-indigo-600 dark:text-indigo-400 mt-0.5">
                     {activeCountForDay}
                   </span>
                 </div>
@@ -435,8 +435,8 @@ export function CalendarView({
               <div className="space-y-2 max-h-[280px] overflow-y-auto pr-1">
                 {filteredTasksForSelectedSelectedDay.length === 0 ? (
                   <div className="py-10 text-center space-y-2">
-                    <ListTodo className="w-7 h-7 text-slate-300 dark:text-slate-650 mx-auto" />
-                    <p className="text-xs text-slate-400 dark:text-slate-450 italic">
+                    <ListTodo className="w-7 h-7 text-slate-300 dark:text-slate-700 mx-auto" />
+                    <p className="text-xs text-slate-400 dark:text-slate-500 italic">
                       Nenhuma tarefa registrada ou concluída neste dia.
                     </p>
                   </div>
@@ -447,7 +447,7 @@ export function CalendarView({
                       className={`p-3 rounded-xl border flex items-start gap-2.5 transition-colors ${
                         task.completed
                           ? "bg-emerald-50/10 dark:bg-emerald-950/10 border-emerald-100/50 dark:border-emerald-900/10"
-                          : "bg-slate-50/30 dark:bg-slate-950/15 border-slate-100 dark:border-slate-850"
+                          : "bg-slate-50/30 dark:bg-slate-950/15 border-slate-100 dark:border-slate-900"
                       }`}
                     >
                       {/* Inline trigger complete checkbox */}
@@ -469,7 +469,7 @@ export function CalendarView({
                           className={`block text-xs font-semibold truncate leading-none ${
                             task.completed
                               ? "text-slate-400 dark:text-slate-500 line-through"
-                              : "text-slate-750 dark:text-slate-200"
+                              : "text-slate-800 dark:text-slate-200"
                           }`}
                         >
                           {task.title}
@@ -500,7 +500,7 @@ export function CalendarView({
                 onClick={handleViewInHistory}
                 disabled={filteredTasksForSelectedSelectedDay.length === 0}
                 type="button"
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-indigo-650 hover:bg-indigo-550 hover:shadow-xs disabled:opacity-40 disabled:hover:bg-indigo-650 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-indigo-650 hover:bg-indigo-600 hover:shadow-xs disabled:opacity-40 disabled:hover:bg-indigo-650 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
               >
                 <span>Explorar no Histórico Filtrado</span>
                 <ArrowRight className="w-3.5 h-3.5" />
