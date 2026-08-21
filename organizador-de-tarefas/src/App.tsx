@@ -34,6 +34,7 @@ import { EmptyStateProductivityTip } from "./components/EmptyStateProductivityTi
 import { CalendarView } from "./components/CalendarView";
 import { ConfettiEffect } from "./components/ConfettiEffect";
 import { NotesView } from "./components/NotesView";
+import { Pauta } from "./components/Pauta";
 import { ListView } from "./components/ListView";
 import { useBackupScheduler } from "./hooks/useBackupScheduler";
 import { useDataStore } from "./hooks/useDataStore";
@@ -151,6 +152,7 @@ export default function App() {
     activeRemindersDays: [1, 2, 3, 4, 5],
   };
   const visibleCards = userPrefs?.visibleCards || {
+    pauta: true,
     categoryPieChart: true,
     dicasHoje: true,
     dailyGoal: true,
@@ -215,6 +217,16 @@ export default function App() {
   // Confetti active state
   const [isConfettiActive, setIsConfettiActive] = useState<boolean>(false);
 
+  // Minutos desde 00:00. Alimenta o cursor da pauta a partir do mesmo
+  // setInterval de 1s dos lembretes — nenhum timer novo.
+  const [minutoAtual, setMinutoAtual] = useState(() => {
+    const agora = new Date();
+    return agora.getHours() * 60 + agora.getMinutes();
+  });
+
+  // Tarefa aberta a partir de um ponto da pauta: sobe para o topo da fila.
+  const [destaqueId, setDestaqueId] = useState<string | null>(null);
+
   // Dark mode mora no <html>: é o que faz `html.dark body` e o color-scheme nativo valerem
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
@@ -264,6 +276,10 @@ export default function App() {
       const currentMin = now.getMinutes().toString().padStart(2, "0");
       const currentTimeString = `${currentHour}:${currentMin}`;
       const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+
+      // Cursor da pauta. Mesmo valor a cada tick dentro do minuto: o React
+      // descarta o set quando o número não muda, então não há re-render extra.
+      setMinutoAtual(now.getHours() * 60 + now.getMinutes());
 
       // Automatically reset reminderTriggered for tasks that fired previously when the minute passes
       firestoreTasks.forEach((t) => {
@@ -1290,9 +1306,13 @@ export default function App() {
     lista.map((task, index) => (
       <motion.div
         key={task.id}
+        id={`tarefa-${task.id}`}
         initial={{ opacity: 0, y: 4 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: Math.min(index, 8) * 0.04 }}
+        className={
+          destaqueId === task.id ? "rounded-pauta outline-2 outline-fita dark:outline-fita-clara" : undefined
+        }
       >
         <TaskItem
           task={task}
@@ -1317,6 +1337,33 @@ export default function App() {
         />
       </motion.div>
     ));
+
+  // O dia da pauta: tudo que está pendente, mais o que foi concluído hoje.
+  const tarefasDaPauta = tasks.filter(
+    (t) =>
+      !t.archived &&
+      (!t.completed || getLocalDateStringFromISO(t.updatedAt || t.createdAt) === todayStr)
+  );
+
+  // A fila mostra cinco. Se a pauta abriu uma tarefa fora delas, ela entra no topo.
+  const filaVisivel = (() => {
+    const base = filteredTasks.slice(0, 5);
+    if (destaqueId && !base.some((t) => t.id === destaqueId)) {
+      const destacada = tasks.find((t) => t.id === destaqueId);
+      if (destacada) return [destacada, ...base];
+    }
+    return base;
+  })();
+
+  const abrirTarefa = (id: string) => {
+    setDestaqueId(id);
+    setActiveTab("diarias");
+    setTimeout(() => {
+      document
+        .getElementById(`tarefa-${id}`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 60);
+  };
 
   const vazio = (titulo: string, convite: string) => (
     <div className={`${ui.superficie} p-10 text-center`}>
@@ -1506,6 +1553,20 @@ export default function App() {
         <div className="mx-auto max-w-[68rem] py-7">
           {activeTab === "diarias" ? (
             <div className="space-y-7">
+              <Pauta
+                tasks={tarefasDaPauta}
+                minutoAtual={minutoAtual}
+                dndSettings={dndSettings}
+                onAbrirTarefa={abrirTarefa}
+                onDefinirHorario={(id, hhmm) =>
+                  handleUpdateTask(id, { reminderTime: hhmm, reminderTriggered: false })
+                }
+                recolhida={visibleCards.pauta === false}
+                onAlternarRecolhida={() =>
+                  setVisibleCards({ ...visibleCards, pauta: visibleCards.pauta === false })
+                }
+              />
+
               <TaskFilter
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
@@ -1520,9 +1581,6 @@ export default function App() {
                 onLoadSamples={handleLoadSamples}
                 categories={categories}
               />
-
-              {/* Entrada manual e estruturada. O console cuida da entrada por fala. */}
-              <TaskForm onAddTask={handleAddNewTask} categories={categories} />
 
               {visibleCards.sugestaoTarefa && (
                 <SugestaoTarefa
@@ -1559,9 +1617,7 @@ export default function App() {
 
                 <div className="space-y-2">
                   <AnimatePresence mode="popLayout">
-                    {filteredTasks.length > 0
-                      ? listaDeTarefas(filteredTasks.slice(0, 5), true)
-                      : null}
+                    {filaVisivel.length > 0 ? listaDeTarefas(filaVisivel, true) : null}
                   </AnimatePresence>
 
                   {filteredTasks.length === 0 &&
@@ -1582,6 +1638,9 @@ export default function App() {
                   )}
                 </div>
               </section>
+
+              {/* Entrada manual e estruturada. O console cuida da entrada por fala. */}
+              <TaskForm onAddTask={handleAddNewTask} categories={categories} />
 
               {/* Métricas: só o que estiver ligado em Ajustes */}
               <div className="space-y-6">

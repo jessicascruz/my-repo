@@ -73,6 +73,8 @@ export interface DndSettings {
 }
 
 export interface VisibleCards {
+  /** A pauta do dia. Ausente = aberta; é o elemento principal da aba diárias. */
+  pauta?: boolean;
   categoryPieChart: boolean;
   dicasHoje: boolean;
   dailyGoal: boolean;
