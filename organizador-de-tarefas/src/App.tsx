@@ -1,36 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  Mic,
-  CalendarDays,
-  Calendar,
-  Sparkles,
   X,
-  Bell,
-  Volume2,
-  Clock,
   Settings,
-  History,
-  Trash2,
-  CheckCircle,
-  Target,
   Printer,
   FileDown,
   Upload,
   Download,
-  Archive,
   Sun,
   Moon,
   FileSpreadsheet,
-  StickyNote,
-  ListTodo,
   Menu,
-  Plus,
-  ChevronLeft,
-  ChevronRight,
+  LogOut,
 } from "lucide-react";
 import { Task, Category, Priority, DndSettings, VisibleCards, Note, List } from "./types";
-import { ProductivityTip } from "./components/ProductivityTip";
+import * as ui from "./lib/ui";
 import { AudioRecorder } from "./components/AudioRecorder";
 import { TaskForm } from "./components/TaskForm";
 import { TaskItem } from "./components/TaskItem";
@@ -56,7 +40,25 @@ import { useDataStore } from "./hooks/useDataStore";
 import { getLocalDateString, getLocalDateStringFromISO } from "./lib/dateUtils";
 import { Login } from "./components/Login";
 import { logout } from "./lib/session";
-import { LogOut } from "lucide-react";
+
+/** Quatro lugares. Tudo que é ação vive no menu do topo, não aqui. */
+const ABAS = [
+  { id: "diarias", rotulo: "diárias" },
+  { id: "notas", rotulo: "notas" },
+  { id: "listas", rotulo: "listas" },
+  { id: "arquivo", rotulo: "arquivo" },
+] as const;
+
+type Aba = (typeof ABAS)[number]["id"];
+
+/** Dentro de "arquivo": histórico, arquivadas e calendário. */
+const MODOS_ARQUIVO = [
+  { id: "concluidas", rotulo: "histórico" },
+  { id: "arquivadas", rotulo: "arquivadas" },
+  { id: "calendario", rotulo: "calendário" },
+] as const;
+
+type ModoArquivo = (typeof MODOS_ARQUIVO)[number]["id"];
 
 const LOCAL_STORAGE_KEY = "audio_organizer_tasks_v1";
 const LOCAL_STORAGE_CATEGORIES_KEY = "audio_organizer_categories_v1";
@@ -184,17 +186,14 @@ export default function App() {
   };
 
   // Historic, active, and archived tabs configuration
-  const [activeTab, setActiveTab] = useState<"diarias" | "historico" | "arquivadas" | "calendario" | "notas" | "listas">("diarias");
+  const [activeTab, setActiveTab] = useState<Aba>("diarias");
+  const [arquivoModo, setArquivoModo] = useState<ModoArquivo>("concluidas");
   const [historyDate, setHistoryDate] = useState("");
 
   // Categories Modal State
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
-  const [isMobileAddOpen, setIsMobileAddOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMobileMenuCollapsed, setIsMobileMenuCollapsed] = useState(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isSidebarHidden, setIsSidebarHidden] = useState(false);
+  const [isAcoesOpen, setIsAcoesOpen] = useState(false);
   const backupAlert = useBackupScheduler(tasks, categories);
 
   // Notifications
@@ -1203,25 +1202,6 @@ export default function App() {
   const totalCount = tasks.filter(t => !t.archived && getLocalDateStringFromISO(t.createdAt) === todayStrMetrics).length;
   const completedCount = tasks.filter((t) => t.completed && !t.archived && getLocalDateStringFromISO(t.updatedAt || t.createdAt) === todayStrMetrics).length;
   const highPriorityCount = tasks.filter((t) => t.priority === "Alta" && !t.completed && !t.archived && getLocalDateStringFromISO(t.createdAt) === todayStrMetrics).length;
-
-  const getCategoryCount = (catName: string) => {
-    return tasks.filter((t) => t.category === catName && !t.archived && !t.completed).length;
-  };
-
-  const getCategoryDotColor = (cat: string) => {
-    const dotColors: Record<string, string> = {
-      Trabalho: "bg-blue-500",
-      Pessoal: "bg-purple-500",
-      Estudos: "bg-indigo-500",
-      Saúde: "bg-rose-500",
-      Finanças: "bg-emerald-500",
-      Casa: "bg-amber-500",
-      Geral: "bg-slate-500",
-      Outros: "bg-teal-500",
-    };
-    return dotColors[cat] || "bg-indigo-400";
-  };
-
   // Group completed tasks by completion date for progress visual sparkline
   const completedGroupedByDate = tasks.reduce((acc: Record<string, number>, t) => {
     if (t.completed) {
@@ -1235,10 +1215,10 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 font-sans">
+      <div className="min-h-screen flex items-center justify-center bg-pauta dark:bg-tinta-fundo font-sans">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-slate-600 dark:text-slate-400 font-medium">Carregando seus dados...</p>
+          <div className="w-10 h-10 border-2 border-fita dark:border-fita-clara border-t-transparent rounded-full animate-spin" />
+          <p className={`${ui.monoRot} ${ui.suave}`}>carregando a sua pauta</p>
         </div>
       </div>
     );
@@ -1248,9 +1228,105 @@ export default function App() {
     return <Login />;
   }
 
+  const hoje = new Date();
+  const diaDaSemana = hoje
+    .toLocaleDateString("pt-BR", { weekday: "long" })
+    .replace("-feira", "");
+  const tituloDoDia = `${diaDaSemana.charAt(0).toUpperCase()}${diaDaSemana.slice(1)}, ${hoje.getDate()} de ${hoje.toLocaleDateString(
+    "pt-BR",
+    { month: "long" }
+  )}`;
+  const tituloCurtoDoDia = hoje
+    .toLocaleDateString("pt-BR", { weekday: "short", day: "numeric", month: "short" })
+    .replace(/\.$/, "");
+
+  const abaAtiva = (id: (typeof ABAS)[number]["id"]) => activeTab === id;
+
+  const irParaAba = (id: (typeof ABAS)[number]["id"]) => {
+    if (id === "diarias") {
+      setSelectedCategory("Todas");
+      setSelectedPriority("Todas");
+      setSearchQuery("");
+    }
+    setActiveTab(id);
+    setIsAcoesOpen(false);
+  };
+
+  const classeAba = (ativa: boolean) =>
+    `${ui.monoRot} px-3 py-1.5 rounded-pauta cursor-pointer transition-colors ${ui.foco} ${
+      ativa
+        ? "bg-fita text-pauta-alta dark:bg-fita-clara dark:text-tinta"
+        : `${ui.suave} hover:bg-pauta-baixa dark:hover:bg-tinta-linha`
+    }`;
+
+  // Ações de uma-vez-por-mês: menu, não navegação.
+  const acoes = [
+    { rotulo: "Imprimir planner", Icone: Printer, onClick: generatePlannerImage },
+    {
+      rotulo: "Copiar resumo do dia",
+      Icone: FileDown,
+      onClick: () => {
+        const today = getLocalDateString();
+        const completedTasksToday = tasks.filter(
+          (t) => t.completed && getLocalDateStringFromISO(t.updatedAt || t.createdAt) === today
+        );
+        if (completedTasksToday.length === 0) {
+          triggerBanner("Nenhuma tarefa concluída hoje para resumir.", "info");
+          return;
+        }
+        const summary =
+          `Tarefas concluídas — ${today}\n\n` +
+          completedTasksToday.map((t) => `- ${t.title}`).join("\n");
+        navigator.clipboard.writeText(summary);
+        triggerBanner("Resumo copiado para a área de transferência.", "success");
+      },
+    },
+    { rotulo: "Exportar backup (JSON)", Icone: Download, onClick: handleExportBackup },
+    { rotulo: "Exportar histórico (CSV)", Icone: FileSpreadsheet, onClick: handleExportCompletedCSV },
+    { rotulo: "Importar backup", Icone: Upload, onClick: () => fileInputRef.current?.click() },
+  ];
+
+  const listaDeTarefas = (lista: Task[], arrastavel: boolean) =>
+    lista.map((task, index) => (
+      <motion.div
+        key={task.id}
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: Math.min(index, 8) * 0.04 }}
+      >
+        <TaskItem
+          task={task}
+          categories={categories}
+          onToggleComplete={handleToggleComplete}
+          onDelete={handleDeleteTask}
+          onUpdate={handleUpdateTask}
+          onToggleArchive={handleToggleArchive}
+          {...(arrastavel
+            ? {
+                isDraggable: true,
+                onDragStart: handleDragStart,
+                onDragOver: handleDragOver,
+                onDragEnd: handleDragEnd,
+                onDrop: handleDrop,
+                isDraggedOver: draggedOverTaskId === task.id,
+                isFocused: focusedTaskId === task.id,
+                isAnyTaskFocused: focusedTaskId !== null,
+                onToggleFocus: (id: string) => setFocusedTaskId(focusedTaskId === id ? null : id),
+              }
+            : {})}
+        />
+      </motion.div>
+    ));
+
+  const vazio = (titulo: string, convite: string) => (
+    <div className={`${ui.superficie} p-10 text-center`}>
+      <h4 className={`${ui.displayMd} mb-1`}>{titulo}</h4>
+      <p className={`${ui.corpoSm} ${ui.suave} max-w-sm mx-auto`}>{convite}</p>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen transition-colors duration-300 font-sans">
-      <div className="flex min-h-screen bg-pauta dark:bg-tinta-fundo text-tinta dark:text-pauta font-sans overflow-hidden">
+    <div className="min-h-screen flex flex-col font-sans bg-pauta dark:bg-tinta-fundo text-tinta dark:text-pauta">
       <ReminderModal
         activeReminders={activeReminders}
         onDismiss={handleDismissReminder}
@@ -1278,1311 +1354,391 @@ export default function App() {
         onUpdateVisibleCards={setVisibleCards}
       />
 
-      {backupAlert && (
-        <div className="fixed bottom-6 right-6 z-50 p-4 bg-indigo-650 text-white rounded-xl shadow-xl flex items-center gap-4">
-          <p className="text-sm font-semibold">{backupAlert.message}</p>
-          <button
-            onClick={backupAlert.action}
-            className="px-3 py-1 bg-white text-indigo-700 rounded-lg text-xs font-bold cursor-pointer hover:bg-slate-100"
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleImportBackup}
+        accept=".json"
+        className="hidden"
+      />
+
+      {/* ── Barra de topo: 4 lugares, 1 menu de ações, 3 controles ────────── */}
+      <header className="sticky top-0 z-30 h-14 shrink-0 border-b border-linha dark:border-tinta-linha bg-pauta/95 dark:bg-tinta-fundo/95 backdrop-blur-sm">
+        <div className="mx-auto flex h-full max-w-[76rem] items-center gap-2 px-4 sm:px-6">
+          <span className="font-display text-[17px] font-extrabold tracking-[-0.02em]">
+            EchoPlan
+          </span>
+
+          <nav className="ml-5 hidden items-center gap-1 md:flex" aria-label="Seções">
+            {ABAS.map(({ id, rotulo }) => (
+              <button
+                key={id}
+                onClick={() => irParaAba(id)}
+                aria-current={abaAtiva(id) ? "page" : undefined}
+                className={classeAba(abaAtiva(id))}
+              >
+                {rotulo}
+              </button>
+            ))}
+          </nav>
+
+          <div className="ml-auto flex items-center gap-1">
+            <div className="relative">
+              <button
+                onClick={() => setIsAcoesOpen((v) => !v)}
+                aria-expanded={isAcoesOpen}
+                aria-haspopup="menu"
+                title="Exportar, importar e imprimir"
+                className={ui.btnIcone}
+              >
+                <Menu className="h-4 w-4" />
+              </button>
+              {isAcoesOpen && (
+                <>
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setIsAcoesOpen(false)}
+                    aria-hidden="true"
+                  />
+                  <div
+                    role="menu"
+                    onKeyDown={(e) => e.key === "Escape" && setIsAcoesOpen(false)}
+                    className={`${ui.superficie} absolute right-0 top-full z-50 mt-1 w-64 overflow-hidden p-1 shadow-2xl`}
+                  >
+                    {acoes.map(({ rotulo, Icone, onClick }) => (
+                      <button
+                        key={rotulo}
+                        role="menuitem"
+                        onClick={() => {
+                          setIsAcoesOpen(false);
+                          onClick();
+                        }}
+                        className={`flex w-full items-center gap-3 rounded-pauta px-3 py-2 text-left ${ui.corpoSm} cursor-pointer hover:bg-pauta-baixa dark:hover:bg-tinta-linha ${ui.foco}`}
+                      >
+                        <Icone className="h-4 w-4 shrink-0 text-fita dark:text-fita-clara" />
+                        <span>{rotulo}</span>
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setDarkMode(!darkMode)}
+              title={darkMode ? "Usar tema claro" : "Usar tema escuro"}
+              className={ui.btnIcone}
+            >
+              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
+
+            <button
+              onClick={() => setIsSettingsModalOpen(true)}
+              title="Ajustes"
+              className={ui.btnIcone}
+            >
+              <Settings className="h-4 w-4" />
+            </button>
+
+            <button
+              onClick={logout}
+              title="Sair"
+              className={`${ui.btnIcone} text-gravando hover:text-gravando dark:text-gravando-clara`}
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Avisos flutuantes */}
+      <AnimatePresence>
+        {alertBanner && (
+          <motion.div
+            role="status"
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className={`fixed left-1/2 top-16 z-40 flex w-[min(30rem,calc(100vw-2rem))] -translate-x-1/2 items-center gap-3 border px-4 py-3 rounded-pauta shadow-xl ${ui.corpoSm} ${
+              alertBanner.type === "error"
+                ? "bg-pauta-alta dark:bg-tinta-alta border-l-[3px] border-l-gravando border-linha dark:border-tinta-linha"
+                : alertBanner.type === "success"
+                ? "bg-pauta-alta dark:bg-tinta-alta border-l-[3px] border-l-fita border-linha dark:border-tinta-linha"
+                : "bg-pauta-alta dark:bg-tinta-alta border-l-[3px] border-l-dial border-linha dark:border-tinta-linha"
+            }`}
           >
-            Download
+            <span className="flex-1 leading-snug">{alertBanner.message}</span>
+            <button
+              onClick={() => setAlertBanner(null)}
+              title="Fechar aviso"
+              className={`p-1 rounded-pauta cursor-pointer hover:bg-pauta-baixa dark:hover:bg-tinta-linha ${ui.foco}`}
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {backupAlert && (
+        <div
+          className={`${ui.superficie} fixed bottom-44 right-4 z-40 flex items-center gap-4 p-4 shadow-2xl md:bottom-28`}
+        >
+          <p className={ui.corpoSm}>{backupAlert.message}</p>
+          <button onClick={backupAlert.action} className={ui.btnPrimario}>
+            Baixar
           </button>
         </div>
       )}
 
-      {/* Sidebar - Professional Polish Style */}
-      <aside className={`${isSidebarHidden ? "hidden" : isSidebarCollapsed ? "w-16 p-2" : "w-66"} bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 hidden md:flex flex-col shrink-0 transition-all duration-300`}>
-        <div className={`border-b border-slate-100 dark:border-slate-800 ${isSidebarCollapsed ? "py-4 px-1" : "p-6"}`}>
-          <div className={`flex ${isSidebarCollapsed ? "flex-col items-center gap-4" : "items-center justify-between"}`}>
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-indigo-650 rounded-xl flex items-center justify-center text-white shadow-md shadow-indigo-200 shrink-0">
-                <Mic className="w-5 h-5" />
-              </div>
-              {!isSidebarCollapsed && (
-                <div>
-                  <span className="font-extrabold text-base tracking-tight font-display text-slate-900 dark:text-slate-100 block">EchoPlan</span>
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Voice Assistant</span>
-                </div>
-              )}
-            </div>
-            <div className={`flex ${isSidebarCollapsed ? "flex-col gap-2" : "items-center gap-1.5"}`}>
-              <button
-                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-                className="p-1.5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-500 cursor-pointer"
-                title={isSidebarCollapsed ? "Expandir menu" : "Encolher menu"}
-              >
-                {isSidebarCollapsed ? (
-                  <ChevronRight className="w-4 h-4" />
-                ) : (
-                  <ChevronLeft className="w-4 h-4" />
-                )}
-              </button>
-              <button
-                onClick={() => setIsSidebarHidden(true)}
-                className="p-1.5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-rose-500 cursor-pointer"
-                title="Esconder menu"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
+      {/* ── Conteúdo: uma coluna. A pauta sangra até 76rem, o resto para em 68rem ── */}
+      <main className="mx-auto w-full max-w-[76rem] flex-1 px-4 pb-64 sm:px-6 md:pb-44">
+        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-linha dark:border-tinta-linha pb-5 pt-8">
+          <h1 className={ui.displayXl}>
+            <span className="hidden sm:inline">{tituloDoDia}</span>
+            <span className="sm:hidden">{tituloCurtoDoDia}</span>
+          </h1>
+          <p className={`${ui.monoNumLg} ${ui.suave}`}>
+            {completedCount} de {totalCount} concluídas
+          </p>
         </div>
 
-        <nav className={`flex-1 space-y-1 overflow-y-auto ${isSidebarCollapsed ? "p-1.5" : "p-4"}`}>
-          {!isSidebarCollapsed && (
-            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-2">Menu Principal</div>
-          )}
-          <button
-            onClick={() => {
-              setSelectedCategory("Todas");
-              setSelectedPriority("Todas");
-              setSearchQuery("");
-              setActiveTab("diarias");
-            }}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold text-xs transition-colors cursor-pointer text-left ${
-              activeTab === "diarias" ? "bg-slate-100/80 dark:bg-slate-800 text-indigo-650 dark:text-indigo-400 font-extrabold" : "text-slate-700 dark:text-slate-400"
-            }`}
-            title="Fila de Atividades"
-          >
-            <CalendarDays className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
-            {!isSidebarCollapsed && <span>Fila de Atividades</span>}
-          </button>
-
-          <button
-            onClick={() => {
-              setActiveTab("calendario");
-            }}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold text-xs transition-colors cursor-pointer text-left ${
-              activeTab === "calendario" ? "bg-slate-100/80 dark:bg-slate-800 text-indigo-650 dark:text-indigo-400 font-extrabold" : "text-slate-700 dark:text-slate-400"
-            }`}
-            title="Calendário Mensal"
-          >
-            <Calendar className="w-4 h-4 text-indigo-700 dark:text-indigo-500 shrink-0" />
-            {!isSidebarCollapsed && <span>Calendário Mensal</span>}
-          </button>
-
-          <button
-            onClick={() => {
-              setActiveTab("historico");
-            }}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold text-xs transition-colors cursor-pointer text-left ${
-              activeTab === "historico" ? "bg-slate-100/80 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 font-extrabold" : "text-slate-600 dark:text-slate-400"
-            }`}
-            title="Histórico de Tarefas"
-          >
-            <History className="w-4 h-4 text-slate-400 dark:text-slate-500 shrink-0" />
-            {!isSidebarCollapsed && <span>Histórico de Tarefas</span>}
-          </button>
-
-          <button
-            onClick={() => {
-              setActiveTab("arquivadas");
-            }}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl font-bold text-xs transition-colors cursor-pointer text-left ${
-              activeTab === "arquivadas" ? "bg-slate-100/80 dark:bg-slate-800 text-amber-800 dark:text-amber-500 font-extrabold" : "text-slate-700 dark:text-slate-500"
-            }`}
-            title="Banco de Tarefas"
-          >
-            <div className="relative flex items-center justify-center">
-              <Archive className="w-4 h-4 text-amber-500 shrink-0 animate-none" />
-              {isSidebarCollapsed && (
-                <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-white text-[8px] font-bold px-1 rounded-full">
-                  {tasks.filter((t) => t.archived).length}
-                </span>
-              )}
-            </div>
-            {!isSidebarCollapsed && (
-              <>
-                <span>Banco de Tarefas</span>
-                <span className="bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900/40 text-[10px] font-bold px-2 py-0.5 rounded-full ml-auto">
-                  {tasks.filter((t) => t.archived).length}
-                </span>
-              </>
-            )}
-          </button>
-
-          {!isSidebarCollapsed && (
-            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-2 pt-6 mb-2">Ações e Planejamento</div>
-          )}
-
-          <button
-            onClick={generatePlannerImage}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 text-indigo-650 dark:text-indigo-400 hover:text-indigo-700 border border-indigo-100 dark:border-indigo-900/35 bg-white dark:bg-slate-900 shadow-xs rounded-xl font-bold text-xs transition-colors cursor-pointer text-left`}
-            title="Baixar planilha de Planner de tarefas para imprimir"
-          >
-            <Printer className="w-4 h-4 text-indigo-600 dark:text-indigo-500 shrink-0" />
-            {!isSidebarCollapsed && <span>Imprimir Planner</span>}
-          </button>
-
-          <button
-            onClick={() => {
-              const today = getLocalDateString();
-              const completedTasksToday = tasks.filter((t) => t.completed && getLocalDateStringFromISO(t.updatedAt || t.createdAt) === today);
-              if (completedTasksToday.length === 0) {
-                triggerBanner("Nenhuma tarefa concluída hoje para resumir.", "info");
-                return;
-              }
-              const summary = `Tarefas Concluídas - ${today}\n\n` + completedTasksToday.map((t) => `- ${t.title}`).join("\n");
-              navigator.clipboard.writeText(summary);
-              triggerBanner("Resumo copiado para a área de transferência!", "success");
-            }}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-700 border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-xs rounded-xl font-bold text-xs transition-colors cursor-pointer text-left`}
-            title="Copiar resumo de tarefas do dia"
-          >
-            <FileDown className="w-4 h-4 text-indigo-600 dark:text-indigo-500 shrink-0" />
-            {!isSidebarCollapsed && <span>Copiar Resumo</span>}
-          </button>
-
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-700 border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-xs rounded-xl font-bold text-xs transition-colors cursor-pointer text-left`}
-            title="Importar backup de tarefas"
-          >
-            <Upload className="w-4 h-4 text-indigo-600 dark:text-indigo-500 shrink-0" />
-            {!isSidebarCollapsed && <span>Importar Backup</span>}
-          </button>
-          
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleImportBackup}
-            accept=".json"
-            className="hidden"
-          />
-
-          <button
-            onClick={handleExportBackup}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-700 border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-xs rounded-xl font-bold text-xs transition-colors cursor-pointer text-left`}
-            title="Exportar backup de tarefas para JSON local"
-          >
-            <Download className="w-4 h-4 text-indigo-600 dark:text-indigo-500 shrink-0" />
-            {!isSidebarCollapsed && <span>Exportar Backup</span>}
-          </button>
-
-          <button
-            onClick={handleExportCompletedCSV}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2.5"} mt-1 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/30 text-slate-700 dark:text-slate-300 hover:text-indigo-700 border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900/60 shadow-xs rounded-xl font-bold text-xs transition-colors cursor-pointer text-left`}
-            title="Exportar histórico de tarefas concluídas em formato CSV"
-          >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-600 shrink-0" />
-            {!isSidebarCollapsed && <span>Exportar Histórico (CSV)</span>}
-          </button>
-
-          <button
-            onClick={() => setIsCategoryModalOpen(true)}
-            className={`w-full flex items-center ${isSidebarCollapsed ? "justify-center p-2.5" : "justify-between px-2.5 py-2"} mt-4 text-[11px] font-bold text-indigo-650 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 bg-indigo-50/20 dark:bg-indigo-950/10 border border-dashed border-indigo-200 dark:border-indigo-900/40 rounded-xl cursor-pointer transition-colors`}
-            title="Categorias Personalizadas"
-          >
-            <span className="flex items-center gap-1.5">
-              <Settings className="w-3.5 h-3.5" />
-              {!isSidebarCollapsed && <span>Categorias Personalizadas</span>}
-            </span>
-            {!isSidebarCollapsed && (
-              <span className="text-[9px] bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 hover:bg-indigo-200 px-1 py-0.2 rounded">+</span>
-            )}
-          </button>
-        </nav>
-
-        {/* User profile section matching the style sheet */}
-        <div className={`p-4 border-t border-slate-100 dark:border-slate-800 flex items-center ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
-          {user.photoURL ? (
-            <img src={user.photoURL} alt={user.displayName || "User"} className="w-10 h-10 rounded-xl shadow-sm object-cover shrink-0" referrerPolicy="no-referrer" />
-          ) : (
-            <div className="w-10 h-10 rounded-xl bg-indigo-650 text-white font-bold text-sm flex items-center justify-center shadow-sm uppercase shrink-0">
-              {user.displayName?.slice(0, 2) || "U"}
-            </div>
-          )}
-          {!isSidebarCollapsed && (
-            <div className="min-w-0 flex-1">
-              <div className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{user.displayName || "Usuário"}</div>
-              <div className="text-[10px] text-slate-400 font-mono truncate">{user.email}</div>
-            </div>
-          )}
-        </div>
-      </aside>
-
-      {/* Main Content Pane */}
-      <main className="flex-1 flex flex-col h-screen overflow-hidden relative">
-        {/* Top Header Bar */}
-        <header className="h-16 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 md:px-6 shrink-0 relative z-20 transition-colors">
-          <div className="flex items-center space-x-3">
-            {isSidebarHidden && (
-              <button
-                onClick={() => setIsSidebarHidden(false)}
-                className="hidden md:flex p-1.5 text-slate-600 dark:text-slate-400 hover:text-indigo-650 dark:hover:text-indigo-400 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 items-center justify-center cursor-pointer transition-colors"
-                title="Mostrar menu lateral"
-              >
-                <Menu className="w-4 h-4" />
-              </button>
-            )}
-            <h1 className="text-base sm:text-lg font-extrabold text-slate-800 dark:text-slate-100 font-display flex items-center gap-2">
-              <span className="md:hidden w-8 h-8 bg-indigo-650 rounded-xl flex items-center justify-center text-white shrink-0 shadow-md shadow-indigo-200">
-                <Mic className="w-4 h-4" />
-              </span>
-              <span className="truncate max-w-[140px] sm:max-w-none">EchoPlan</span>
-            </h1>
-            <div className="hidden xs:flex items-center space-x-1 py-0.5 px-2 bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/40 rounded-lg text-[10px] font-semibold text-indigo-650 dark:text-indigo-400">
-              <Sparkles className="w-3 h-3 text-indigo-600" />
-              <span>Gemini Pro</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 sm:gap-4">
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium font-display hidden sm:inline-block">
-              {new Date().toLocaleDateString("pt-BR", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-              })}
-            </span>
-            {/* Action buttons (Manage categories & notifications notification alert) */}
-            <div className="flex items-center space-x-2">
-              <button
-                type="button"
-                onClick={() => setDarkMode(!darkMode)}
-                className="p-1.5 text-slate-600 dark:text-slate-400 hover:text-indigo-650 dark:hover:text-indigo-400 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-center cursor-pointer transition-colors"
-                title={darkMode ? "Ativar Modo Claro" : "Ativar Modo Escuro"}
-              >
-                {darkMode ? <Sun className="w-4 h-4 text-amber-500 animate-none" /> : <Moon className="w-4 h-4 text-indigo-600 animate-none" />}
-              </button>
-
-              <button
-                onClick={() => setIsSettingsModalOpen(true)}
-                className="p-1.5 text-slate-600 dark:text-slate-300 hover:text-indigo-650 dark:hover:text-indigo-400 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-center cursor-pointer transition-colors"
-                title="Configurações"
-              >
-                <Settings className="w-4 h-4" />
-              </button>
-
-              <button
-                onClick={logout}
-                className="p-1.5 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-center cursor-pointer transition-colors"
-                title="Sair"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-
-              <div className="relative p-1.5 text-slate-600 dark:text-slate-300 hover:text-indigo-650 dark:hover:text-indigo-400 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 flex items-center justify-center">
-                <Bell className="w-4 h-4" />
-                {activeReminders.length > 0 && (
-                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full animate-ping" />
-                )}
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Floating alert banners */}
-        <AnimatePresence>
-          {alertBanner && (
-            <motion.div
-              initial={{ opacity: 0, y: -40, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              className={`fixed top-4 left-1/2 -translate-x-1/2 z-45 px-5 py-3 rounded-xl shadow-lg border text-sm font-semibold flex items-center space-x-2.5 max-w-md w-full shrink-0 ${
-                alertBanner.type === "success"
-                  ? "bg-emerald-50 text-emerald-800 border-emerald-300"
-                  : alertBanner.type === "error"
-                  ? "bg-rose-50 text-rose-800 border-rose-300"
-                  : "bg-indigo-50 text-indigo-800 border-indigo-300"
-              }`}
-            >
-              <span className="flex-1 leading-snug">{alertBanner.message}</span>
-              <button
-                onClick={() => setAlertBanner(null)}
-                className="p-1 hover:bg-black/5 rounded-md transition-all cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Scrollable Content Body */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 space-y-6 pb-24 md:pb-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Left Column: Input Panel - Hidden on mobile, sticky on desktop */}
-            <div className="hidden lg:block lg:col-span-5 space-y-6 lg:sticky lg:top-0">
-              <AudioRecorder
-                onTasksExtracted={handleAIRecovery}
-                onError={(msg) => triggerBanner(msg, "error")}
+        <div className="mx-auto max-w-[68rem] py-7">
+          {activeTab === "diarias" ? (
+            <div className="space-y-7">
+              <TaskFilter
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+                selectedPriority={selectedPriority}
+                setSelectedPriority={setSelectedPriority}
+                totalCount={totalCount}
+                completedCount={completedCount}
+                highPriorityCount={highPriorityCount}
+                onClearAll={handleClearAll}
+                onLoadSamples={handleLoadSamples}
+                categories={categories}
               />
 
-              {/* Display last audio transcription */}
-              <AnimatePresence>
-                {recentTranscription && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100/60 dark:border-indigo-900/40 rounded-2xl p-5"
-                  >
-                    <h4 className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center mb-1.5">
-                      <Volume2 className="w-3.5 h-3.5 mr-1" /> Transcrição do seu relato
-                    </h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 italic leading-relaxed">
-                      "{recentTranscription}"
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
+              {/* Entrada manual e estruturada. O console cuida da entrada por fala. */}
               <TaskForm onAddTask={handleAddNewTask} categories={categories} />
+
+              {visibleCards.sugestaoTarefa && (
+                <SugestaoTarefa
+                  tasks={tasks}
+                  onToggleComplete={handleToggleComplete}
+                  onToggleFocus={(id) => setFocusedTaskId(focusedTaskId === id ? null : id)}
+                  focusedTaskId={focusedTaskId}
+                />
+              )}
+
+              <section className="space-y-3">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h2 className={ui.displayLg}>Hoje</h2>
+                  <span className={`${ui.monoRot} ${ui.fraco}`}>
+                    {filteredTasks.length > 5
+                      ? `5 de ${filteredTasks.length} na fila`
+                      : `${filteredTasks.length} na fila`}
+                  </span>
+                </div>
+
+                {focusedTaskId && (
+                  <div
+                    className={`${ui.superficie} flex flex-wrap items-center justify-between gap-3 border-l-[3px] border-l-dial p-4`}
+                  >
+                    <p className={ui.corpoSm}>
+                      <span className="font-semibold">Modo foco.</span> As outras tarefas estão
+                      ocultas.
+                    </p>
+                    <button onClick={() => setFocusedTaskId(null)} className={ui.btnFantasma}>
+                      Sair do foco
+                    </button>
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <AnimatePresence mode="popLayout">
+                    {filteredTasks.length > 0
+                      ? listaDeTarefas(filteredTasks.slice(0, 5), true)
+                      : null}
+                  </AnimatePresence>
+
+                  {filteredTasks.length === 0 &&
+                    (hasNoPendingTasksToday ? (
+                      <EmptyStateProductivityTip />
+                    ) : (
+                      vazio(
+                        "Nada com esse filtro",
+                        "Limpe a busca ou escolha outra categoria para ver o resto da fila."
+                      )
+                    ))}
+
+                  {filteredTasks.length > 5 && (
+                    <p className={`${ui.corpoSm} ${ui.suave} pt-1`}>
+                      A fila mostra cinco por vez. Conclua ou arquive para carregar as próximas{" "}
+                      {filteredTasks.length - 5}.
+                    </p>
+                  )}
+                </div>
+              </section>
+
+              {/* Métricas: só o que estiver ligado em Ajustes */}
+              <div className="space-y-6">
+                <PriorityDurationCard tasks={firestoreTasks} />
+                {visibleCards.dailyGoal && <DailyGoal tasks={tasks} />}
+                {visibleCards.weeklyProgress && <WeeklyProgress tasks={tasks} />}
+                {visibleCards.productivitySummary && <ProductivitySummary tasks={tasks} />}
+                {visibleCards.dicasHoje && <DicasHoje tasks={tasks} />}
+                {visibleCards.categoryPieChart && <CategoryPieChart tasks={tasks} />}
+              </div>
             </div>
+          ) : activeTab === "notas" ? (
+            <NotesView
+              notes={notes}
+              onAddNote={addNote}
+              onUpdateNote={updateNote}
+              onDeleteNote={deleteNote}
+            />
+          ) : activeTab === "listas" ? (
+            <ListView
+              lists={lists}
+              onAddList={addList}
+              onUpdateList={updateList}
+              onDeleteList={deleteList}
+            />
+          ) : (
+            /* Arquivo: histórico, arquivadas e calendário num destino só */
+            <div className="space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-1">
+                  {MODOS_ARQUIVO.map(({ id, rotulo }) => (
+                    <button
+                      key={id}
+                      onClick={() => setArquivoModo(id)}
+                      aria-current={arquivoModo === id ? "true" : undefined}
+                      className={classeAba(arquivoModo === id)}
+                    >
+                      {rotulo}
+                    </button>
+                  ))}
+                </div>
 
-            {/* Right Column: Dynamic Dashboard and Interactive Lists */}
-            <div className="lg:col-span-7 space-y-6">
-              {/* Mobile Tab Title & Status indicator */}
-              <div className="md:hidden flex items-center justify-between bg-white dark:bg-slate-900 px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
-                <span className="text-xs font-extrabold text-slate-800 dark:text-slate-100 flex items-center gap-2 font-display">
-                  {activeTab === "diarias" && (
-                    <>
-                      <CalendarDays className="w-4 h-4 text-indigo-600" />
-                      Fila de Atividades
-                    </>
-                  )}
-                  {activeTab === "historico" && (
-                    <>
-                      <History className="w-4 h-4 text-emerald-600" />
-                      Histórico de Tarefas
-                    </>
-                  )}
-                  {activeTab === "arquivadas" && (
-                    <>
-                      <Archive className="w-4 h-4 text-amber-500" />
-                      Banco de Tarefas
-                    </>
-                  )}
-                  {activeTab === "calendario" && (
-                    <>
-                      <Calendar className="w-4 h-4 text-indigo-500" />
-                      Calendário Mensal
-                    </>
-                  )}
-                  {activeTab === "notas" && (
-                    <>
-                      <StickyNote className="w-4 h-4 text-teal-600" />
-                      Notas & Ideias
-                    </>
-                  )}
-                  {activeTab === "listas" && (
-                    <>
-                      <ListTodo className="w-4 h-4 text-sky-600" />
-                      Listas de Verificação
-                    </>
-                  )}
-                </span>
-                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 font-mono">
-                  {activeTab === "diarias" && `${filteredTasks.length} ativas`}
-                  {activeTab === "historico" && "Histórico"}
-                  {activeTab === "arquivadas" && "Arquivadas"}
-                  {activeTab === "calendario" && "Mensal"}
-                  {activeTab === "notas" && `${notes.length} notas`}
-                  {activeTab === "listas" && `${lists.length} listas`}
-                </span>
-              </div>
-
-              {/* Tab Selector - Visible on desktop/tablet only */}
-              <div className="hidden md:flex border-b border-slate-200 dark:border-slate-800">
-                <button
-                  onClick={() => setActiveTab("diarias")}
-                  className={`py-3 px-6 text-sm font-semibold border-b-2 cursor-pointer transition-all ${
-                    activeTab === "diarias"
-                      ? "border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 font-bold"
-                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
-                  }`}
-                >
-                  Fila de Atividades
-                </button>
-                 <button
-                  onClick={() => setActiveTab("historico")}
-                  className={`py-3 px-6 text-sm font-semibold border-b-2 cursor-pointer transition-all flex items-center gap-2 ${
-                    activeTab === "historico"
-                      ? "border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 font-bold"
-                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
-                  }`}
-                >
-                  <History className="w-4 h-4 shrink-0" />
-                  <span>Histórico de Tarefas</span>
-                  <span className="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/45 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                    {tasks.filter((t) => !t.archived).length}
-                  </span>
-                </button>
-                <button
-                  onClick={() => setActiveTab("arquivadas")}
-                  className={`py-3 px-6 text-sm font-semibold border-b-2 cursor-pointer transition-all flex items-center gap-2 ${
-                    activeTab === "arquivadas"
-                      ? "border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 font-bold"
-                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
-                  }`}
-                >
-                  <Archive className="w-4 h-4 shrink-0 text-amber-500 animate-none" />
-                  <span>Banco de Tarefas</span>
-                  <span className="bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-900/45 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                    {tasks.filter((t) => t.archived).length}
-                  </span>
-                </button>
-                <button
-                  onClick={() => setActiveTab("calendario")}
-                  className={`py-3 px-6 text-sm font-semibold border-b-2 cursor-pointer transition-all flex items-center gap-2 ${
-                    activeTab === "calendario"
-                      ? "border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 font-bold"
-                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
-                  }`}
-                >
-                  <Calendar className="w-4 h-4 shrink-0" />
-                  <span>Calendário</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab("notas")}
-                  className={`py-3 px-6 text-sm font-semibold border-b-2 cursor-pointer transition-all flex items-center gap-2 ${
-                    activeTab === "notas"
-                      ? "border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 font-bold"
-                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
-                  }`}
-                >
-                  <StickyNote className="w-4 h-4 shrink-0" />
-                  <span>Notas</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab("listas")}
-                  className={`py-3 px-6 text-sm font-semibold border-b-2 cursor-pointer transition-all flex items-center gap-2 ${
-                    activeTab === "listas"
-                      ? "border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 font-bold"
-                      : "border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
-                  }`}
-                >
-                  <ListTodo className="w-4 h-4 shrink-0" />
-                  <span>Listas</span>
-                </button>
-              </div>
-
-              {activeTab === "diarias" ? (
-                // Tab 1: Regular Workflow
-                <div className="flex flex-col gap-6">
-                  {/* Task block - placed first on mobile via order-1 */}
-                  <div className="order-1 md:order-7 space-y-6">
-                    <TaskFilter
-                      searchQuery={searchQuery}
-                      setSearchQuery={setSearchQuery}
-                      selectedCategory={selectedCategory}
-                      setSelectedCategory={setSelectedCategory}
-                      selectedPriority={selectedPriority}
-                      setSelectedPriority={setSelectedPriority}
-                      totalCount={totalCount}
-                      completedCount={completedCount}
-                      highPriorityCount={highPriorityCount}
-                      onClearAll={handleClearAll}
-                      onLoadSamples={handleLoadSamples}
-                      categories={categories}
+                {arquivoModo !== "calendario" && (
+                  <div className="flex items-center gap-2">
+                    <label className={`${ui.monoRot} ${ui.fraco}`} htmlFor="filtro-periodo">
+                      período
+                    </label>
+                    <input
+                      id="filtro-periodo"
+                      type="date"
+                      value={historyDate}
+                      onChange={(e) => setHistoryDate(e.target.value)}
+                      className={`${ui.campo} w-auto ${ui.monoNum}`}
                     />
-
-                    {/* Task list container */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-bold text-slate-800 font-display text-base">
-                          Fila de Atividades ({filteredTasks.length > 5 ? `Exibindo 5 de ${filteredTasks.length}` : filteredTasks.length})
-                        </h3>
-                        {selectedCategory !== "Todas" || selectedPriority !== "Todas" ? (
-                          <button
-                            onClick={() => {
-                              setSelectedCategory("Todas");
-                              setSelectedPriority("Todas");
-                            }}
-                            className="text-xs text-indigo-650 hover:underline font-semibold cursor-pointer"
-                          >
-                            Limpar Filtros
-                          </button>
-                        ) : (
-                          <span className="text-xs text-slate-400 font-mono">
-                            Arraste as tarefas pelo marcador para reordenar
-                          </span>
-                        )}
-                      </div>
-
-                      {visibleCards.sugestaoTarefa && (
-                        <SugestaoTarefa
-                          tasks={tasks}
-                          onToggleComplete={handleToggleComplete}
-                          onToggleFocus={(id) => setFocusedTaskId(focusedTaskId === id ? null : id)}
-                          focusedTaskId={focusedTaskId}
-                        />
-                      )}
-
-                      {filteredTasks.length > 5 && (
-                        <div className="bg-indigo-50/60 border border-indigo-100 rounded-2xl p-4 text-xs text-slate-700 flex gap-3 shadow-xs">
-                          <Sparkles className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5 animate-pulse" />
-                          <div>
-                            <p className="font-bold text-slate-900">Visualização Focada (Máximo 5 tarefas)</p>
-                            <p className="mt-0.5 leading-relaxed text-slate-600">
-                              Sua tela inicial exibe no máximo as 5 primeiras tarefas ativas. Conclua tarefas para carregar as próximas {filteredTasks.length - 5} automaticamente ou envie-as para o <strong>Banco de Tarefas (arquivando)</strong> para tirá-las da fila!
-                            </p>
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="space-y-3 min-h-[200px] pb-10">
-                        {focusedTaskId && (
-                          <motion.div
-                            initial={{ opacity: 0, y: -10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            className="bg-amber-50/55 border border-amber-200/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 shadow-xs"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="p-2.5 bg-amber-500 text-white rounded-xl shadow-xs">
-                                <Target className="w-5 h-5 animate-pulse" />
-                              </div>
-                              <div>
-                                <h4 className="text-sm font-bold text-slate-800">Você está no Modo Foco 🎯</h4>
-                                <p className="text-xs text-slate-500">As outras tarefas estão ocultas para ajudá-lo a manter o foco total.</p>
-                              </div>
-                            </div>
-                            <button
-                              onClick={() => setFocusedTaskId(null)}
-                              className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all cursor-pointer inline-flex items-center gap-2 self-start sm:self-auto"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                              <span>Sair do Foco</span>
-                            </button>
-                          </motion.div>
-                        )}
-
-                        <AnimatePresence mode="popLayout">
-                          <motion.div
-                            key={`${selectedCategory}-${searchQuery}`}
-                            initial="hidden"
-                            animate="visible"
-                            variants={{
-                              visible: { transition: { staggerChildren: 0.1 } },
-                              hidden: {},
-                            }}
-                          >
-                            {filteredTasks.length > 0 ? (
-                              filteredTasks.slice(0, 5).map((task, index) => (
-                                <motion.div
-                                  key={task.id}
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  transition={{ delay: index * 0.1 }}
-                                >
-                                  <TaskItem
-                                    task={task}
-                                    categories={categories}
-                                    onToggleComplete={handleToggleComplete}
-                                    onDelete={handleDeleteTask}
-                                    onUpdate={handleUpdateTask}
-                                    isDraggable={true}
-                                    onDragStart={handleDragStart}
-                                    onDragOver={handleDragOver}
-                                    onDragEnd={handleDragEnd}
-                                    onDrop={handleDrop}
-                                    isDraggedOver={draggedOverTaskId === task.id}
-                                    isFocused={focusedTaskId === task.id}
-                                    isAnyTaskFocused={focusedTaskId !== null}
-                                    onToggleFocus={(id) => setFocusedTaskId(focusedTaskId === id ? null : id)}
-                                    onToggleArchive={handleToggleArchive}
-                                  />
-                                </motion.div>
-                              ))
-                            ) : hasNoPendingTasksToday ? (
-                              <EmptyStateProductivityTip />
-                            ) : (
-                              <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className="border-2 border-dashed border-slate-200 rounded-2xl p-10 text-center flex flex-col items-center justify-center min-h-[300px]"
-                              >
-                                <img
-                                  src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='10'/><path d='M8 12h8'/></svg>"
-                                  alt="Nenhuma tarefa encontrada"
-                                  className="w-12 h-12 text-slate-300 opacity-60 mb-3"
-                                />
-                                <h4 className="font-bold font-display text-slate-600 text-sm">
-                                  Nenhuma tarefa correspondente
-                                </h4>
-                                <p className="text-xs text-slate-400 max-w-xs mt-1 leading-relaxed">
-                                  Tente gravar um áudio descrevendo sua rotina ou crie tarefas manuais no formulário lateral para começar a classificar seu dia!
-                                </p>
-                              </motion.div>
-                            )}
-                          </motion.div>
-                        </AnimatePresence>
-                      </div>
-                    </div>
+                    {historyDate && (
+                      <button onClick={() => setHistoryDate("")} className={ui.btnFantasma}>
+                        Tudo
+                      </button>
+                    )}
                   </div>
+                )}
+              </div>
 
-                  {/* Focus in High Priority Card - order-2 */}
-                  <div className="order-2 md:order-6">
-                    <PriorityDurationCard tasks={firestoreTasks} />
-                  </div>
-
-                  {/* Daily Goal Card - order-3 */}
-                  {visibleCards.dailyGoal && (
-                    <div className="order-3 md:order-3">
-                      <DailyGoal tasks={tasks} />
-                    </div>
-                  )}
-
-                  {/* Weekly Progress Card - order-4 */}
-                  {visibleCards.weeklyProgress && (
-                    <div className="order-4 md:order-4">
-                      <WeeklyProgress tasks={tasks} />
-                    </div>
-                  )}
-
-                  {/* Productivity Summary Card - order-5 */}
-                  {visibleCards.productivitySummary && (
-                    <div className="order-5 md:order-5">
-                      <ProductivitySummary tasks={tasks} />
-                    </div>
-                  )}
-
-                  {/* Dicas Hoje Card - order-6 */}
-                  {visibleCards.dicasHoje && (
-                    <div className="order-6 md:order-2">
-                      <DicasHoje tasks={tasks} />
-                    </div>
-                  )}
-
-                  {/* Category Pie Chart Card - order-7 */}
-                  {visibleCards.categoryPieChart && (
-                    <div className="order-7 md:order-1">
-                      <CategoryPieChart tasks={tasks} />
-                    </div>
-                  )}
-                </div>
-              ) : activeTab === "historico" ? (
-                // Tab 2: Historic Completed View & Date Filtration
-                <div className="space-y-6">
-                  {/* Historical Date Filtering bar */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-xs">
-                    <div className="space-y-1">
-                      <h4 className="font-bold text-slate-800 dark:text-slate-100 text-sm flex items-center gap-1.5">
-                        <History className="w-4 h-4 text-indigo-500" />
-                        Histórico de Tarefas
-                      </h4>
-                      <p className="text-xs text-slate-400 dark:text-slate-500">
-                        Busque e filtre todas as suas atividades ativas ou concluídas por data
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="date"
-                        value={historyDate}
-                        onChange={(e) => setHistoryDate(e.target.value)}
-                        className="px-3.5 py-1.5 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-950 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
-                      />
-                      {historyDate && (
-                        <button
-                          onClick={() => setHistoryDate("")}
-                          className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-semibold cursor-pointer"
-                        >
-                          Mostrar Todas
-                        </button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Visual Completion Progress Over Time Dashboard */}
-                  {Object.keys(completedGroupedByDate).length === 0 ? (
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-5 shadow-xs">
-                      <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-2">
-                        Desempenho por Dia
-                      </h4>
-                      <p className="text-xs text-slate-400 dark:text-slate-600 italic">
-                        Nenhum progresso de tarefa concluída computado ainda. Complete atividades do menu diário para preencher seu gráfico de produtividade!
-                      </p>
-                    </div>
-                  ) : (
-                    <ProgressChart completedGroupedByDate={completedGroupedByDate} />
-                  )}
-
-                  {/* List of Historic Tasks */}
-                  <div className="space-y-3">
-                    <h3 className="font-bold text-slate-800 dark:text-slate-100 font-display text-base">
-                      {historyDate ? `Tarefas em ${new Date(historyDate + "T12:00:00").toLocaleDateString("pt-BR")}` : "Histórico Geral de Tarefas"}{" "}
-                      ({completedHistoryFiltered.length})
-                    </h3>
-
-                    <div className="space-y-3 min-h-[150px] pb-10">
-                      <AnimatePresence mode="popLayout">
-                        {completedHistoryFiltered.length > 0 ? (
-                          completedHistoryFiltered.map((task) => (
-                            <TaskItem
-                              key={task.id}
-                              task={task}
-                              categories={categories}
-                              onToggleComplete={handleToggleComplete}
-                              onDelete={handleDeleteTask}
-                              onUpdate={handleUpdateTask}
-                              onToggleArchive={handleToggleArchive}
-                            />
-                          ))
-                        ) : (
-                          <div className="border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-10 text-center flex flex-col items-center justify-center min-h-[220px]">
-                            <h4 className="font-bold font-display text-slate-500 dark:text-slate-400 text-sm">
-                              Nenhuma tarefa encontrada nesta data
-                            </h4>
-                            <p className="text-xs text-slate-400 dark:text-slate-500 max-w-xs mt-1 leading-relaxed">
-                              Suas tarefas ativas ou concluídas residem nesta lista para acompanhamento de sua evolução diária.
-                            </p>
-                          </div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </div>
-                </div>
-              ) : activeTab === "calendario" ? (
-                // Tab 4: Calendar Monthly View
+              {arquivoModo === "calendario" ? (
                 <CalendarView
                   tasks={tasks}
                   categories={categories}
                   onToggleComplete={handleToggleComplete}
-                  setActiveTab={setActiveTab}
-                  setHistoryDate={setHistoryDate}
+                  onOpenDate={(date) => {
+                    setHistoryDate(date);
+                    setArquivoModo("concluidas");
+                  }}
                 />
-              ) : activeTab === "notas" ? (
-                <NotesView 
-                  notes={notes} 
-                  onAddNote={addNote} 
-                  onUpdateNote={updateNote} 
-                  onDeleteNote={deleteNote} 
-                />
-              ) : activeTab === "listas" ? (
-                <ListView
-                  lists={lists}
-                  onAddList={addList}
-                  onUpdateList={updateList}
-                  onDeleteList={deleteList}
-                />
+              ) : arquivoModo === "arquivadas" ? (
+                <section className="space-y-3">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <h2 className={ui.displayLg}>Arquivadas</h2>
+                    <span className={`${ui.monoRot} ${ui.fraco}`}>{archivedTasks.length}</span>
+                  </div>
+                  <p className={`${ui.corpoSm} ${ui.suave} max-w-[68ch]`}>
+                    O que está aqui fica fora da fila do dia e das metas. Desarquive para trazer de
+                    volta.
+                  </p>
+                  <div className="space-y-2">
+                    <AnimatePresence mode="popLayout">
+                      {listaDeTarefas(archivedTasks, false)}
+                    </AnimatePresence>
+                    {archivedTasks.length === 0 &&
+                      vazio(
+                        "Nada arquivado",
+                        "Arquive na fila do dia o que é ideia ou compromisso futuro."
+                      )}
+                  </div>
+                </section>
               ) : (
-                // Tab 3: Archived / Banco de Tarefas View
-                <div className="space-y-6">
-                  {/* Archived Info Header Banner */}
-                  <div className="bg-amber-50/10 dark:bg-amber-950/10 border border-amber-200/60 dark:border-amber-900/40 rounded-2xl p-5 shadow-xs flex gap-4">
-                    <Archive className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-                    <div>
-                      <h4 className="text-sm font-bold text-amber-900 dark:text-amber-500 uppercase tracking-wide flex items-center gap-2 mb-1 font-display">
-                        Banco de Tarefas (Arquivadas)
-                      </h4>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-sans">
-                        Este é o seu banco de tarefas e ideias secundárias. Tarefas aqui guardadas ficam fora das suas metas diárias ativas e do seu histórico para evitar distrações. Você pode <strong>Desarquivar</strong> (através do ícone de gaveta de arquivo) para trazê-las de volta à sua Fila de Atividades a qualquer momento!
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* List of Archived Tasks */}
+                <section className="space-y-6">
+                  {Object.keys(completedGroupedByDate).length > 0 && (
+                    <ProgressChart completedGroupedByDate={completedGroupedByDate} />
+                  )}
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-bold text-slate-800 dark:text-slate-100 font-display text-base">
-                        Banco de Tarefas ({archivedTasks.length})
-                      </h3>
-                      {selectedCategory !== "Todas" || selectedPriority !== "Todas" ? (
-                        <button
-                          onClick={() => {
-                            setSelectedCategory("Todas");
-                            setSelectedPriority("Todas");
-                          }}
-                          className="text-xs text-indigo-200 hover:underline font-semibold cursor-pointer"
-                        >
-                          Limpar Filtros
-                        </button>
-                      ) : null}
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <h2 className={ui.displayLg}>
+                        {historyDate
+                          ? new Date(historyDate + "T12:00:00").toLocaleDateString("pt-BR")
+                          : "Todo o histórico"}
+                      </h2>
+                      <span className={`${ui.monoRot} ${ui.fraco}`}>
+                        {completedHistoryFiltered.length}
+                      </span>
                     </div>
-
-                    <div className="space-y-3 min-h-[150px] pb-10">
+                    <div className="space-y-2">
                       <AnimatePresence mode="popLayout">
-                        {archivedTasks.length > 0 ? (
-                          archivedTasks.map((task) => (
-                            <TaskItem
-                              key={task.id}
-                              task={task}
-                              categories={categories}
-                              onToggleComplete={handleToggleComplete}
-                              onDelete={handleDeleteTask}
-                              onUpdate={handleUpdateTask}
-                              onToggleArchive={handleToggleArchive}
-                            />
-                          ))
-                        ) : (
-                          <div className="border border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-10 text-center flex flex-col items-center justify-center min-h-[220px]">
-                            <Archive className="w-10 h-10 text-slate-400 dark:text-slate-500 shrink-0 mb-3" />
-                            <h4 className="font-bold font-display text-slate-500 dark:text-slate-400 text-sm">
-                              Nenhuma tarefa no seu banco
-                            </h4>
-                            <p className="text-xs text-slate-400 dark:text-slate-500 max-w-xs mt-1 leading-relaxed">
-                              Use a fila diária e clique no ícone de arquivamento para guardar ideias, referências ou compromissos futuros aqui neste banco!
-                            </p>
-                          </div>
-                        )}
+                        {listaDeTarefas(completedHistoryFiltered, false)}
                       </AnimatePresence>
+                      {completedHistoryFiltered.length === 0 &&
+                        vazio(
+                          "Nada nesta data",
+                          "Escolha outro dia ou toque em Tudo para ver o histórico inteiro."
+                        )}
                     </div>
                   </div>
-                </div>
+                </section>
               )}
             </div>
-          </div>
-        </div>
-
-        {/* Floating Action Button (FAB) for mobile additions */}
-        <button
-          onClick={() => setIsMobileAddOpen(true)}
-          className="lg:hidden fixed bottom-20 right-6 z-40 w-14 h-14 bg-indigo-600 hover:bg-indigo-800 text-white rounded-full shadow-lg shadow-indigo-200 dark:shadow-none flex items-center justify-center transition-all cursor-pointer hover:scale-105 active:scale-95"
-          title="Adicionar Tarefa ou Gravar Áudio"
-        >
-          <Mic className="w-5 h-5" />
-        </button>
-
-        {/* Mobile Task Insertion Slide-up Bottom Sheet */}
-        <AnimatePresence>
-          {isMobileAddOpen && (
-            <>
-              {/* Backdrop overlay */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.5 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsMobileAddOpen(false)}
-                className="lg:hidden fixed inset-0 bg-black z-45"
-              />
-              {/* Bottom Sheet Card */}
-              <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "100%" }}
-                transition={{ type: "spring", damping: 25, stiffness: 220 }}
-                className="lg:hidden fixed bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto bg-slate-50 dark:bg-slate-900 rounded-t-3xl border-t border-slate-200 dark:border-slate-800 p-5 z-50 shadow-2xl flex flex-col space-y-5"
-              >
-                {/* Grab handle bar */}
-                <div className="flex justify-center -mt-1.5 mb-1">
-                  <div className="w-12 h-1.5 bg-slate-300 dark:bg-slate-700 rounded-full" />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                    <h3 className="font-bold font-display text-slate-800 dark:text-slate-100 text-sm">Nova Tarefa / Áudio</h3>
-                  </div>
-                  <button
-                    onClick={() => setIsMobileAddOpen(false)}
-                    className="p-1.5 bg-slate-200 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-500 cursor-pointer"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-
-                {/* Render inputs inside sheet */}
-                <div className="space-y-6 pb-6">
-                  <AudioRecorder
-                    onTasksExtracted={(tasks) => {
-                      handleAIRecovery(tasks);
-                      // Close the modal after successful audio parsing
-                      setIsMobileAddOpen(false);
-                    }}
-                    onError={(msg) => triggerBanner(msg, "error")}
-                  />
-
-                  {recentTranscription && (
-                    <div className="bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100/60 dark:border-indigo-900/40 rounded-2xl p-5">
-                      <h4 className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center mb-1.5">
-                        <Volume2 className="w-3.5 h-3.5 mr-1" /> Transcrição do seu relato
-                      </h4>
-                      <p className="text-xs text-slate-600 dark:text-slate-400 italic leading-relaxed">
-                        "{recentTranscription}"
-                      </p>
-                    </div>
-                  )}
-
-                  <TaskForm 
-                    onAddTask={(task) => {
-                      handleAddNewTask(task);
-                      // Close sheet on successful add
-                      setIsMobileAddOpen(false);
-                    }} 
-                    categories={categories} 
-                  />
-                </div>
-              </motion.div>
-            </>
           )}
-        </AnimatePresence>
+        </div>
+      </main>
 
-        {/* Mobile Bottom Tab Navigation */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 z-40 flex items-center justify-around px-2">
-          <button
-            onClick={() => {
-              setSelectedCategory("Todas");
-              setSelectedPriority("Todas");
-              setSearchQuery("");
-              setActiveTab("diarias");
-            }}
-            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-colors cursor-pointer ${
-              activeTab === "diarias"
-                ? "text-indigo-650 dark:text-indigo-400 font-extrabold scale-105"
-                : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-            }`}
-          >
-            <CalendarDays className="w-5 h-5 shrink-0" />
-            <span className="text-[10px] tracking-tight">Atividades</span>
-          </button>
-
-          <button
-            onClick={() => {
-              setActiveTab("calendario");
-            }}
-            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-colors cursor-pointer ${
-              activeTab === "calendario"
-                ? "text-indigo-650 dark:text-indigo-400 font-extrabold scale-105"
-                : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-            }`}
-          >
-            <Calendar className="w-5 h-5 shrink-0" />
-            <span className="text-[10px] tracking-tight">Calendário</span>
-          </button>
-
-          <button
-            onClick={() => {
-              setActiveTab("notas");
-            }}
-            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-colors cursor-pointer ${
-              activeTab === "notas"
-                ? "text-indigo-650 dark:text-indigo-400 font-extrabold scale-105"
-                : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-            }`}
-          >
-            <StickyNote className="w-5 h-5 shrink-0" />
-            <span className="text-[10px] tracking-tight">Notas</span>
-          </button>
-
-          <button
-            onClick={() => {
-              setActiveTab("listas");
-            }}
-            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-colors cursor-pointer ${
-              activeTab === "listas"
-                ? "text-indigo-650 dark:text-indigo-400 font-extrabold scale-105"
-                : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-            }`}
-          >
-            <ListTodo className="w-5 h-5 shrink-0" />
-            <span className="text-[10px] tracking-tight">Listas</span>
-          </button>
-
-          <button
-            onClick={() => {
-              setIsMobileMenuOpen(!isMobileMenuOpen);
-            }}
-            className={`flex flex-col items-center gap-1 py-1 px-3 rounded-xl transition-colors cursor-pointer ${
-              isMobileMenuOpen
-                ? "text-indigo-650 dark:text-indigo-400 font-extrabold scale-105"
-                : "text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-            }`}
-          >
-            <Menu className="w-5 h-5 shrink-0" />
-            <span className="text-[10px] tracking-tight">Menu</span>
-          </button>
+      {/* ── Console de voz: ancorado embaixo, sempre ao alcance ───────────── */}
+      <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-linha dark:border-tinta-linha bg-pauta-alta dark:bg-tinta-alta shadow-[0_-8px_24px_-16px_rgba(0,0,0,.45)]">
+        <nav
+          className="mx-auto flex max-w-[76rem] items-center gap-1 border-b border-linha px-2 py-1 dark:border-tinta-linha md:hidden"
+          aria-label="Seções"
+        >
+          {ABAS.map(({ id, rotulo }) => (
+            <button
+              key={id}
+              onClick={() => irParaAba(id)}
+              aria-current={abaAtiva(id) ? "page" : undefined}
+              className={`${classeAba(abaAtiva(id))} flex-1`}
+            >
+              {rotulo}
+            </button>
+          ))}
         </nav>
 
-        {/* Mobile Menu Slide-over/Drawer Overlay */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <>
-              {/* Backdrop (hidden if collapsed to allow interacting with content) */}
-              {!isMobileMenuCollapsed && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.5 }}
-                  exit={{ opacity: 0 }}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="md:hidden fixed inset-0 bg-black z-45"
-                />
-              )}
-              {/* Drawer content */}
-              <motion.div
-                initial={{ x: "100%" }}
-                animate={{ x: 0 }}
-                exit={{ x: "100%" }}
-                transition={{ type: "spring", damping: 25, stiffness: 220 }}
-                className={`md:hidden fixed inset-y-0 right-0 ${
-                  isMobileMenuCollapsed ? "w-16 p-2" : "w-80 p-5"
-                } bg-white dark:bg-slate-900 z-50 shadow-2xl flex flex-col space-y-5 border-l border-slate-200 dark:border-slate-800 h-screen overflow-y-auto pb-24 transition-all duration-300`}
-              >
-                {/* Drawer Header */}
-                <div className={`flex ${isMobileMenuCollapsed ? "flex-col items-center gap-4" : "items-center justify-between"}`}>
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-indigo-650 rounded-xl flex items-center justify-center text-white shadow-xs shrink-0">
-                      <Mic className="w-4 h-4" />
-                    </div>
-                    {!isMobileMenuCollapsed && (
-                      <div>
-                        <span className="font-extrabold text-sm tracking-tight font-display text-slate-900 dark:text-slate-100 block">EchoPlan</span>
-                        <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Voice Assistant</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className={`flex ${isMobileMenuCollapsed ? "flex-col gap-2" : "items-center gap-1.5"}`}>
-                    <button
-                      onClick={() => setIsMobileMenuCollapsed(!isMobileMenuCollapsed)}
-                      className="p-1.5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-slate-500 cursor-pointer"
-                      title={isMobileMenuCollapsed ? "Expandir menu" : "Encolher menu"}
-                    >
-                      {isMobileMenuCollapsed ? (
-                        <ChevronLeft className="w-4 h-4" />
-                      ) : (
-                        <ChevronRight className="w-4 h-4" />
-                      )}
-                    </button>
-                    <button
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="p-1.5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full text-rose-500 cursor-pointer"
-                      title="Esconder menu"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* User profile */}
-                <div className={`${isMobileMenuCollapsed ? "p-1 justify-center" : "p-3 gap-3"} bg-slate-50 dark:bg-slate-950/40 rounded-2xl border border-slate-200 dark:border-slate-800/80 flex items-center`}>
-                  {user.photoURL ? (
-                    <img src={user.photoURL} alt={user.displayName || "User"} className="w-10 h-10 rounded-xl shadow-sm object-cover" referrerPolicy="no-referrer" />
-                  ) : (
-                    <div className="w-10 h-10 rounded-xl bg-indigo-650 text-white font-bold text-sm flex items-center justify-center shadow-sm uppercase shrink-0">
-                      {user.displayName?.slice(0, 2) || "U"}
-                    </div>
-                  )}
-                  {!isMobileMenuCollapsed && (
-                    <div className="min-w-0 flex-1">
-                      <div className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{user.displayName || "Usuário"}</div>
-                      <div className="text-[10px] text-slate-400 font-mono truncate">{user.email}</div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Navigation Menu Links */}
-                <div className="space-y-1">
-                  {!isMobileMenuCollapsed && (
-                    <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-1.5">Seções do App</div>
-                  )}
-                  
-                  <button
-                    onClick={() => {
-                      setSelectedCategory("Todas");
-                      setSelectedPriority("Todas");
-                      setSearchQuery("");
-                      setActiveTab("diarias");
-                      if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
-                    }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs transition-colors cursor-pointer ${
-                      activeTab === "diarias" ? "bg-slate-100 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                    }`}
-                    title="Fila de Atividades"
-                  >
-                    <CalendarDays className="w-4 h-4 shrink-0" />
-                    {!isMobileMenuCollapsed && <span>Fila de Atividades</span>}
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setActiveTab("calendario");
-                      if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
-                    }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs transition-colors cursor-pointer ${
-                      activeTab === "calendario" ? "bg-slate-100 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                    }`}
-                    title="Calendário Mensal"
-                  >
-                    <Calendar className="w-4 h-4 shrink-0" />
-                    {!isMobileMenuCollapsed && <span>Calendário Mensal</span>}
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setActiveTab("historico");
-                      if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
-                    }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs transition-colors cursor-pointer ${
-                      activeTab === "historico" ? "bg-slate-100 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                    }`}
-                    title="Histórico de Tarefas"
-                  >
-                    <History className="w-4 h-4 shrink-0" />
-                    {!isMobileMenuCollapsed && <span>Histórico de Tarefas</span>}
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setActiveTab("arquivadas");
-                      if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
-                    }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs transition-colors cursor-pointer ${
-                      activeTab === "arquivadas" ? "bg-slate-100 dark:bg-slate-800 text-amber-600 dark:text-amber-500" : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                    }`}
-                    title="Banco de Tarefas"
-                  >
-                    <div className="relative flex items-center justify-center">
-                      <Archive className="w-4 h-4 shrink-0 text-amber-500" />
-                      {isMobileMenuCollapsed && (
-                        <span className="absolute -top-1.5 -right-1.5 bg-amber-500 text-white text-[8px] font-bold px-1 rounded-full">
-                          {tasks.filter((t) => t.archived).length}
-                        </span>
-                      )}
-                    </div>
-                    {!isMobileMenuCollapsed && (
-                      <>
-                        <span>Banco de Tarefas</span>
-                        <span className="bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full ml-auto">
-                          {tasks.filter((t) => t.archived).length}
-                        </span>
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                {/* Action buttons from Sidebar */}
-                <div className="space-y-1">
-                  {!isMobileMenuCollapsed && (
-                    <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest px-2 mb-1.5">Ações e Planejamento</div>
-                  )}
-
-                  <button
-                    onClick={() => {
-                      generatePlannerImage();
-                      if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
-                    }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-indigo-600 dark:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer border border-indigo-100 dark:border-indigo-900/35 bg-indigo-50/20 dark:bg-indigo-950/10`}
-                    title="Imprimir Planner"
-                  >
-                    <Printer className="w-4 h-4 shrink-0" />
-                    {!isMobileMenuCollapsed && <span>Imprimir Planner</span>}
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
-                      const today = getLocalDateString();
-                      const completedTasksToday = tasks.filter((t) => t.completed && getLocalDateStringFromISO(t.updatedAt || t.createdAt) === today);
-                      if (completedTasksToday.length === 0) {
-                        triggerBanner("Nenhuma tarefa concluída hoje para resumir.", "info");
-                        return;
-                      }
-                      const summary = `Tarefas Concluídas - ${today}\n\n` + completedTasksToday.map((t) => `- ${t.title}`).join("\n");
-                      navigator.clipboard.writeText(summary);
-                      triggerBanner("Resumo copiado para a área de transferência!", "success");
-                    }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-slate-200 dark:border-slate-800 cursor-pointer`}
-                    title="Copiar Resumo"
-                  >
-                    <FileDown className="w-4 h-4 shrink-0 text-indigo-600" />
-                    {!isMobileMenuCollapsed && <span>Copiar Resumo</span>}
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
-                      fileInputRef.current?.click();
-                    }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-slate-200 dark:border-slate-800 cursor-pointer`}
-                    title="Importar Backup"
-                  >
-                    <Upload className="w-4 h-4 shrink-0 text-indigo-600" />
-                    {!isMobileMenuCollapsed && <span>Importar Backup</span>}
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
-                      handleExportBackup();
-                    }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-slate-200 dark:border-slate-800 cursor-pointer`}
-                    title="Exportar Backup"
-                  >
-                    <Download className="w-4 h-4 shrink-0 text-indigo-600" />
-                    {!isMobileMenuCollapsed && <span>Exportar Backup</span>}
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
-                      handleExportCompletedCSV();
-                    }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-slate-200 dark:border-slate-800 cursor-pointer`}
-                    title="Exportar Histórico (CSV)"
-                  >
-                    <FileSpreadsheet className="w-4 h-4 shrink-0 text-emerald-600 dark:text-emerald-500" />
-                    {!isMobileMenuCollapsed && <span>Exportar Histórico (CSV)</span>}
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
-                      setIsCategoryModalOpen(true);
-                    }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-indigo-650 dark:text-indigo-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 border border-dashed border-indigo-200 dark:border-indigo-900/45 cursor-pointer bg-indigo-50/10`}
-                    title="Categorias Personalizadas"
-                  >
-                    <Settings className="w-4 h-4 shrink-0 text-indigo-600" />
-                    {!isMobileMenuCollapsed && <span>Categorias Personalizadas</span>}
-                  </button>
-                </div>
-
-                {/* Settings & Logout */}
-                <div className="space-y-1 pt-3 border-t border-slate-200 dark:border-slate-800">
-                  <button
-                    onClick={() => {
-                      if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
-                      setDarkMode(!darkMode);
-                    }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer`}
-                    title={darkMode ? "Modo Claro" : "Modo Escuro"}
-                  >
-                    {darkMode ? (
-                      <>
-                        <Sun className="w-4 h-4 text-amber-500 shrink-0" />
-                        {!isMobileMenuCollapsed && <span>Modo Claro</span>}
-                      </>
-                    ) : (
-                      <>
-                        <Moon className="w-4 h-4 text-indigo-600 shrink-0" />
-                        {!isMobileMenuCollapsed && <span>Modo Escuro</span>}
-                      </>
-                    )}
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
-                      setIsSettingsModalOpen(true);
-                    }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer`}
-                    title="Configurações Gerais"
-                  >
-                    <Settings className="w-4 h-4 shrink-0" />
-                    {!isMobileMenuCollapsed && <span>Configurações Gerais</span>}
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      if (!isMobileMenuCollapsed) setIsMobileMenuOpen(false);
-                      logout();
-                    }}
-                    className={`w-full flex items-center ${isMobileMenuCollapsed ? "justify-center p-2.5" : "gap-3 px-3 py-2 text-left"} rounded-xl font-bold text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/20 cursor-pointer`}
-                    title="Sair da Conta"
-                  >
-                    <LogOut className="w-4 h-4 shrink-0" />
-                    {!isMobileMenuCollapsed && <span>Sair da Conta</span>}
-                  </button>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-      </main>
+        <div className="mx-auto max-h-[46vh] max-w-[68rem] overflow-y-auto px-4 py-3 sm:px-6">
+          <AudioRecorder
+            onTasksExtracted={handleAIRecovery}
+            onError={(msg) => triggerBanner(msg, "error")}
+            transcricaoRecente={recentTranscription}
+            onLimparTranscricao={() => setRecentTranscription(null)}
+          />
+        </div>
+      </div>
 
       <ConfettiEffect active={isConfettiActive} onComplete={() => setIsConfettiActive(false)} />
     </div>
-  </div>
   );
 }

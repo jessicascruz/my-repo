@@ -17,16 +17,15 @@ interface CalendarViewProps {
   tasks: Task[];
   categories: string[];
   onToggleComplete: (id: string) => void;
-  setActiveTab: (tab: "diarias" | "historico" | "arquivadas" | "calendario") => void;
-  setHistoryDate: (date: string) => void;
+  /** Abre o dia escolhido no histórico do arquivo. */
+  onOpenDate: (date: string) => void;
 }
 
 export function CalendarView({
   tasks,
   categories,
   onToggleComplete,
-  setActiveTab,
-  setHistoryDate,
+  onOpenDate,
 }: CalendarViewProps) {
   const today = new Date();
   
@@ -157,8 +156,7 @@ export function CalendarView({
 
   // Sync to history component date handler
   const handleViewInHistory = () => {
-    setHistoryDate(selectedDateStr);
-    setActiveTab("historico");
+    onOpenDate(selectedDateStr);
   };
 
   // Helper colors for category dots
