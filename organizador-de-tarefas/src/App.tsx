@@ -454,7 +454,7 @@ export default function App() {
     }
 
     // 2. Double Decorative Border
-    ctx.strokeStyle = "#4A4E57"; // slate-600 border
+    ctx.strokeStyle = "#4A4E57"; // tinta-70
     ctx.lineWidth = 3;
     ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
 
