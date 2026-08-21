@@ -1,5 +1,0 @@
-Dockerfile
-kubernetes*
-*.md
-.dockerignore
-.git*

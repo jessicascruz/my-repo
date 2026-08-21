@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Pauta — Plano de Redesign do EchoPlan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --tinta:      #16181D;
+    --tinta-70:   #4A4E57;
+    --tinta-45:   #767A84;
+    --pauta:      #E9E6DD;
+    --pauta-alta: #F4F2EC;
+    --pauta-baixa:#DCD8CC;
+    --linha:      #C6C1B3;
+    --fita:       #0E5C4A;
+    --fita-clara: #34A98B;
+    --dial:       #F0A828;
+    --gravando:   #E2453A;
+
+    --bg: var(--pauta);
+    --superficie: var(--pauta-alta);
+    --fg: var(--tinta);
+    --fg-suave: var(--tinta-70);
+    --fg-fraco: var(--tinta-45);
+    --borda: var(--linha);
+    --acento: var(--fita);
+    --codigo-bg: #14171C;
+    --codigo-fg: #DCD8CC;
+
+    --display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    --corpo: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+    --mono: "DM Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101216;
+      --superficie: #171A1F;
+      --fg: #E9E6DD;
+      --fg-suave: #A8A49A;
+      --fg-fraco: #7D7A72;
+      --borda: #2A2E35;
+      --acento: var(--fita-clara);
+      --codigo-bg: #0B0D10;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--corpo);
+    font-size: 16px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 0 24px 120px; }
+
+  header.capa { padding: 88px 0 56px; border-bottom: 1px solid var(--borda); margin-bottom: 56px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--acento); margin: 0 0 20px;
+  }
+  h1 {
+    font-family: var(--display); font-weight: 800; font-size: clamp(42px, 8vw, 82px);
+    line-height: .94; letter-spacing: -.03em; margin: 0 0 22px;
+  }
+  h1 em { font-style: normal; color: var(--acento); }
+  .lede { font-size: clamp(17px, 2.2vw, 20px); color: var(--fg-suave); max-width: 62ch; margin: 0; }
+  .meta { font-family: var(--mono); font-size: 12px; color: var(--fg-fraco); margin-top: 32px; display: flex; flex-wrap: wrap; gap: 20px; }
+
+  section { margin: 0 0 72px; scroll-margin-top: 24px; }
+  h2 {
+    font-family: var(--display); font-weight: 800; font-size: clamp(26px, 4vw, 36px);
+    letter-spacing: -.02em; line-height: 1.08; margin: 0 0 8px;
+  }
+  h2 .num {
+    font-family: var(--mono); font-size: 12px; font-weight: 400; color: var(--acento);
+    display: block; letter-spacing: .12em; margin-bottom: 10px;
+  }
+  h3 { font-family: var(--display); font-weight: 600; font-size: 19px; letter-spacing: -.01em; margin: 36px 0 10px; }
+  h4 { font-family: var(--mono); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-fraco); margin: 28px 0 8px; }
+  p { margin: 0 0 16px; max-width: 72ch; }
+  .sub { color: var(--fg-suave); max-width: 68ch; margin-bottom: 28px; }
+  ul, ol { max-width: 72ch; padding-left: 22px; margin: 0 0 16px; }
+  li { margin-bottom: 7px; }
+  strong { font-weight: 600; }
+  code {
+    font-family: var(--mono); font-size: .87em; background: var(--pauta-baixa);
+    padding: 1px 5px; border-radius: 3px;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) code { background: #23272E; } }
+  a { color: var(--acento); }
+
+  pre {
+    font-family: var(--mono); font-size: 12.5px; line-height: 1.55;
+    background: var(--codigo-bg); color: var(--codigo-fg);
+    padding: 20px 22px; border-radius: 4px; overflow-x: auto; margin: 0 0 20px;
+  }
+
+  .caixa { border: 1px solid var(--borda); background: var(--superficie); border-radius: 4px; padding: 22px 24px; margin: 0 0 20px; }
+  .caixa > :last-child { margin-bottom: 0; }
+  .aviso { border-left: 3px solid var(--gravando); }
+  .nota  { border-left: 3px solid var(--dial); }
+  .ok    { border-left: 3px solid var(--acento); }
+
+  .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 2px; margin: 0 0 24px; }
+  .sw { padding: 18px 14px 14px; min-height: 118px; display: flex; flex-direction: column; justify-content: flex-end; }
+  .sw b { font-family: var(--display); font-weight: 600; font-size: 15px; display: block; }
+  .sw span { font-family: var(--mono); font-size: 11px; opacity: .8; }
+  .sw small { font-family: var(--corpo); font-size: 11.5px; opacity: .75; display: block; margin-top: 6px; line-height: 1.35; }
+
+  .tipo-demo { border: 1px solid var(--borda); border-radius: 4px; overflow: hidden; margin-bottom: 24px; }
+  .tipo-linha { padding: 18px 22px; border-bottom: 1px solid var(--borda); display: flex; gap: 20px; align-items: baseline; flex-wrap: wrap; }
+  .tipo-linha:last-child { border-bottom: 0; }
+  .tipo-linha .rot { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-fraco); width: 150px; flex-shrink: 0; }
+
+  .pauta-demo {
+    border: 1px solid var(--borda); border-radius: 4px; background: var(--superficie);
+    padding: 26px 0 18px; margin-bottom: 20px; overflow-x: auto;
+  }
+  .pauta-demo svg { display: block; min-width: 620px; width: 100%; height: auto; }
+
+  .fase { border-top: 1px solid var(--borda); padding: 24px 0; display: grid; grid-template-columns: 92px 1fr; gap: 24px; }
+  .fase:last-of-type { border-bottom: 1px solid var(--borda); }
+  .fase .tag { font-family: var(--mono); font-size: 12px; color: var(--acento); letter-spacing: .08em; }
+  .fase .tag small { display: block; color: var(--fg-fraco); margin-top: 6px; letter-spacing: 0; }
+  .fase h3 { margin: 0 0 8px; }
+  .fase ul { margin-bottom: 12px; }
+  .arquivos { font-family: var(--mono); font-size: 11.5px; color: var(--fg-fraco); line-height: 1.7; }
+  .arquivos b { color: var(--fg-suave); font-weight: 500; }
+  .prova { font-size: 13.5px; color: var(--fg-suave); border-left: 2px solid var(--dial); padding-left: 12px; margin-top: 12px; }
+  .prova b { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .09em; color: var(--fg-fraco); display: block; }
+
+  .copy-par { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-bottom: 2px; }
+  .copy-par > div { padding: 14px 16px; font-size: 14.5px; }
+  .antes { background: var(--pauta-baixa); color: var(--fg-suave); }
+  .depois { background: var(--superficie); border: 1px solid var(--borda); border-left: 3px solid var(--acento); }
+  .copy-par .rot { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-fraco); display: block; margin-bottom: 4px; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .antes { background: #1E2228; } }
+  @media (max-width: 640px) { .copy-par { grid-template-columns: 1fr; } .fase { grid-template-columns: 1fr; gap: 10px; } }
+
+  nav.indice { font-family: var(--mono); font-size: 12.5px; margin: 0 0 64px; }
+  nav.indice ol { list-style: none; padding: 0; counter-reset: i; }
+  nav.indice li { counter-increment: i; border-bottom: 1px dotted var(--borda); padding: 9px 0; }
+  nav.indice li::before { content: counter(i, decimal-leading-zero); color: var(--acento); margin-right: 14px; }
+  nav.indice a { text-decoration: none; color: var(--fg); }
+  nav.indice a:hover { color: var(--acento); }
+  :focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="capa">
+  <p class="eyebrow">Plano de redesign &middot; EchoPlan</p>
+  <h1>A <em>Pauta</em>.<br>O dia como uma gravação.</h1>
+  <p class="lede">O app já ouve. A interface ainda não escuta: hoje é um dashboard de cards indigo que poderia ser qualquer SaaS. Este plano troca a metáfora — de painel de controle para <strong>pauta de gravação</strong>: uma linha de tempo com faixas por prioridade, um cursor que anda com o relógio e um console de voz sempre ao alcance.</p>
+  <p class="meta">
+    <span>21 ago 2026</span>
+    <span>Escopo: front-end inteiro</span>
+    <span>Stack mantida: React 19 &middot; Tailwind v4 &middot; motion &middot; lucide &middot; recharts</span>
+    <span>Zero mudança de schema</span>
+  </p>
+</header>
+
+<nav class="indice" aria-label="Índice">
+  <ol>
+    <li><a href="#diagnostico">Diagnóstico — o que trava hoje</a></li>
+    <li><a href="#direcao">Direção — por que "pauta" e não "dashboard"</a></li>
+    <li><a href="#cor">Cor</a></li>
+    <li><a href="#tipografia">Tipografia</a></li>
+    <li><a href="#layout">Layout</a></li>
+    <li><a href="#signature">Elemento assinatura — A Pauta do dia</a></li>
+    <li><a href="#movimento">Movimento</a></li>
+    <li><a href="#texto">Texto de interface</a></li>
+    <li><a href="#execucao">Execução — 10 fases</a></li>
+    <li><a href="#pronto">Definição de pronto</a></li>
+    <li><a href="#fora">Fora de escopo</a></li>
+  </ol>
+</nav>
+
+<section id="diagnostico">
+  <h2><span class="num">01</span>Diagnóstico — o que trava hoje</h2>
+  <p class="sub">Três problemas visuais e três estruturais. Os estruturais vêm primeiro, senão o redesign é pintura sobre parede solta.</p>
+
+  <h3>Visual</h3>
+  <ul>
+    <li><strong>Indigo sobre slate.</strong> <code>indigo-650</code> + <code>slate-50</code> é o preset do Tailwind. Nada na tela vem do assunto do produto (voz, tempo, fala).</li>
+    <li><strong>Inter + Space Grotesk.</strong> O par mais usado em app gerado por IA hoje. Legível, sem personalidade.</li>
+    <li><strong>Tudo é card.</strong> Sidebar + header + grid de 12 colunas com caixinhas <code>rounded-2xl shadow-sm</code>. Hierarquia plana: o gravador — o coração do app — é só mais um card.</li>
+  </ul>
+
+  <h3>Estrutural</h3>
+  <div class="caixa aviso">
+    <h4>Bug 1 — 281 usos de classes Tailwind que não existem</h4>
+    <p style="margin-bottom:10px">Varredura em <code>src/</code>: <strong>71 classes distintas fora da escala do Tailwind</strong>, usadas 281 vezes. Só <code>indigo-650</code> está definida em <code>@theme</code>. As outras não geram CSS e falham em silêncio — o elemento herda a cor de cima.</p>
+    <pre>text-slate-355   text-slate-405   text-slate-450   text-slate-455
+text-slate-550   text-slate-555   text-slate-650   text-slate-655
+text-indigo-455  text-indigo-505  text-indigo-555  text-indigo-655
+bg-slate-850     bg-slate-855     bg-amber-450     bg-indigo-750
+border-slate-105 border-amber-105 border-teal-105  ring-indigo-505
+... e mais 51</pre>
+    <p style="margin-bottom:0">Consequência prática: <strong>parte do contraste que você vê hoje é acidente</strong>. Não há como calibrar paleta nova sem limpar isso primeiro.</p>
+  </div>
+
+  <div class="caixa aviso">
+    <h4>Bug 2 — dark mode aplicado no lugar errado</h4>
+    <p style="margin-bottom:0"><code>App.tsx:1247</code> põe a classe <code>dark</code> num <strong>div</strong>, não no <code>&lt;html&gt;</code>. Resultado: a regra <code>html.dark body</code> em <code>index.css</code> nunca dispara, o <code>&lt;body&gt;</code> fica claro atrás de tudo e qualquer área não coberta pelo div vaza branco. Também impede <code>color-scheme</code> nativo (barra de rolagem, autofill, controles do SO).</p>
+  </div>
+
+  <div class="caixa aviso">
+    <h4>Bug 3 — dois arquivos concentram 40% do front</h4>
+    <p style="margin-bottom:0"><code>App.tsx</code> com 2.583 linhas e <code>TaskItem.tsx</code> com 1.688, de 10.889 no total. Estilo e estado moram juntos, então trocar aparência mexe em lógica. O plano trata isso com extração cirúrgica, não com refatoração geral.</p>
+  </div>
+</section>
+
+<section id="direcao">
+  <h2><span class="num">02</span>Direção — por que "pauta" e não "dashboard"</h2>
+  <p>O material bruto deste app não é uma lista. É <strong>uma gravação</strong>: você fala o dia, o Gemini transcreve e estrutura. Todo o vocabulário nativo do produto já é sonoro — gravar, transcrever, ouvir, silenciar (o DND), lembrar num minuto exato.</p>
+  <p><strong>Pauta</strong> é a palavra que faz a ponte em português: é a pauta musical (as linhas onde as notas se apoiam) e é a pauta de trabalho (o que está na agenda). A interface adota isso literalmente: o dia é uma pauta com <strong>três faixas — Alta, Média, Baixa</strong> — onde cada tarefa se apoia no horário do lembrete, e um <strong>cursor</strong> caminha com o relógio.</p>
+
+  <div class="caixa ok">
+    <h4>O que isso muda na prática</h4>
+    <ul style="margin-bottom:0">
+      <li>O tempo passa a ser eixo, não campo de formulário. "18:00" deixa de ser texto num card e passa a ser <em>posição</em>.</li>
+      <li>Prioridade deixa de ser badge colorida e passa a ser <em>altura na pauta</em> — dá para ler o dia em meio segundo.</li>
+      <li>A voz sobe de card a <strong>console fixo</strong>: sempre visível, como a barra de um player.</li>
+      <li>"Tarefa sem hora" ganha lugar honesto — a <strong>bandeja</strong> embaixo da pauta — em vez de se misturar às agendadas.</li>
+    </ul>
+  </div>
+
+  <h3>O que foi descartado, e por quê</h3>
+  <ul>
+    <li><strong>Estúdio dark com verde-neon.</strong> Coerente com o assunto, mas é exatamente um dos três looks-padrão de IA hoje. Descartado por ser default disfarçado de escolha.</li>
+    <li><strong>Caderno de ditado</strong> (creme + serifa de alto contraste + terracota). Mesmo motivo — é o default número um.</li>
+    <li><strong>Duração como largura da barra.</strong> Seria a leitura mais rica, mas <code>Task</code> em <code>src/types.ts</code> não tem campo de duração. Fica registrado como evolução futura: este redesign não mexe em schema.</li>
+  </ul>
+
+  <div class="caixa nota">
+    <h4>O risco assumido</h4>
+    <p style="margin-bottom:0">Trocar o grid de cards por uma tela-canvas com eixo de tempo é aposta: quem está acostumado à lista vertical vai estranhar. Mitigação: <strong>a lista continua existindo</strong> logo abaixo da pauta, com o mesmo conteúdo. A pauta é leitura panorâmica; a lista é trabalho. Nenhuma ação existe só na pauta.</p>
+  </div>
+</section>
+
+<section id="cor">
+  <h2><span class="num">03</span>Cor</h2>
+  <p class="sub">Seis valores. Vêm de equipamento de gravação analógico — corpo de fita, mostrador âmbar retroiluminado, luz vermelha de <em>gravando</em>, papel de pauta impressa. Nenhum gradiente, nenhum brilho difuso.</p>
+
+  <div class="swatches">
+    <div class="sw" style="background:#16181D;color:#E9E6DD"><b>tinta</b><span>#16181D</span><small>Texto, cursor, moldura. Preto com viés azul.</small></div>
+    <div class="sw" style="background:#E9E6DD;color:#16181D;border:1px solid #C6C1B3"><b>pauta</b><span>#E9E6DD</span><small>Fundo no claro. Papel, não branco.</small></div>
+    <div class="sw" style="background:#0E5C4A;color:#E9E6DD"><b>fita</b><span>#0E5C4A</span><small>Acento primário: aba ativa, ações, confirmação.</small></div>
+    <div class="sw" style="background:#F0A828;color:#16181D"><b>dial</b><span>#F0A828</span><small>Atenção, prioridade Média, janela de silêncio.</small></div>
+    <div class="sw" style="background:#E2453A;color:#F4F2EC"><b>gravando</b><span>#E2453A</span><small>Só gravando, prioridade Alta e excluir.</small></div>
+    <div class="sw" style="background:#C6C1B3;color:#16181D"><b>linha</b><span>#C6C1B3</span><small>Bordas, linhas da pauta, divisores.</small></div>
+  </div>
+
+  <h4>Escuro — inversão de papel, não de matiz</h4>
+  <p>No escuro <code>tinta</code> vira fundo (<code>#101216</code>), <code>pauta</code> vira texto, e os acentos clareiam para manter contraste: <code>fita</code> vai a <code>#34A98B</code>, <code>dial</code> a <code>#F5BE55</code>, <code>gravando</code> a <code>#FF6B5E</code>. Superfície elevada <code>#171A1F</code>, borda <code>#2A2E35</code>.</p>
+
+  <div class="caixa nota">
+    <h4>Três regras de contraste, para valer</h4>
+    <ul style="margin-bottom:0">
+      <li><code>dial</code> <strong>nunca</strong> é cor de texto sobre papel (cerca de 1,9:1). Só preenchimento, sempre com texto <code>tinta</code> em cima.</li>
+      <li><code>gravando</code> sobre papel (cerca de 4,0:1) serve para ícone e texto de 18px ou mais. Corpo de texto, não.</li>
+      <li><code>fita</code> sobre papel (cerca de 7:1) passa em AA em qualquer tamanho — é o único acento livre.</li>
+    </ul>
+  </div>
+
+  <h4>Categorias nos gráficos</h4>
+  <p>As categorias pt-BR (<code>Trabalho</code>, <code>Saúde</code>, <code>Finanças</code>, ...) são dados do usuário e podem crescer. Em vez de oito cores inventadas, uma rampa derivada de <code>fita</code> variando luminosidade e saturação, com <code>dial</code> reservado para "Outros". Cor não é o rótulo — o rótulo é o rótulo, sempre escrito.</p>
+
+  <h4>Como isso entra no código</h4>
+  <pre>/* src/index.css — tokens no @theme, sem tailwind.config (v4) */
+@theme {
+  --font-display: "Bricolage Grotesque", ui-sans-serif, sans-serif;
+  --font-sans:    "Instrument Sans", ui-sans-serif, sans-serif;
+  --font-mono:    "DM Mono", ui-monospace, monospace;
+
+  --color-tinta:      #16181D;
+  --color-pauta:      #E9E6DD;
+  --color-pauta-alta: #F4F2EC;
+  --color-pauta-baixa:#DCD8CC;
+  --color-linha:      #C6C1B3;
+  --color-fita:       #0E5C4A;
+  --color-fita-clara: #34A98B;
+  --color-dial:       #F0A828;
+  --color-gravando:   #E2453A;
+}</pre>
+  <p>Ganho colateral: nome de token em português, igual ao domínio. <code>bg-fita</code> é inequívoco; <code>bg-indigo-650</code> nunca foi.</p>
+</section>
+
+<section id="tipografia">
+  <h2><span class="num">04</span>Tipografia</h2>
+  <p class="sub">Três papéis, três fontes, todas no Google Fonts e todas com acentuação pt-BR completa — requisito não negociável, o domínio é acentuado (<em>Saúde</em>, <em>Finanças</em>, <em>Média</em>).</p>
+
+  <div class="tipo-demo">
+    <div class="tipo-linha">
+      <span class="rot">Display<br>Bricolage Grotesque</span>
+      <span style="font-family:var(--display);font-weight:800;font-size:34px;letter-spacing:-.02em;line-height:1.05">Terça, 21 de agosto</span>
+    </div>
+    <div class="tipo-linha">
+      <span class="rot">Corpo<br>Instrument Sans</span>
+      <span style="font-family:var(--corpo);font-size:16px">Revisar a proposta de orçamento antes da reunião com o time de Finanças.</span>
+    </div>
+    <div class="tipo-linha">
+      <span class="rot">Utilitário<br>DM Mono</span>
+      <span style="font-family:var(--mono);font-size:15px">18:00 &middot; ALTA &middot; 3 de 7 concluídas &middot; 00:42</span>
+    </div>
+  </div>
+
+  <p><strong>Bricolage Grotesque</strong> é uma grotesca variável de desenho irregular por escolha — largura óptica que muda com o tamanho, terminais levemente tortos. Em título grande parece impressa em máquina, o que combina com a pauta. Usada <em>com contenção</em>: só título de dia, título de seção e o número grande de progresso.</p>
+  <p><strong>Instrument Sans</strong> no corpo: um pouco mais estreita que a Inter, altura-x generosa. Ganha densidade em título de tarefa longo sem virar caixa apertada.</p>
+  <p><strong>DM Mono</strong> em tudo que é medida: horário, cronômetro de gravação, contadores, atalhos, prioridade em caixa alta. Monoespaçado no horário resolve um problema real — <code>09:05</code> e <code>18:00</code> alinham em coluna, e o cronômetro não dança a cada segundo.</p>
+
+  <h4>Escala</h4>
+  <pre>display-xl   clamp(38px, 7vw, 64px)  800  -0.03em   título do dia
+display-lg   clamp(24px, 4vw, 34px)  800  -0.02em   título de seção
+display-md   19px                    600  -0.01em   título de modal
+corpo-lg     17px                    400   0        texto de leitura
+corpo        15px                    400   0        padrão da interface
+corpo-sm     13.5px                  400   0        apoio, ajuda
+mono-rot     11px                    500   0.10em   rótulo caixa alta
+mono-num     13px / 15px             400   0        horário, contador</pre>
+  <p>Seis degraus de leitura, dois utilitários. Hoje o JSX vai de <code>text-[8px]</code> a <code>text-3xl</code>, com <code>text-[9px]</code>, <code>text-[10px]</code> e <code>text-[11px]</code> espalhados: onze tamanhos sem sistema. Nada abaixo de 11px sobrevive — é falha de legibilidade.</p>
+</section>
+
+<section id="layout">
+  <h2><span class="num">05</span>Layout</h2>
+  <p class="sub">Fora: sidebar de 15 itens, header de 6 ícones, grid de 12 colunas. Dentro: barra de topo fina, uma coluna de conteúdo, console de voz ancorado embaixo. A navegação encolhe porque a maior parte da sidebar de hoje é <em>ação</em> (exportar, importar, imprimir), não <em>lugar</em>.</p>
+
+  <h4>Desktop, 1024px ou mais</h4>
+  <pre>+---------------------------------------------------------------+
+| O EchoPlan          diarias  notas  listas  arquivo   K  D  S | 56px, fixo
++---------------------------------------------------------------+
+|                                                               |
+|  Terça, 21 de agosto                        3 de 7 concluídas | display-xl + mono
+|  -------------------------------------------------------------|
+|                                                               |
+|  A PAUTA DO DIA                                     v recolher|
+|   06        09        12        15        18        21     24  | mono, régua
+|  -+---------+----o----+---------+----o----+---------+-------+  | Alta
+|  -+----o----+---------+----o----+---------+----o----+-------+  | Média
+|  -+---------+---------+---------+----o----+---------+-------+  | Baixa
+|                        ^ agora 14:23                          | cursor
+|  sem hora marcada: o o o                                      | bandeja
+|                                                               |
+|  -------------------------------------------------------------|
+|  [ ] 09:30  Revisar proposta de orçamento       Trabalho  ... | lista
+|  [x] 11:00  Consulta com a nutricionista         Saúde    ... |
+|  [ ] 14:00  Fechar planilha de despesas       Finanças    ... |
+|                                                               |
+|  [ métricas — só se ligadas em Ajustes ]                      |
++---------------------------------------------------------------+
+|  O gravar     "fale suas tarefas do dia"      teclado digitar | console, fixo
++---------------------------------------------------------------+</pre>
+
+  <h4>Mobile, até 640px</h4>
+  <pre>+-------------------------+
+| O EchoPlan        D  S |
++-------------------------+
+| Ter, 21 ago      3 / 7  |
+|                         |
+| -+--o---+---o--+------+ | pauta com rolagem
+| -+o-----+------+--o---+ | horizontal; centra
+| -+------+---o--+------+ | no agora ao abrir
+|      ^ 14:23            |
+|                         |
+| [ ] 09:30 Revisar pro.. |
+| [x] 11:00 Consulta co.. |
+| [ ] 14:00 Fechar plan.. |
+|                         |
++-------------------------+
+| diarias notas listas .. | abas
+|      O gravar           | console
++-------------------------+</pre>
+
+  <div class="caixa">
+    <h4>Onde vão os 15 itens da sidebar atual</h4>
+    <ul style="margin-bottom:0">
+      <li><strong>Lugares (4)</strong> viram abas no topo: diárias, notas, listas e <em>arquivo</em> — este último junta histórico, arquivadas e calendário num destino só, com filtro de período.</li>
+      <li><strong>Ações (6)</strong> — imprimir, PDF, CSV, JSON, importar, backup — vão para um menu no topo. São coisas de uma vez por mês, não navegação.</li>
+      <li><strong>Ajustes, tema e sair (3)</strong> ficam no topo à direita, como estão.</li>
+      <li><strong>Perfil e categorias (2)</strong> entram em Ajustes.</li>
+    </ul>
+  </div>
+
+  <h4>Grade e espaço</h4>
+  <ul>
+    <li>Coluna de conteúdo com <code>max-width: 68rem</code>, centrada. A pauta sangra até <code>76rem</code> — ela é a peça larga.</li>
+    <li>Ritmo vertical em múltiplos de 4px; blocos separados por 40px, itens por 8px.</li>
+    <li>Raio de <code>3px</code> em tudo. Hoje há <code>rounded-lg</code>, <code>xl</code>, <code>2xl</code>, <code>3xl</code> e <code>full</code> na mesma tela. Quase reto combina com papel de pauta e desaparece como decisão — que é o objetivo.</li>
+    <li>Sem sombra, exceto console e modal. Separação vem de borda e cor de superfície.</li>
+  </ul>
+</section>
+
+<section id="signature">
+  <h2><span class="num">06</span>Elemento assinatura — A Pauta do dia</h2>
+  <p class="sub">Uma peça, memorável, construída só com o que já existe nos dados: <code>reminderTime</code>, <code>priority</code>, <code>completed</code>, <code>category</code>.</p>
+
+  <div class="pauta-demo">
+    <svg viewBox="0 0 660 200" role="img" aria-label="Pauta do dia: três faixas por prioridade, tarefas posicionadas pelo horário do lembrete, cursor no horário atual e bandeja de tarefas sem hora.">
+      <g font-family="DM Mono, monospace" font-size="10" fill="#767A84">
+        <text x="40" y="20">06</text><text x="143" y="20">09</text><text x="246" y="20">12</text>
+        <text x="349" y="20">15</text><text x="452" y="20">18</text><text x="555" y="20">21</text>
+      </g>
+      <g stroke="#C6C1B3" stroke-width="1">
+        <line x1="40" y1="60"  x2="620" y2="60"/>
+        <line x1="40" y1="100" x2="620" y2="100"/>
+        <line x1="40" y1="140" x2="620" y2="140"/>
+      </g>
+      <g stroke="#C6C1B3" stroke-width="1" stroke-dasharray="2 5" opacity=".7">
+        <line x1="143" y1="52" x2="143" y2="148"/><line x1="246" y1="52" x2="246" y2="148"/>
+        <line x1="349" y1="52" x2="349" y2="148"/><line x1="452" y1="52" x2="452" y2="148"/>
+        <line x1="555" y1="52" x2="555" y2="148"/>
+      </g>
+      <g font-family="DM Mono, monospace" font-size="9" fill="#767A84" text-anchor="end">
+        <text x="32" y="63">ALTA</text><text x="32" y="103">MED</text><text x="32" y="143">BAIXA</text>
+      </g>
+      <circle cx="177" cy="60" r="6" fill="#E2453A"/>
+      <circle cx="452" cy="60" r="6" fill="#E2453A"/>
+      <circle cx="108" cy="100" r="6" fill="#F0A828"/>
+      <circle cx="280" cy="100" r="6" fill="#F0A828"/>
+      <circle cx="521" cy="100" r="6" fill="#F0A828"/>
+      <circle cx="418" cy="140" r="6" fill="none" stroke="#0E5C4A" stroke-width="2"/>
+      <circle cx="212" cy="140" r="6" fill="#0E5C4A"/>
+      <line x1="326" y1="44" x2="326" y2="156" stroke="#16181D" stroke-width="1.5"/>
+      <polygon points="326,40 321,32 331,32" fill="#16181D"/>
+      <text x="336" y="174" font-family="DM Mono, monospace" font-size="10" fill="#16181D">agora 14:23</text>
+      <text x="40" y="192" font-family="DM Mono, monospace" font-size="9.5" fill="#767A84">SEM HORA</text>
+      <circle cx="112" cy="188" r="5" fill="#F0A828"/>
+      <circle cx="128" cy="188" r="5" fill="#0E5C4A"/>
+      <circle cx="144" cy="188" r="5" fill="none" stroke="#0E5C4A" stroke-width="2"/>
+    </svg>
+  </div>
+
+  <h4>Gramática</h4>
+  <ul>
+    <li><strong>Eixo horizontal</strong>: hora do dia, 06:00 a 24:00 por padrão; estica se houver tarefa fora da janela.</li>
+    <li><strong>Faixa vertical</strong>: prioridade. Alta em cima. Ler de cima para baixo é ler urgência.</li>
+    <li><strong>Ponto cheio</strong> é pendente, <strong>anel vazado</strong> é concluída. A cor vem da prioridade, a mesma da lista.</li>
+    <li><strong>Cursor</strong> é o agora. Move com o <code>setInterval</code> de 1 segundo que o <code>App.tsx</code> <em>já roda</em> para os lembretes — nenhum timer novo.</li>
+    <li><strong>Bandeja</strong> guarda tarefa sem <code>reminderTime</code>. Arrastar dela para a pauta define o horário, pelo mesmo <code>handleUpdateTask</code> do drag-and-drop de hoje.</li>
+    <li><strong>Janela de silêncio</strong> (DND) sombreia a faixa de horário em <code>pauta-baixa</code> — a configuração passa a ser visível, em vez de escondida em Ajustes.</li>
+  </ul>
+
+  <div class="caixa nota">
+    <h4>Acessibilidade não é opcional aqui</h4>
+    <p style="margin-bottom:0">Gráfico não pode ser a única via. Cada ponto é um <code>&lt;button&gt;</code> real, alcançável por Tab, com <code>aria-label</code> completo ("Revisar proposta, 09:30, prioridade Alta, pendente") e foco visível. Enter abre a tarefa. A lista abaixo continua sendo o caminho completo, e a pauta pode ser recolhida — a preferência entra em <code>visibleCards</code>, que já existe.</p>
+  </div>
+</section>
+
+<section id="movimento">
+  <h2><span class="num">07</span>Movimento</h2>
+  <p class="sub">Um momento encenado, três micro-interações, nada além. A dependência <code>motion</code> já está instalada.</p>
+  <ul>
+    <li><strong>Entrada da pauta</strong>, o momento: as três linhas se desenham da esquerda para a direita em 320ms escalonados de 60ms, os pontos aparecem em seguida, o cursor desliza até o horário atual. Roda uma vez, ao carregar o dia. É a única animação encenada.</li>
+    <li><strong>Gravando</strong>: o botão pulsa em <code>gravando</code> a cada 1s e o cronômetro conta em DM Mono. Reaproveita o <code>voice-ripple</code> que já existe em <code>index.css</code>, recalibrado para uma onda só em vez de três.</li>
+    <li><strong>Concluir</strong>: o ponto na pauta vaza (cheio para anel) em 180ms, sincronizado com o riscado na lista. Mesma ação, dois lugares, um gesto.</li>
+    <li><strong>Chegada da IA</strong>: tarefas novas entram com fade e 4px de subida, escalonadas de 40ms, na ordem do horário. Mostra que o app entendeu isto, nesta ordem.</li>
+  </ul>
+  <p>O confete (<code>ConfettiEffect.tsx</code>) fica, mas só no dia 100% concluído — não a cada tarefa. Comemoração que acontece sempre não é comemoração.</p>
+  <div class="caixa ok">
+    <p style="margin-bottom:0"><code>@media (prefers-reduced-motion: reduce)</code> desliga desenho, pulso e escalonamento; os estados finais aparecem direto. O cursor continua se movendo — é informação, não enfeite.</p>
+  </div>
+</section>
+
+<section id="texto">
+  <h2><span class="num">08</span>Texto de interface</h2>
+  <p class="sub">Passe de copy junto com o visual: mesmo vocabulário do começo ao fim, voz ativa, sem venda. Amostra do que muda.</p>
+
+  <div class="copy-par">
+    <div class="antes"><span class="rot">antes</span>Potencializado por Gemini AI</div>
+    <div class="depois"><span class="rot">depois</span>Fale. O resto é com a gente.</div>
+  </div>
+  <div class="copy-par">
+    <div class="antes"><span class="rot">antes</span>Analisando seu áudio com inteligência artificial...</div>
+    <div class="depois"><span class="rot">depois</span>Ouvindo... 00:12</div>
+  </div>
+  <div class="copy-par">
+    <div class="antes"><span class="rot">antes</span>Nenhuma tarefa encontrada. Comece adicionando uma tarefa!</div>
+    <div class="depois"><span class="rot">depois</span>Pauta vazia. Toque em gravar e fale o seu dia.</div>
+  </div>
+  <div class="copy-par">
+    <div class="antes"><span class="rot">antes</span>Erro ao processar o áudio. Tente novamente.</div>
+    <div class="depois"><span class="rot">depois</span>O áudio não subiu. Confira a conexão e grave de novo.</div>
+  </div>
+  <div class="copy-par">
+    <div class="antes"><span class="rot">antes</span>Modo local ativado (sem IA)</div>
+    <div class="depois"><span class="rot">depois</span>Sem chave do Gemini: as tarefas saem do texto, sem áudio.</div>
+  </div>
+
+  <h4>Regras</h4>
+  <ul>
+    <li>Botão diz o que acontece: <strong>Gravar</strong>, <strong>Salvar tarefa</strong>, <strong>Arquivar</strong> — nunca "Enviar" ou "OK".</li>
+    <li>O nome da ação não muda no caminho: quem aperta <em>Arquivar</em> lê <em>Tarefa arquivada</em>. Hoje há "Concluir", "Finalizar" e "Marcar como feita" para a mesma coisa; escolher um e valer para tudo.</li>
+    <li>Erro diz o que houve e o que fazer. Sem desculpa, sem "Ops!".</li>
+    <li>Tela vazia é convite, não lamento.</li>
+    <li>Frase em caixa baixa, sem ponto em rótulo, sem exclamação — exceto na comemoração do dia 100%, uma por dia.</li>
+  </ul>
+</section>
+
+<section id="execucao">
+  <h2><span class="num">09</span>Execução — 10 fases</h2>
+  <p class="sub">Ordenadas por dependência: primeiro o que impede calibrar cor, depois casca, depois conteúdo. Cada fase termina com uma prova executável. <code>npm run lint</code> (<code>tsc --noEmit</code>) é a única verificação automatizada do projeto, então cada fase carrega também uma checagem manual explícita.</p>
+
+  <div class="fase">
+    <div class="tag">F0<small>bloqueia<br>todas</small></div>
+    <div>
+      <h3>Fundação — limpar o que falha em silêncio</h3>
+      <ul>
+        <li>Mapear as 71 classes inexistentes para a escala real (<code>slate-355</code> para <code>slate-400</code>, e assim por diante) e aplicar as 281 substituições num commit só, sem mexer em mais nada. Este commit muda aparência de propósito: é quando o contraste acidental fica visível.</li>
+        <li>Mover a classe <code>dark</code> do div para o <code>&lt;html&gt;</code> com <code>useEffect</code> e <code>document.documentElement.classList.toggle</code>; declarar <code>color-scheme</code>; a regra <code>html.dark body</code> volta a valer.</li>
+        <li>Trocar o <code>@theme</code>: fontes e os nove tokens de cor novos. Manter <code>indigo-650</code> como alias temporário para não quebrar tudo de uma vez — ele some no fim da F7.</li>
+        <li><code>index.html</code>: <code>lang="pt-BR"</code>, título de verdade, <code>meta theme-color</code>.</li>
+      </ul>
+      <p class="arquivos"><b>src/index.css</b> &middot; <b>index.html</b> &middot; <b>src/App.tsx</b> (linha 1247)</p>
+      <p class="prova"><b>prova</b><code>npm run lint</code> limpo e o grep de classes fora da escala volta vazio; abrir claro e escuro e confirmar que nenhuma área vaza fundo branco.</p>
+    </div>
+  </div>
+
+  <div class="fase">
+    <div class="tag">F1</div>
+    <div>
+      <h3>Vocabulário — um arquivo, não uma biblioteca</h3>
+      <ul>
+        <li><code>src/lib/ui.ts</code> exportando strings de classe: <code>superficie</code>, <code>btnPrimario</code>, <code>btnFantasma</code>, <code>btnPerigo</code>, <code>chip</code>, <code>campo</code>, <code>rotulo</code>, <code>cascaModal</code>, <code>foco</code>.</li>
+        <li>Sem componente-invólucro, sem <code>cva</code>, sem dependência nova. Os componentes de <code>src/components/</code> já são apresentacionais; passam a compor daqui.</li>
+        <li><code>foco</code> é obrigatório em tudo que é clicável: <code>focus-visible:outline-2 outline-fita outline-offset-2</code>. Hoje o foco é o default do browser, invisível sobre o indigo.</li>
+      </ul>
+      <p class="arquivos"><b>src/lib/ui.ts</b> (novo)</p>
+      <p class="prova"><b>prova</b>navegar a tela inteira só de Tab e ver o foco em todo controle.</p>
+    </div>
+  </div>
+
+  <div class="fase">
+    <div class="tag">F2</div>
+    <div>
+      <h3>Casca — topo, abas, console</h3>
+      <ul>
+        <li>Sidebar de 15 itens vira barra de topo com 4 abas, menu de ações e ajustes/tema/sair.</li>
+        <li>Histórico, arquivadas e calendário passam a ser o destino único "arquivo", com filtro de período. O estado de abas cai de 6 para 4 sem perder nada.</li>
+        <li>Rodapé fixo reservado para o console da F3.</li>
+        <li>Nada de lógica muda: os mesmos <code>handleX</code>, os mesmos estados.</li>
+      </ul>
+      <p class="arquivos"><b>src/App.tsx</b> (casca, aproximadamente linhas 1240 a 1600) &middot; <b>src/components/TaskFilter.tsx</b></p>
+      <p class="prova"><b>prova</b>toda ação que existia na sidebar continua alcançável em dois cliques ou menos; conferir uma por uma, importar backup incluído.</p>
+    </div>
+  </div>
+
+  <div class="fase">
+    <div class="tag">F3</div>
+    <div>
+      <h3>Console de voz</h3>
+      <ul>
+        <li><code>AudioRecorder</code> deixa de ser card no grid e passa a ser o console ancorado: quatro estados — pronto, gravando, revisar, processando — no mesmo lugar da tela, sem salto de layout.</li>
+        <li>Cronômetro em DM Mono, pulso único em <code>gravando</code>, e os borrões de fundo (<code>blur-2xl</code>) saem.</li>
+        <li>A alternância gravar/digitar continua, agora como par de abas em mono dentro do console.</li>
+        <li>A transcrição aparece <em>no</em> console durante a revisão, não num card separado no topo da coluna.</li>
+        <li>Preservar intactos o fallback de <code>SpeechRecognition</code> e o aviso de <code>isLocalFallback</code>.</li>
+      </ul>
+      <p class="arquivos"><b>src/components/AudioRecorder.tsx</b> &middot; <b>src/App.tsx</b> (área de transcrição)</p>
+      <p class="prova"><b>prova</b>gravar, revisar e enviar funcionando; e com <code>GEMINI_API_KEY</code> removida, ver o 403 virar mensagem clara e o caminho de texto continuar entregando tarefas.</p>
+    </div>
+  </div>
+
+  <div class="fase">
+    <div class="tag">F4<small>assinatura</small></div>
+    <div>
+      <h3>A Pauta</h3>
+      <ul>
+        <li><code>src/components/Pauta.tsx</code>: SVG com três faixas, régua de horas, cursor, bandeja de sem-hora e sombra da janela de silêncio.</li>
+        <li>Cursor alimentado pelo <code>setInterval</code> de 1s que já existe para os lembretes — passar o minuto atual por prop.</li>
+        <li>Cada ponto é <code>&lt;button&gt;</code> com <code>aria-label</code>; o clique abre a mesma tarefa que a lista abre.</li>
+        <li>Arrastar da bandeja para a pauta grava <code>reminderTime</code> pelo <code>handleUpdateTask</code> existente.</li>
+        <li>Recolhível, com a preferência em <code>visibleCards</code>.</li>
+      </ul>
+      <p class="arquivos"><b>src/components/Pauta.tsx</b> (novo) &middot; <b>src/App.tsx</b> (aba diárias) &middot; <b>src/types.ts</b> (só a chave nova em <code>VisibleCards</code>)</p>
+      <p class="prova"><b>prova</b>tarefa às 23:50, tarefa às 05:00 e uma sem horário, no mesmo dia: as três no lugar certo. Percorrer os pontos só de teclado.</p>
+    </div>
+  </div>
+
+  <div class="fase">
+    <div class="tag">F5<small>maior<br>bloco</small></div>
+    <div>
+      <h3>Item de tarefa</h3>
+      <ul>
+        <li><code>TaskItem.tsx</code> (1.688 linhas) recebe o estilo novo: linha densa em vez de card, horário em mono à esquerda, prioridade como marca de 3px na borda, categoria como chip discreto.</li>
+        <li>Extrair <strong>só</strong> o formulário de edição inline para <code>TaskItemEdit.tsx</code>. É o pedaço que mais atrapalha ler o arquivo. Nenhuma outra extração — diff pequeno vale mais que arquitetura bonita.</li>
+        <li>Subtarefa com indentação por filete, não outro card.</li>
+        <li>Alvo de toque mínimo de 44px no mobile; hoje há botão de 24px.</li>
+      </ul>
+      <p class="arquivos"><b>src/components/TaskItem.tsx</b> &middot; <b>src/components/TaskItemEdit.tsx</b> (novo)</p>
+      <p class="prova"><b>prova</b>concluir, editar, arquivar, adicionar subtarefa, sugerir subtarefas e reordenar por drag — os seis caminhos, no claro e no escuro. Confirmar que a tarefa recorrente ainda gera a cópia ao ser concluída.</p>
+    </div>
+  </div>
+
+  <div class="fase">
+    <div class="tag">F6</div>
+    <div>
+      <h3>Modais e formulários</h3>
+      <ul>
+        <li><code>cascaModal</code> e <code>campo</code> aplicados nos sete: Settings, CategoryManager, Confirmation, Reminder, TaskForm, NoteForm e ListForm.</li>
+        <li>Fechar no Esc, foco preso dentro do modal, foco devolvido ao gatilho na saída. Hoje nada disso existe.</li>
+        <li><code>SettingsModal</code> (579 linhas) ganha seções nomeadas: Silêncio, Lembretes, Aparência, Categorias, Backup, Dados.</li>
+      </ul>
+      <p class="arquivos"><b>SettingsModal.tsx</b> &middot; <b>CategoryManagerModal.tsx</b> &middot; <b>ConfirmationModal.tsx</b> &middot; <b>ReminderModal.tsx</b> &middot; <b>TaskForm.tsx</b> &middot; <b>NoteForm.tsx</b> &middot; <b>ListForm.tsx</b></p>
+      <p class="prova"><b>prova</b>abrir cada modal, fechar no Esc, e confirmar que o foco voltou para o botão que o abriu.</p>
+    </div>
+  </div>
+
+  <div class="fase">
+    <div class="tag">F7</div>
+    <div>
+      <h3>Notas, listas, arquivo</h3>
+      <ul>
+        <li><code>NotesView</code> e <code>NoteItem</code>: nota é transcrição, então tratar como tal — texto grande e legível, horário em mono, áudio embutido discreto.</li>
+        <li><code>ListView</code> e <code>ListItem</code>: numerada, checklist e mista com desenho próprio, não três variações do mesmo card.</li>
+        <li><code>CalendarView</code>: recolorir e adotar a mesma marca de prioridade da pauta, para o olho reconhecer o padrão.</li>
+        <li>Remover o alias <code>indigo-650</code> do <code>@theme</code>. Se algo ainda depender dele, aparece agora.</li>
+      </ul>
+      <p class="arquivos"><b>NotesView.tsx</b> &middot; <b>NoteItem.tsx</b> &middot; <b>ListView.tsx</b> &middot; <b>ListItem.tsx</b> &middot; <b>CalendarView.tsx</b> &middot; <b>src/index.css</b></p>
+      <p class="prova"><b>prova</b>grep por <code>indigo</code> em <code>src/</code> volta vazio.</p>
+    </div>
+  </div>
+
+  <div class="fase">
+    <div class="tag">F8</div>
+    <div>
+      <h3>Números e gráficos</h3>
+      <ul>
+        <li>Os seis componentes de recharts recebem a paleta nova: rampa derivada de <code>fita</code> para categorias, sem gradiente, sem sombra, grade em <code>linha</code>, rótulo em DM Mono.</li>
+        <li>Tooltip com a mesma superfície e borda do resto da interface.</li>
+        <li><code>ProductivitySummary</code> e <code>DailyGoal</code>: um número grande em Bricolage 800 com rótulo pequeno em mono. É o único lugar onde o número grande se justifica — aqui ele é o conteúdo.</li>
+      </ul>
+      <p class="arquivos"><b>CategoryPieChart.tsx</b> &middot; <b>ProgressChart.tsx</b> &middot; <b>WeeklyProgress.tsx</b> &middot; <b>ProductivitySummary.tsx</b> &middot; <b>DailyGoal.tsx</b> &middot; <b>PriorityDurationCard.tsx</b></p>
+      <p class="prova"><b>prova</b>com 12 categorias cadastradas, nenhuma fatia fica indistinguível da vizinha e todas têm rótulo escrito.</p>
+    </div>
+  </div>
+
+  <div class="fase">
+    <div class="tag">F9</div>
+    <div>
+      <h3>Entrada, telas vazias e texto</h3>
+      <ul>
+        <li><code>Login.tsx</code>: sai o card centralizado com brilho em gradiente. Entra uma pauta vazia com o cursor andando, o botão de gravar desabilitado e o convite. A tela de entrada mostra o que o app faz.</li>
+        <li>Tela vazia por aba, cada uma com uma ação. <code>EmptyStateProductivityTip</code>, <code>DicasHoje</code>, <code>ProductivityTip</code> e <code>SugestaoTarefa</code> passam a compartilhar um desenho só.</li>
+        <li>Passe de copy da seção 08 em todas as strings de interface, inclusive nas mensagens de erro que sobem do <code>server.ts</code>.</li>
+      </ul>
+      <p class="arquivos"><b>Login.tsx</b> &middot; <b>EmptyStateProductivityTip.tsx</b> &middot; <b>DicasHoje.tsx</b> &middot; <b>ProductivityTip.tsx</b> &middot; <b>SugestaoTarefa.tsx</b> &middot; <b>ConfettiEffect.tsx</b></p>
+      <p class="prova"><b>prova</b>usuário novo com banco vazio: as quatro abas vazias, e todas dizem o que fazer em seguida.</p>
+    </div>
+  </div>
+
+  <div class="fase">
+    <div class="tag">F10</div>
+    <div>
+      <h3>Fechamento</h3>
+      <ul>
+        <li>360px de largura sem rolagem horizontal em nenhuma aba.</li>
+        <li>Foco visível em todos os controles; contraste AA no claro e no escuro, com as três regras da seção 03 respeitadas.</li>
+        <li><code>prefers-reduced-motion</code> honrado.</li>
+        <li><code>npm run lint</code> limpo, <code>npm run test:db</code> passando, sanidade nos dois backends (<code>VITE_DATA_BACKEND=firebase</code> e <code>=sqlite</code>).</li>
+        <li>Atualizar o <code>CLAUDE.md</code>: a seção de dark mode e Tailwind muda (classe agora no <code>&lt;html&gt;</code>, classes inventadas eliminadas, tokens em português).</li>
+      </ul>
+      <p class="arquivos"><b>CLAUDE.md</b> &middot; <b>docs/</b></p>
+      <p class="prova"><b>prova</b>a lista da seção 10, item por item.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pronto">
+  <h2><span class="num">10</span>Definição de pronto</h2>
+  <ul>
+    <li>Zero classe Tailwind fora da escala; zero <code>indigo</code> em <code>src/</code>.</li>
+    <li>Classe <code>dark</code> no <code>&lt;html&gt;</code>, <code>color-scheme</code> declarado, nenhum vazamento de fundo claro no escuro.</li>
+    <li>Seis degraus de tipo, nada abaixo de 11px.</li>
+    <li>Contraste: corpo de texto 4,5:1 ou mais; título 3:1 ou mais; as três regras de acento respeitadas.</li>
+    <li>Foco visível e ordem de Tab coerente em toda a interface, pauta incluída.</li>
+    <li>Cada modal fecha no Esc e devolve o foco.</li>
+    <li>Toque de 44px no mobile; 360px sem rolagem horizontal.</li>
+    <li><code>prefers-reduced-motion</code> desliga desenho e pulso.</li>
+    <li>Toda ação da sidebar antiga alcançável em dois cliques ou menos.</li>
+    <li>Fallback sem Gemini exibe mensagem clara nos dois caminhos: 403 no áudio e parser local no texto.</li>
+    <li><code>npm run lint</code> limpo, <code>npm run test:db</code> passando, os dois backends abrindo.</li>
+    <li><code>CLAUDE.md</code> atualizado.</li>
+  </ul>
+</section>
+
+<section id="fora">
+  <h2><span class="num">11</span>Fora de escopo</h2>
+  <p class="sub">Cortado de propósito. Cada item vem com o gatilho que o traz de volta.</p>
+  <ul>
+    <li><strong>Biblioteca de componentes ou design system em pacote.</strong> Um arquivo de strings de classe resolve para 28 componentes. Volta quando houver um segundo app consumindo os mesmos tokens.</li>
+    <li><strong>Quebrar o <code>App.tsx</code> em rotas e contexto.</strong> É refatoração de arquitetura, não redesign, e dobraria o risco. Volta quando alguém precisar de link direto por aba.</li>
+    <li><strong>Duração de tarefa como largura da barra.</strong> Exige campo novo em <code>Task</code>, prompt novo no <code>server.ts</code> e migração dos documentos existentes. Volta como feature própria — é a evolução natural da pauta.</li>
+    <li><strong>Trocar o recharts.</strong> Já está instalado e recolorir resolve. Volta se algum gráfico pedir o que ele não faz.</li>
+    <li><strong>Ícone, PWA e splash.</strong> Merece passe próprio depois que a identidade estiver assentada no produto.</li>
+    <li><strong>Testes de front.</strong> O projeto não tem runner de teste; montar um é decisão de engenharia, separada desta. Até lá, cada fase carrega a checagem manual da linha <em>prova</em>.</li>
+  </ul>
+</section>
+
+</div>
+</body>
+</html>
