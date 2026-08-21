@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Plus, Bell, Clock, Tag, X, Zap, RefreshCw } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { Category, Priority, Task } from "../types";
-import { Tooltip } from "./Tooltip";
+import * as ui from "../lib/ui";
 
 interface TaskFormProps {
   onAddTask: (task: Omit<Task, "id" | "completed" | "reminderTriggered" | "createdAt" | "updatedAt">) => void;
@@ -89,26 +89,16 @@ export function TaskForm({ onAddTask, categories }: TaskFormProps) {
   };
 
   return (
-    <form
-      id="manual-task-form"
-      onSubmit={handleSubmit}
-      className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-5"
-    >
-      <h3 className="font-bold text-slate-800 dark:text-slate-100 font-display text-base mb-4 flex items-center justify-between">
-        <span className="flex items-center">
-          <Plus className="w-5 h-5 text-indigo-500 mr-2" />
-          Adicionar Tarefa Manualmente
-        </span>
-        <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[9px] font-mono font-bold bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700/60 rounded-md">
-          Ctrl+N
-        </kbd>
-      </h3>
+    <form id="manual-task-form" onSubmit={handleSubmit} className={`${ui.superficie} p-5`}>
+      <div className="mb-4 flex items-baseline justify-between gap-3">
+        <h2 className={ui.displayMd}>Nova tarefa</h2>
+        <kbd className={`${ui.monoRot} ${ui.fraco}`}>Ctrl + N</kbd>
+      </div>
 
       <div className="space-y-4">
-        {/* Title */}
         <div>
-          <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
-            Título da Tarefa
+          <label className={`${ui.rotulo} mb-1`} htmlFor="new-task-title-input">
+            título
           </label>
           <input
             id="new-task-title-input"
@@ -116,35 +106,35 @@ export function TaskForm({ onAddTask, categories }: TaskFormProps) {
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Ex: Pagar conta de energia"
-            className="w-full px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+            placeholder="Ex: pagar a conta de energia"
+            className={ui.campo}
           />
         </div>
 
-        {/* Notes */}
         <div>
-          <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
-            Notas / Descrição (Opcional)
+          <label className={`${ui.rotulo} mb-1`} htmlFor="new-task-notes">
+            descrição
           </label>
           <textarea
+            id="new-task-notes"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="Observações ou detalhes extras sobre a atividade..."
-            rows={2.5}
-            className="w-full px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600 resize-y"
+            placeholder="Opcional: detalhes, metas, referências."
+            rows={2}
+            className={`${ui.campo} resize-none`}
           />
         </div>
 
-        {/* Row 1: Category & Priority */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <div>
-            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
-              Categoria
+            <label className={`${ui.rotulo} mb-1`} htmlFor="new-task-category">
+              categoria
             </label>
             <select
-              value={categories.includes(category) ? category : "Geral"}
+              id="new-task-category"
+              value={category}
               onChange={(e) => setCategory(e.target.value as Category)}
-              className="w-full px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all cursor-pointer"
+              className={ui.campo}
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -153,80 +143,61 @@ export function TaskForm({ onAddTask, categories }: TaskFormProps) {
               ))}
             </select>
           </div>
-
           <div>
-            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
-              Prioridade
+            <label className={`${ui.rotulo} mb-1`} htmlFor="new-task-priority">
+              prioridade
             </label>
             <select
+              id="new-task-priority"
               value={priority}
               onChange={(e) => setPriority(e.target.value as Priority)}
-              className="w-full px-3.5 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all cursor-pointer"
+              className={ui.campo}
             >
-              {PRIORITIES.map((prio) => (
-                <option key={prio} value={prio}>
-                  {prio}
+              {PRIORITIES.map((p) => (
+                <option key={p} value={p}>
+                  {p}
                 </option>
               ))}
             </select>
           </div>
         </div>
 
-        {/* Tags / Labels */}
         <div>
-          <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-            <Tag className="w-3.5 h-3.5 text-indigo-500" />
-            Tags / Marcadores (Opcional)
+          <label className={`${ui.rotulo} mb-1`} htmlFor="new-task-tag">
+            tags — Enter ou vírgula cadastra
           </label>
-          <div className="flex border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 rounded-xl px-3 py-1.5 items-center focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent transition-all">
-            <input
-              type="text"
-              value={tagInput}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val.endsWith(",")) {
-                  const cleaned = val.slice(0, -1).trim();
-                  if (cleaned && !tags.includes(cleaned)) {
-                    setTags([...tags, cleaned]);
-                  }
-                  setTagInput("");
-                } else {
-                  setTagInput(val);
-                }
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  handleAddTag();
-                }
-              }}
-              placeholder="Digite e tecle Enter ou vírgula..."
-              className="w-full text-xs bg-transparent border-none p-1 focus:outline-none focus:ring-0 text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-600"
-            />
-            {tagInput.trim() && (
-              <button
-                type="button"
-                onClick={handleAddTag}
-                className="text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-650 font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer select-none shrink-0"
-              >
-                Adicionar
-              </button>
-            )}
-          </div>
+          <input
+            id="new-task-tag"
+            type="text"
+            value={tagInput}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val.endsWith(",")) {
+                const limpa = val.slice(0, -1).trim();
+                if (limpa && !tags.includes(limpa)) setTags([...tags, limpa]);
+                setTagInput("");
+              } else {
+                setTagInput(val);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleAddTag(e);
+            }}
+            placeholder="Opcional"
+            className={ui.campo}
+          />
           {tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-2">
-              {tags.map((tg) => (
-                <span
-                  key={tg}
-                  className="inline-flex items-center text-[10px] font-bold bg-indigo-50/70 dark:bg-indigo-950/45 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/40 rounded-full px-2 py-0.5"
-                >
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {tags.map((tg, idx) => (
+                <span key={tg} className={ui.chip}>
                   #{tg}
                   <button
                     type="button"
-                    onClick={() => setTags(tags.filter((tKey) => tKey !== tg))}
-                    className="ml-1 text-indigo-400 hover:text-indigo-650 dark:hover:text-indigo-200 transition-colors focus:outline-none"
+                    onClick={() => handleRemoveTag(idx)}
+                    aria-label={`Remover tag ${tg}`}
+                    className={`cursor-pointer hover:text-gravando dark:hover:text-gravando-clara ${ui.foco}`}
                   >
-                    <X className="w-2.5 h-2.5" />
+                    <X className="h-3 w-3" />
                   </button>
                 </span>
               ))}
@@ -234,135 +205,96 @@ export function TaskForm({ onAddTask, categories }: TaskFormProps) {
           )}
         </div>
 
-        {/* Reminder config */}
-        <div className="pt-2">
-          <div className="flex items-center justify-between mb-1">
-            <label className="flex items-center space-x-2.5 text-slate-600 dark:text-slate-300 text-sm cursor-pointer select-none">
+        <div className="space-y-2 border-t border-linha pt-3 dark:border-tinta-linha">
+          <div className="flex flex-wrap items-center gap-3">
+            <label className={`flex cursor-pointer items-center gap-2 ${ui.corpoSm}`}>
               <input
                 type="checkbox"
                 checked={hasReminder}
                 onChange={(e) => setHasReminder(e.target.checked)}
-                className="w-4 h-4 rounded text-indigo-600 border-slate-300 focus:ring-indigo-500"
+                className={`h-4 w-4 accent-fita ${ui.foco}`}
               />
-              <span className="flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                <Bell className="w-3.5 h-3.5 mr-1 text-slate-400" />
-                Configurar Horário / Lembrete
-              </span>
+              <span>Lembrete</span>
             </label>
-
-            <button
-              type="button"
-              onClick={handleQuickReminder}
-              className="flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-800/40 rounded-lg hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-all cursor-pointer"
-            >
-              <Zap className="w-2.5 h-2.5" />
-              Lembrete Rápido (+1h)
+            {hasReminder && (
+              <input
+                type="time"
+                aria-label="Horário do lembrete"
+                value={reminderTime}
+                onChange={(e) => setReminderTime(e.target.value)}
+                className={`${ui.campo} ${ui.monoNum} w-auto`}
+              />
+            )}
+            <button type="button" onClick={handleQuickReminder} className={ui.btnFantasma}>
+              Daqui a 1 hora
             </button>
           </div>
 
           {hasReminder && (
-            <div className="mt-2 pl-6 animate-fadeIn space-y-3">
-              <div className="flex items-center space-x-2">
-                <Clock className="w-4 h-4 text-slate-400" />
-                <input
-                  type="time"
-                  required={hasReminder}
-                  value={reminderTime}
-                  onChange={(e) => setReminderTime(e.target.value)}
-                  className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-950 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer"
-                />
-                <span className="text-xs text-slate-400">
-                  (Notificar às {reminderTime || "--:--"})
-                </span>
+            <div>
+              <span className={`${ui.rotulo} mb-1`}>dias de repetição</span>
+              <div className="flex flex-wrap gap-1">
+                {WEEK_DAYS.map((dia) => {
+                  const marcado = reminderDays.includes(dia.value);
+                  return (
+                    <button
+                      key={dia.value}
+                      type="button"
+                      aria-pressed={marcado}
+                      aria-label={dia.fullName}
+                      onClick={() =>
+                        setReminderDays((prev) =>
+                          prev.includes(dia.value)
+                            ? prev.filter((d) => d !== dia.value)
+                            : [...prev, dia.value]
+                        )
+                      }
+                      className={`h-8 w-8 cursor-pointer rounded-pauta border font-mono text-[12px] ${ui.foco} ${
+                        marcado
+                          ? "border-fita bg-fita text-pauta-alta dark:border-fita-clara dark:bg-fita-clara dark:text-tinta"
+                          : "border-linha dark:border-tinta-linha"
+                      }`}
+                    >
+                      {dia.label}
+                    </button>
+                  );
+                })}
               </div>
-
-              {/* Specific days option */}
-              <div className="space-y-1.5 pt-1">
-                <span className="block text-[11px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider">
-                  Repetir nos dias:
-                </span>
-                <div className="flex flex-wrap gap-1.5">
-                  {WEEK_DAYS.map((day) => {
-                    const isSelected = reminderDays.includes(day.value);
-                    return (
-                      <button
-                        key={day.value}
-                        type="button"
-                        onClick={() => {
-                          setReminderDays((prev) =>
-                            prev.includes(day.value)
-                              ? prev.filter((d) => d !== day.value)
-                              : [...prev, day.value]
-                          );
-                        }}
-                        className={`w-7 h-7 rounded-lg text-xs font-bold transition-all flex items-center justify-center cursor-pointer select-none border ${
-                          isSelected
-                            ? "bg-indigo-600 border-indigo-600 text-white shadow-xs"
-                            : "bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900"
-                        }`}
-                        title={day.fullName}
-                      >
-                        {day.label}
-                      </button>
-                    );
-                  })}
-                </div>
-                <p className="text-[10px] text-slate-500 dark:text-slate-500 italic mt-1 font-mono">
-                  {reminderDays.length === 0
-                    ? "✓ Todos os dias"
-                    : `✓ Apenas: ${reminderDays
-                        .map((dayVal) => WEEK_DAYS.find((d) => d.value === dayVal)?.fullName.split("-")[0])
-                        .join(", ")}`}
-                </p>
-              </div>
+              <p className={`mt-1 ${ui.corpoSm} ${ui.suave}`}>
+                {reminderDays.length === 0 ? "Todos os dias." : "Só nos dias marcados."}
+              </p>
             </div>
           )}
         </div>
 
-        {/* Recurrence config */}
-        <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
-          <div className="flex items-center justify-between">
-            <label className="flex items-center space-x-2.5 text-slate-600 dark:text-slate-300 text-sm cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={isRecurring}
-                onChange={(e) => setIsRecurring(e.target.checked)}
-                className="w-4 h-4 rounded text-indigo-600 border-slate-300 focus:ring-indigo-500"
-              />
-              <span className="flex items-center text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                <RefreshCw className="w-3.5 h-3.5 mr-1 text-slate-400" />
-                Definir como Recorrente
-              </span>
-            </label>
-
-            {isRecurring && (
-              <select
-                value={recurrence}
-                onChange={(e) => setRecurrence(e.target.value as any)}
-                className="px-3 py-1.5 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-950 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all cursor-pointer"
-              >
-                <option value="diario">Diário</option>
-                <option value="semanal">Semanal</option>
-                <option value="mensal">Mensal</option>
-              </select>
-            )}
-          </div>
+        <div className="flex flex-wrap items-center gap-3 border-t border-linha pt-3 dark:border-tinta-linha">
+          <label className={`flex cursor-pointer items-center gap-2 ${ui.corpoSm}`}>
+            <input
+              type="checkbox"
+              checked={isRecurring}
+              onChange={(e) => setIsRecurring(e.target.checked)}
+              className={`h-4 w-4 accent-fita ${ui.foco}`}
+            />
+            <span>Recorrente</span>
+          </label>
+          {isRecurring && (
+            <select
+              aria-label="Frequência da recorrência"
+              value={recurrence}
+              onChange={(e) => setRecurrence(e.target.value as any)}
+              className={`${ui.campo} w-auto`}
+            >
+              <option value="diario">Diário</option>
+              <option value="semanal">Semanal</option>
+              <option value="mensal">Mensal</option>
+            </select>
+          )}
         </div>
 
-        {/* Submit */}
-        <Tooltip
-          content="Cria a tarefa informada manualmente e adiciona à Fila de Atividades."
-          shortcut={["Enter"]}
-          position="top"
-          className="w-full"
-        >
-          <button
-            type="submit"
-            className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl text-sm transition-colors cursor-pointer shadow-sm text-center"
-          >
-            Criar Tarefa
-          </button>
-        </Tooltip>
+        <button type="submit" className={`${ui.btnPrimario} w-full`}>
+          <Plus className="h-4 w-4" />
+          Salvar tarefa
+        </button>
       </div>
     </form>
   );

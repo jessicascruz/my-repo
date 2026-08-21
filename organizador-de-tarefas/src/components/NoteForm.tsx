@@ -1,19 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { 
-  Mic, 
-  Square, 
-  Sparkles, 
-  Loader2, 
-  X, 
-  Save, 
-  Trash2, 
-  Plus, 
-  FileText, 
-  Volume2,
-  AlertCircle
-} from "lucide-react";
+import { Mic, Square, Loader2, Save, Trash2, FileText } from "lucide-react";
 import { Note } from "../types";
-import { motion, AnimatePresence } from "motion/react";
+import * as ui from "../lib/ui";
 
 interface NoteFormProps {
   onAddNote: (note: Omit<Note, "id" | "userId" | "createdAt">) => void;
@@ -162,140 +150,122 @@ export function NoteForm({ onAddNote, onCancel }: NoteFormProps) {
     return `${mins.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
+  const abaModo = (modo: "text" | "audio", rotulo: string, Icone: typeof Mic) => (
+    <button
+      type="button"
+      onClick={() => setActiveTab(modo)}
+      aria-current={activeTab === modo ? "true" : undefined}
+      className={`${ui.monoRot} flex items-center gap-1.5 rounded-pauta px-2.5 py-1.5 cursor-pointer transition-colors ${ui.foco} ${
+        activeTab === modo
+          ? "bg-fita text-pauta-alta dark:bg-fita-clara dark:text-tinta"
+          : `${ui.suave} hover:bg-pauta-baixa dark:hover:bg-tinta-linha`
+      }`}
+    >
+      <Icone className="h-3.5 w-3.5" />
+      {rotulo}
+    </button>
+  );
+
   return (
-    <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-5 space-y-4">
-      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
-        <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-          <Plus className="w-5 h-5 text-indigo-500" />
-          Nova Nota
-        </h3>
-        <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-lg">
-          <button
-            type="button"
-            onClick={() => setActiveTab("text")}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-              activeTab === "text" 
-                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm" 
-                : "text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            <FileText className="w-3.5 h-3.5 inline mr-1" />
-            Texto
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("audio")}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
-              activeTab === "audio" 
-                ? "bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm" 
-                : "text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            <Mic className="w-3.5 h-3.5 inline mr-1" />
-            Voz
-          </button>
+    <form onSubmit={handleSubmit} className={`${ui.superficie} space-y-4 p-5`}>
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-linha pb-3 dark:border-tinta-linha">
+        <h2 className={ui.displayMd}>Nova nota</h2>
+        <div className="flex items-center gap-1">
+          {abaModo("text", "escrever", FileText)}
+          {abaModo("audio", "gravar", Mic)}
         </div>
       </div>
 
       {error && (
-        <div className="p-3 bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-800/40 rounded-xl flex items-center gap-3 text-rose-600 dark:text-rose-400 text-sm animate-fadeIn">
-          <AlertCircle className="w-5 h-5 shrink-0" />
-          <p>{error}</p>
-        </div>
+        <p className={`border-l-[3px] border-l-gravando pl-3 ${ui.corpoSm}`}>{error}</p>
       )}
 
       {activeTab === "audio" && (
-        <div className="flex flex-col items-center justify-center py-4 bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
-          {!audioUrl && !isRecording ? (
+        <div className="flex items-center gap-3">
+          <div className="relative shrink-0">
+            {isRecording && (
+              <span
+                className="pulso-gravando absolute inset-0 rounded-full bg-gravando/25"
+                aria-hidden="true"
+              />
+            )}
             <button
               type="button"
-              onClick={startRecording}
-              className="flex flex-col items-center gap-3 text-slate-500 hover:text-indigo-600 transition-colors"
+              onClick={isRecording ? stopRecording : startRecording}
+              aria-label={isRecording ? "Parar gravação" : "Gravar nota"}
+              className={`relative grid h-12 w-12 place-items-center rounded-full bg-gravando text-pauta-alta cursor-pointer transition-colors hover:bg-gravando/88 active:scale-95 ${ui.foco}`}
             >
-              <div className="w-16 h-16 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-200 dark:shadow-none hover:bg-rose-600 active:scale-95 transition-all">
-                <Mic className="w-8 h-8" />
-              </div>
-              <span className="text-xs font-bold uppercase tracking-wider">Gravar Nota</span>
+              {isRecording ? (
+                <Square className="h-4 w-4 fill-current" />
+              ) : (
+                <Mic className="h-5 w-5" />
+              )}
             </button>
-          ) : isRecording ? (
-            <div className="flex flex-col items-center gap-3">
-              <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-rose-500/20 animate-ping" />
+          </div>
+
+          <div className="min-w-0 flex-1">
+            {isRecording ? (
+              <div className="flex items-baseline gap-3">
+                <span className="font-mono text-[22px] tabular-nums leading-none">
+                  {formatTime(recordingDuration)}
+                </span>
+                <span className={`${ui.monoRot} text-gravando dark:text-gravando-clara`}>
+                  gravando
+                </span>
+              </div>
+            ) : isProcessing ? (
+              <p className={`flex items-center gap-2 ${ui.corpoSm} ${ui.suave}`}>
+                <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
+                Ouvindo…
+              </p>
+            ) : audioUrl ? (
+              <div className="flex flex-wrap items-center gap-2">
+                <audio src={audioUrl} controls className="h-9 max-w-[15rem] flex-1" />
                 <button
                   type="button"
-                  onClick={stopRecording}
-                  className="relative w-16 h-16 rounded-full bg-rose-600 text-white flex items-center justify-center shadow-lg active:scale-95 transition-all"
+                  onClick={() => {
+                    setAudioUrl(null);
+                    setTranscription("");
+                  }}
+                  className={ui.btnFantasma}
+                  title="Descartar áudio"
                 >
-                  <Square className="w-6 h-6 fill-white" />
+                  <Trash2 className="h-4 w-4" />
                 </button>
               </div>
-              <span className="text-xl font-mono font-bold text-slate-800 dark:text-slate-100">
-                {formatTime(recordingDuration)}
-              </span>
-              <span className="text-xs text-rose-500 font-medium animate-pulse">Gravando...</span>
-            </div>
-          ) : (
-            <div className="w-full px-4 space-y-3">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex-1 flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
-                  <Volume2 className="w-4 h-4 text-indigo-500" />
-                  <audio src={audioUrl} controls className="h-8 flex-1" />
-                </div>
-                <button
-                  type="button"
-                  onClick={() => { setAudioUrl(null); setTranscription(""); }}
-                  className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/20 rounded-lg transition-colors"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
-              </div>
-              {isProcessing && (
-                <div className="flex items-center justify-center gap-2 text-slate-500 text-sm py-2">
-                  <Loader2 className="w-4 h-4 animate-spin text-indigo-500" />
-                  <span>Transcrevendo...</span>
-                </div>
-              )}
-              {transcription && (
-                <div className="space-y-1 animate-fadeIn">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Transcrição da IA</label>
-                  <div className="p-3 bg-white dark:bg-slate-900 rounded-lg border border-slate-100 dark:border-slate-800 text-sm text-slate-600 dark:text-slate-300 italic">
-                    "{transcription}"
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+            ) : (
+              <p className={`${ui.corpoSm} ${ui.suave}`}>Fale e a nota vira texto.</p>
+            )}
+          </div>
         </div>
       )}
 
-      <div className="space-y-1.5">
-        <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-2">
-          <FileText className="w-3.5 h-3.5" />
-          {activeTab === "audio" ? "Editar Nota / Conteúdo" : "Conteúdo da Nota"}
+      <div>
+        <label className={`${ui.rotulo} mb-1`} htmlFor="nota-conteudo">
+          {activeTab === "audio" ? "transcrição" : "nota"}
         </label>
         <textarea
+          id="nota-conteudo"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder={activeTab === "audio" ? "A transcrição aparecerá aqui para edição..." : "Digite sua nota aqui..."}
-          className="w-full min-h-[120px] p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all resize-none text-sm"
+          placeholder={
+            activeTab === "audio" ? "A transcrição aparece aqui para editar." : "Escreva a nota."
+          }
+          className={`${ui.campo} ${ui.corpoLg} min-h-[7rem] resize-none`}
         />
       </div>
 
-      <div className="flex items-center gap-3 pt-2">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           type="submit"
           disabled={!content.trim() && !transcription.trim()}
-          className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl shadow-lg shadow-indigo-100 dark:shadow-none transition-all cursor-pointer"
+          className={ui.btnPrimario}
         >
-          <Save className="w-4 h-4" />
-          Salvar Nota
+          <Save className="h-4 w-4" />
+          Salvar nota
         </button>
         {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-5 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all cursor-pointer"
-          >
+          <button type="button" onClick={onCancel} className={ui.btnFantasma}>
             Cancelar
           </button>
         )}

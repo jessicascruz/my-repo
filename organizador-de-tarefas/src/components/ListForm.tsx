@@ -2,13 +2,11 @@ import React, { useState } from "react";
 import { 
   Plus, 
   Trash2, 
-  GripVertical, 
   CheckSquare, 
   ListOrdered, 
   Hash,
   X,
   Save,
-  PlusCircle,
   ShoppingCart,
   Plane,
   Briefcase,
@@ -19,12 +17,11 @@ import {
   Home,
   Code,
   Coffee,
-  CheckCircle2,
   List as ListIcon,
   Smile
 } from "lucide-react";
 import { List, ListEntry } from "../types";
-import { motion, AnimatePresence } from "motion/react";
+import * as ui from "../lib/ui";
 
 const AVAILABLE_ICONS = [
   { id: "list", icon: ListIcon },
@@ -109,190 +106,160 @@ export function ListForm({ onAddList, onUpdateList, initialData, onCancel, isCom
     setNewItemText("");
   };
 
+  const TIPOS: { id: List["type"]; rotulo: string; Icone: typeof CheckSquare }[] = [
+    { id: "checklist", rotulo: "checklist", Icone: CheckSquare },
+    { id: "numbered", rotulo: "numerada", Icone: ListOrdered },
+    { id: "mixed", rotulo: "mista", Icone: Hash },
+  ];
+
+  const botaoEscolha = (ativo: boolean) =>
+    `flex items-center justify-center gap-1.5 rounded-pauta border px-2 py-2 cursor-pointer transition-colors ${ui.monoRot} ${ui.foco} ${
+      ativo
+        ? "border-fita bg-fita text-pauta-alta dark:border-fita-clara dark:bg-fita-clara dark:text-tinta"
+        : `border-linha dark:border-tinta-linha ${ui.suave} hover:bg-pauta-baixa dark:hover:bg-tinta-linha`
+    }`;
+
   return (
-    <form 
-      onSubmit={handleSubmit} 
-      className={`${isCompact ? '' : 'bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm p-6'} ${isCompact ? 'space-y-4' : 'space-y-6'}`}
+    <form
+      onSubmit={handleSubmit}
+      className={`${isCompact ? "" : `${ui.superficie} p-5`} space-y-4`}
     >
-      <div className={`flex items-center justify-between border-b border-slate-100 dark:border-slate-800 ${isCompact ? 'pb-2.5' : 'pb-3.5'}`}>
-        <h3 className="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 text-base font-display">
-          <PlusCircle className="w-5 h-5 text-indigo-500" />
-          {initialData ? "Editar Lista" : "Nova Lista"}
-        </h3>
+      <div className="flex items-center justify-between gap-3 border-b border-linha pb-3 dark:border-tinta-linha">
+        <h2 className={ui.displayMd}>{initialData ? "Editar lista" : "Nova lista"}</h2>
         {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-          >
-            <X className="w-5 h-5" />
+          <button type="button" onClick={onCancel} className={ui.btnIcone} title="Fechar">
+            <X className="h-4 w-4" />
           </button>
         )}
       </div>
 
-      <div className="space-y-4">
-        {/* Title input */}
-        <div>
-          <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 block">Título da Lista</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Ex: Compras do Mês, Checklist de Viagem..."
-            className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 outline-none transition-all font-medium text-sm"
-          />
-        </div>
+      <div>
+        <label className={`${ui.rotulo} mb-1`} htmlFor="lista-titulo">
+          título
+        </label>
+        <input
+          id="lista-titulo"
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Ex: compras do mês"
+          className={ui.campo}
+        />
+      </div>
 
-        {/* List type grid selector */}
-        <div>
-          <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 block">Tipo de Lista</label>
-          <div className="grid grid-cols-3 gap-2 bg-slate-50 dark:bg-slate-950/40 p-1.5 rounded-xl border border-slate-100 dark:border-slate-800">
+      <div>
+        <span className={`${ui.rotulo} mb-1`}>tipo</span>
+        <div className="grid grid-cols-3 gap-2">
+          {TIPOS.map(({ id, rotulo, Icone }) => (
             <button
+              key={id}
               type="button"
-              onClick={() => setType("checklist")}
-              className={`py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                type === "checklist" 
-                  ? "bg-indigo-600 text-white shadow-xs" 
-                  : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800"
-              }`}
+              aria-pressed={type === id}
+              onClick={() => setType(id)}
+              className={botaoEscolha(type === id)}
             >
-              <CheckSquare className="w-3.5 h-3.5" />
-              <span>Checklist</span>
+              <Icone className="h-3.5 w-3.5" />
+              {rotulo}
             </button>
-            <button
-              type="button"
-              onClick={() => setType("numbered")}
-              className={`py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                type === "numbered" 
-                  ? "bg-indigo-600 text-white shadow-xs" 
-                  : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800"
-              }`}
-            >
-              <ListOrdered className="w-3.5 h-3.5" />
-              <span>Numerada</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setType("mixed")}
-              className={`py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                type === "mixed" 
-                  ? "bg-indigo-600 text-white shadow-xs" 
-                  : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800"
-              }`}
-            >
-              <Hash className="w-3.5 h-3.5" />
-              <span>Mista</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Icon picker */}
-        <div>
-          <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5 block">Ícone</label>
-          <div className="flex flex-wrap gap-2 p-2 bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-slate-100 dark:border-slate-800 justify-between sm:justify-start">
-            {AVAILABLE_ICONS.map((item) => {
-              const IconComp = item.icon;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setIcon(item.id)}
-                  className={`p-2 rounded-lg transition-all cursor-pointer ${
-                    icon === item.id 
-                      ? "bg-indigo-600 text-white shadow-sm scale-110" 
-                      : "bg-white dark:bg-slate-900 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 border border-slate-100 dark:border-slate-800"
-                  }`}
-                >
-                  <IconComp className="w-4 h-4" />
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Items creation block */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <label className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest block">Itens da Lista ({items.length})</label>
-            {items.length === 0 && (
-              <span className="text-[10px] text-rose-500 font-bold uppercase animate-pulse">Adicione pelo menos 1 item</span>
-            )}
-          </div>
-          
-          {items.length > 0 && (
-            <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1 bg-slate-50/50 dark:bg-slate-950/20 p-2.5 rounded-xl border border-slate-100 dark:border-slate-900">
-              <AnimatePresence initial={false}>
-                {items.map((item, index) => (
-                  <motion.div
-                    key={item.id || index}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 10 }}
-                    className="flex items-center gap-2 group bg-white dark:bg-slate-900 p-1.5 rounded-lg border border-slate-100 dark:border-slate-900 shadow-2xs"
-                  >
-                    <div className="flex items-center justify-center w-5.5 h-5.5 text-[10px] font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 rounded-md shrink-0">
-                      {type === "numbered" || type === "mixed" ? index + 1 : "•"}
-                    </div>
-                    <input
-                      type="text"
-                      value={item.text}
-                      onChange={(e) => updateItemText(index, e.target.value)}
-                      placeholder="Nome do item..."
-                      className="flex-1 bg-transparent text-xs text-slate-700 dark:text-slate-200 py-0.5 outline-none font-medium border-b border-transparent focus:border-indigo-500 transition-all"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeItem(index)}
-                      className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/60 rounded-md transition-all shrink-0 cursor-pointer"
-                      title="Remover item"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-          )}
-
-          {/* New Item input bar */}
-          <div className="flex items-center gap-2 pt-1">
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                value={newItemText}
-                onChange={(e) => setNewItemText(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addItem())}
-                placeholder="Adicionar novo item..."
-                className="w-full pl-4 pr-10 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 outline-none transition-all font-medium"
-              />
-              <button
-                type="button"
-                onClick={addItem}
-                disabled={!newItemText.trim()}
-                className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1.5 text-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-lg transition-colors disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      <div className="flex items-center gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+      <div>
+        <span className={`${ui.rotulo} mb-1`}>ícone</span>
+        <div className="flex flex-wrap gap-1.5">
+          {AVAILABLE_ICONS.map(({ id, icon: Icone }) => (
+            <button
+              key={id}
+              type="button"
+              aria-pressed={icon === id}
+              aria-label={`Ícone ${id}`}
+              onClick={() => setIcon(id)}
+              className={`grid h-9 w-9 place-items-center rounded-pauta border cursor-pointer transition-colors ${ui.foco} ${
+                icon === id
+                  ? "border-fita bg-fita text-pauta-alta dark:border-fita-clara dark:bg-fita-clara dark:text-tinta"
+                  : `border-linha dark:border-tinta-linha ${ui.suave} hover:bg-pauta-baixa dark:hover:bg-tinta-linha`
+              }`}
+            >
+              <Icone className="h-4 w-4" />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <div className="mb-1 flex items-baseline justify-between gap-2">
+          <span className={ui.rotulo}>itens ({items.length})</span>
+          {items.length === 0 && (
+            <span className={`${ui.corpoSm} ${ui.suave}`}>Pelo menos um.</span>
+          )}
+        </div>
+
+        {items.length > 0 && (
+          <ul className="mb-2 max-h-56 divide-y divide-linha overflow-y-auto border-y border-linha dark:divide-tinta-linha dark:border-tinta-linha">
+            {items.map((item, index) => (
+              <li key={item.id || index} className="flex items-center gap-2 py-1">
+                <span className={`w-6 shrink-0 text-right ${ui.monoNum} ${ui.fraco}`}>
+                  {type === "checklist" ? "•" : index + 1}
+                </span>
+                <input
+                  type="text"
+                  aria-label={`Item ${index + 1}`}
+                  value={item.text}
+                  onChange={(e) => updateItemText(index, e.target.value)}
+                  placeholder="Nome do item"
+                  className={`flex-1 border-none bg-transparent py-1 ${ui.corpoSm} ${ui.foco}`}
+                />
+                <button
+                  type="button"
+                  onClick={() => removeItem(index)}
+                  aria-label={`Remover item ${index + 1}`}
+                  className={`${ui.btnIcone} shrink-0 hover:text-gravando dark:hover:text-gravando-clara`}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="flex gap-2">
+          <input
+            type="text"
+            aria-label="Novo item"
+            value={newItemText}
+            onChange={(e) => setNewItemText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addItem();
+              }
+            }}
+            placeholder="Novo item — Enter adiciona"
+            className={ui.campo}
+          />
+          <button
+            type="button"
+            onClick={addItem}
+            disabled={!newItemText.trim()}
+            className={`${ui.btnFantasma} shrink-0`}
+          >
+            <Plus className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2 border-t border-linha pt-3 dark:border-tinta-linha">
         <button
           type="submit"
           disabled={!title.trim() || items.length === 0}
-          className="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-2.5 rounded-xl shadow-md shadow-indigo-100 dark:shadow-none transition-all text-xs cursor-pointer"
+          className={ui.btnPrimario}
         >
-          <Save className="w-4 h-4" />
-          <span>Salvar Lista</span>
+          <Save className="h-4 w-4" />
+          Salvar lista
         </button>
         {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition-all text-xs cursor-pointer"
-          >
+          <button type="button" onClick={onCancel} className={ui.btnFantasma}>
             Cancelar
           </button>
         )}
