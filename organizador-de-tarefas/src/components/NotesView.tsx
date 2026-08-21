@@ -1,22 +1,10 @@
-import React, { useState, useMemo } from "react";
-import { 
-  StickyNote, 
-  Search, 
-  Filter, 
-  Plus, 
-  X, 
-  Trash2, 
-  LayoutGrid, 
-  List,
-  FileText,
-  Mic,
-  Calendar,
-  AlertCircle
-} from "lucide-react";
+import { useMemo, useState } from "react";
+import { Plus, Search, X, FileText, Mic } from "lucide-react";
 import { Note } from "../types";
 import { NoteForm } from "./NoteForm";
 import { NoteItem } from "./NoteItem";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
+import * as ui from "../lib/ui";
 
 interface NotesViewProps {
   notes: Note[];
@@ -25,191 +13,124 @@ interface NotesViewProps {
   onDeleteNote: (id: string) => void;
 }
 
+const FILTROS = [
+  { id: "all", rotulo: "todas", Icone: null },
+  { id: "text", rotulo: "escritas", Icone: FileText },
+  { id: "audio", rotulo: "de voz", Icone: Mic },
+] as const;
+
 export function NotesView({ notes, onAddNote, onUpdateNote, onDeleteNote }: NotesViewProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<"all" | "text" | "audio">("all");
   const [isAddingNote, setIsAddingNote] = useState(false);
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const filteredNotes = useMemo(() => {
+    const busca = searchQuery.toLowerCase();
     return notes.filter((note) => {
-      const matchesSearch = note.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          (note.transcription?.toLowerCase().includes(searchQuery.toLowerCase()));
-      
-      const matchesType = filterType === "all" || 
-                         (filterType === "audio" && !!note.audioUrl) ||
-                         (filterType === "text" && !note.audioUrl);
-
-      return matchesSearch && matchesType;
+      const casaBusca =
+        note.content.toLowerCase().includes(busca) ||
+        !!note.transcription?.toLowerCase().includes(busca);
+      const casaTipo =
+        filterType === "all" ||
+        (filterType === "audio" && !!note.audioUrl) ||
+        (filterType === "text" && !note.audioUrl);
+      return casaBusca && casaTipo;
     });
   }, [notes, searchQuery, filterType]);
 
-  const handleAddNote = (note: Omit<Note, "id" | "userId" | "createdAt">) => {
-    onAddNote(note);
-    setIsAddingNote(false);
-  };
-
   return (
-    <div className="space-y-6 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-            <StickyNote className="w-7 h-7 text-indigo-500" />
-            Suas Notas
-          </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Organize suas ideias, transcrições e lembretes rápidos.
+          <h2 className={ui.displayLg}>Notas</h2>
+          <p className={`${ui.corpoSm} ${ui.suave}`}>
+            Ideias, transcrições e o que não é tarefa.
           </p>
         </div>
-        
         {!isAddingNote && (
-          <button
-            onClick={() => setIsAddingNote(true)}
-            className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-100 dark:shadow-none transition-all cursor-pointer"
-          >
-            <Plus className="w-5 h-5" />
-            Nova Nota
+          <button onClick={() => setIsAddingNote(true)} className={ui.btnPrimario}>
+            <Plus className="h-4 w-4" />
+            Nova nota
           </button>
         )}
       </div>
 
-      <AnimatePresence>
-        {isAddingNote && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
-          >
-            <NoteForm onAddNote={handleAddNote} onCancel={() => setIsAddingNote(false)} />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isAddingNote && (
+        <NoteForm
+          onAddNote={(note) => {
+            onAddNote(note);
+            setIsAddingNote(false);
+          }}
+          onCancel={() => setIsAddingNote(false)}
+        />
+      )}
 
-      {/* Filters & Search */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
-        <div className="relative w-full md:max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative min-w-0 flex-1 sm:max-w-sm">
+          <Search
+            aria-hidden="true"
+            className={`pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 ${ui.fraco}`}
+          />
           <input
             type="text"
-            placeholder="Pesquisar em notas e transcrições..."
+            aria-label="Pesquisar nas notas"
+            placeholder="Pesquisar"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+            className={`${ui.campo} pl-9 pr-9`}
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 transition-colors"
+              aria-label="Limpar busca"
+              className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-pauta p-1 cursor-pointer ${ui.foco}`}
             >
-              <X className="w-3 h-3" />
+              <X className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto justify-between sm:justify-start">
-          <div className="flex bg-slate-100 dark:bg-slate-950 p-1 rounded-xl w-full sm:w-auto">
+        <div className="flex items-center gap-1">
+          {FILTROS.map(({ id, rotulo, Icone }) => (
             <button
-              onClick={() => setFilterType("all")}
-              className={`flex-1 sm:flex-initial text-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                filterType === "all"
-                  ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                  : "text-slate-500 hover:text-slate-800"
+              key={id}
+              onClick={() => setFilterType(id)}
+              aria-current={filterType === id ? "true" : undefined}
+              className={`${ui.monoRot} flex items-center gap-1.5 rounded-pauta px-2.5 py-1.5 cursor-pointer transition-colors ${ui.foco} ${
+                filterType === id
+                  ? "bg-fita text-pauta-alta dark:bg-fita-clara dark:text-tinta"
+                  : `${ui.suave} hover:bg-pauta-baixa dark:hover:bg-tinta-linha`
               }`}
             >
-              Todas
+              {Icone && <Icone className="h-3.5 w-3.5" />}
+              {rotulo}
             </button>
-            <button
-              onClick={() => setFilterType("text")}
-              className={`flex-1 sm:flex-initial text-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                filterType === "text"
-                  ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              <FileText className="w-3 h-3 text-indigo-500" />
-              <span>Texto</span>
-            </button>
-            <button
-              onClick={() => setFilterType("audio")}
-              className={`flex-1 sm:flex-initial text-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                filterType === "audio"
-                  ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              <Mic className="w-3 h-3 text-indigo-500" />
-              <span>Voz</span>
-            </button>
-          </div>
-
-          <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-1 hidden sm:block shrink-0" />
-
-          <div className="flex bg-slate-100 dark:bg-slate-950 p-1 rounded-xl shrink-0">
-            <button
-              onClick={() => setViewMode("grid")}
-              className={`p-1.5 rounded-lg transition-all cursor-pointer ${
-                viewMode === "grid"
-                  ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              <LayoutGrid className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setViewMode("list")}
-              className={`p-1.5 rounded-lg transition-all cursor-pointer ${
-                viewMode === "list"
-                  ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              <List className="w-4 h-4" />
-            </button>
-          </div>
+          ))}
         </div>
+
+        <span className={`${ui.monoRot} ${ui.fraco} ml-auto`}>{filteredNotes.length}</span>
       </div>
 
-      {/* Notes List */}
-      <div className={`grid gap-5 ${viewMode === "grid" ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}>
+      <div className="space-y-2">
         <AnimatePresence mode="popLayout">
           {filteredNotes.map((note) => (
-            <NoteItem
-              key={note.id}
-              note={note}
-              onDelete={onDeleteNote}
-              onUpdate={onUpdateNote}
-            />
+            <NoteItem key={note.id} note={note} onDelete={onDeleteNote} onUpdate={onUpdateNote} />
           ))}
         </AnimatePresence>
-      </div>
 
-      {filteredNotes.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-          <div className="w-20 h-20 bg-slate-100 dark:bg-slate-900 rounded-full flex items-center justify-center">
-            <StickyNote className="w-10 h-10 text-slate-300" />
-          </div>
-          <div className="space-y-1">
-            <h3 className="font-bold text-slate-800 dark:text-slate-200">
-              {searchQuery || filterType !== "all" ? "Nenhuma nota encontrada" : "Sua área de notas está vazia"}
+        {filteredNotes.length === 0 && (
+          <div className={`${ui.superficie} p-10 text-center`}>
+            <h3 className={`${ui.displayMd} mb-1`}>
+              {searchQuery || filterType !== "all" ? "Nada com esse filtro" : "Nenhuma nota ainda"}
             </h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400 max-w-xs">
-              {searchQuery || filterType !== "all" 
-                ? "Tente ajustar seus filtros ou termos de pesquisa." 
-                : "Comece a registrar suas ideias digitando ou gravando um áudio rápido!"}
+            <p className={`${ui.corpoSm} ${ui.suave} mx-auto max-w-sm`}>
+              {searchQuery || filterType !== "all"
+                ? "Limpe a busca ou escolha outro tipo."
+                : "Toque em Nova nota e escreva, ou grave e deixe a transcrição virar texto."}
             </p>
           </div>
-          {!searchQuery && filterType === "all" && !isAddingNote && (
-            <button
-              onClick={() => setIsAddingNote(true)}
-              className="text-indigo-600 dark:text-indigo-400 text-sm font-bold hover:underline"
-            >
-              Adicionar minha primeira nota
-            </button>
-          )}
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

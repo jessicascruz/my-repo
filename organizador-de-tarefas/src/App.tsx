@@ -1539,15 +1539,18 @@ export default function App() {
 
       {/* ── Conteúdo: uma coluna. A pauta sangra até 76rem, o resto para em 68rem ── */}
       <main className="mx-auto w-full max-w-[76rem] flex-1 px-4 pb-64 sm:px-6 md:pb-44">
-        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-linha dark:border-tinta-linha pb-5 pt-8">
-          <h1 className={ui.displayXl}>
-            <span className="hidden sm:inline">{tituloDoDia}</span>
-            <span className="sm:hidden">{tituloCurtoDoDia}</span>
-          </h1>
-          <p className={`${ui.monoNumLg} ${ui.suave}`}>
-            {completedCount} de {totalCount} concluídas
-          </p>
-        </div>
+        {/* O dia titula a aba diárias. As outras abas têm o próprio título. */}
+        {activeTab === "diarias" && (
+          <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-linha dark:border-tinta-linha pb-5 pt-8">
+            <h1 className={ui.displayXl}>
+              <span className="hidden sm:inline">{tituloDoDia}</span>
+              <span className="sm:hidden">{tituloCurtoDoDia}</span>
+            </h1>
+            <p className={`${ui.monoNumLg} ${ui.suave}`}>
+              {completedCount} de {totalCount} concluídas
+            </p>
+          </div>
+        )}
 
         <div className="mx-auto max-w-[68rem] py-7">
           {activeTab === "diarias" ? (

@@ -1,16 +1,11 @@
 import React, { useState } from "react";
-import { 
-  Trash2, 
-  CheckSquare, 
-  Square, 
-  ChevronDown, 
-  ChevronUp, 
-  ListOrdered, 
-  Hash,
-  Clock,
+import {
+  Trash2,
   Edit2,
-  X,
-  CheckCircle2,
+  Check,
+  CheckSquare,
+  ListOrdered,
+  Hash,
   ShoppingCart,
   Plane,
   Briefcase,
@@ -22,25 +17,32 @@ import {
   Code,
   Coffee,
   Smile,
-  List as ListIcon
+  List as ListIcon,
 } from "lucide-react";
-import { List, ListEntry } from "../types";
-import { motion, AnimatePresence } from "motion/react";
+import { List } from "../types";
+import { motion } from "motion/react";
 import { ListForm } from "./ListForm";
+import * as ui from "../lib/ui";
 
 const ICON_MAP: Record<string, any> = {
-  "list": ListIcon,
+  list: ListIcon,
   "shopping-cart": ShoppingCart,
-  "plane": Plane,
-  "briefcase": Briefcase,
+  plane: Plane,
+  briefcase: Briefcase,
   "graduation-cap": GraduationCap,
-  "utensils": Utensils,
-  "dumbbell": Dumbbell,
-  "heart": Heart,
-  "home": Home,
-  "code": Code,
-  "coffee": Coffee,
-  "smile": Smile,
+  utensils: Utensils,
+  dumbbell: Dumbbell,
+  heart: Heart,
+  home: Home,
+  code: Code,
+  coffee: Coffee,
+  smile: Smile,
+};
+
+const TIPO: Record<List["type"], { rotulo: string; Icone: any }> = {
+  checklist: { rotulo: "checklist", Icone: CheckSquare },
+  numbered: { rotulo: "numerada", Icone: ListOrdered },
+  mixed: { rotulo: "mista", Icone: Hash },
 };
 
 interface ListItemProps {
@@ -49,196 +51,148 @@ interface ListItemProps {
   onUpdate: (id: string, updates: Partial<List>) => void;
 }
 
+/**
+ * Cada tipo tem desenho próprio, não três variações do mesmo card:
+ * numerada é sequência (sem marcar), checklist é caixa de marcar, mista tem
+ * número e caixa. Os itens ficam sempre à vista — o conteúdo é a lista.
+ */
 export const ListItem: React.FC<ListItemProps> = ({ list, onDelete, onUpdate }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const formattedDate = new Date(list.createdAt).toLocaleDateString("pt-BR", {
+  const marcavel = list.type === "checklist" || list.type === "mixed";
+  const numerada = list.type === "numbered" || list.type === "mixed";
+  const total = list.items?.length || 0;
+  const feitos = list.items.filter((i) => i.completed).length;
+
+  const data = new Date(list.createdAt).toLocaleDateString("pt-BR", {
     day: "2-digit",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
+    month: "2-digit",
   });
 
-  const toggleItem = (itemId: string) => {
-    const newItems = list.items.map(item => 
-      item.id === itemId ? { ...item, completed: !item.completed } : item
-    );
-    onUpdate(list.id, { items: newItems });
+  const IconeLista = ICON_MAP[list.icon || "list"] || ListIcon;
+  const { rotulo, Icone: IconeTipo } = TIPO[list.type];
+
+  const alternar = (itemId: string) => {
+    if (!marcavel) return;
+    onUpdate(list.id, {
+      items: list.items.map((item) =>
+        item.id === itemId ? { ...item, completed: !item.completed } : item
+      ),
+    });
   };
-
-  const totalItems = list.items?.length || 0;
-  const progress = totalItems > 0 
-    ? Math.round((list.items.filter(i => i.completed).length / totalItems) * 100)
-    : 0;
-
-  const getTypeIcon = () => {
-    switch (list.type) {
-      case "numbered": return <ListOrdered className="w-3.5 h-3.5" />;
-      case "checklist": return <CheckSquare className="w-3.5 h-3.5" />;
-      case "mixed": return <Hash className="w-3.5 h-3.5" />;
-    }
-  };
-
-  const getTypeText = () => {
-    switch (list.type) {
-      case "numbered": return "Numerada";
-      case "checklist": return "Checklist";
-      case "mixed": return "Mista";
-    }
-  };
-
-  const IconComponent = ICON_MAP[list.icon || "list"] || ListIcon;
 
   if (isEditing) {
     return (
-      <motion.div
-        layout
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="z-10 h-fit bg-white dark:bg-slate-900 rounded-2xl border border-indigo-200 dark:border-indigo-900/50 shadow-md p-5"
-      >
-        <ListForm 
-          initialData={list} 
-          onAddList={() => {}} 
+      <div className={`${ui.superficie} p-5`}>
+        <ListForm
+          initialData={list}
+          onAddList={() => {}}
           onUpdateList={(id, updates) => {
             onUpdate(id, updates);
             setIsEditing(false);
           }}
           onCancel={() => setIsEditing(false)}
-          isCompact={true}
+          isCompact
         />
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 10 }}
+    <motion.section
+      layout="position"
+      initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden h-fit"
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
+      className={`group ${ui.superficie} px-4 py-3.5`}
     >
-      <div className="p-5">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-2 mb-2.5">
-              <div className="flex items-center gap-1.5 text-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider">
-                <IconComponent className="w-3.5 h-3.5" />
-                <div className="w-px h-3 bg-indigo-200 dark:bg-indigo-800 mx-1" />
-                {getTypeIcon()}
-                <span>{getTypeText()}</span>
-              </div>
-              <span className="text-[10px] font-medium text-slate-400 dark:text-slate-500 flex items-center gap-1 shrink-0">
-                <Clock className="w-2.5 h-2.5" />
-                {formattedDate}
-              </span>
-            </div>
+      <div className="flex items-start gap-3">
+        <IconeLista className={`mt-1 h-4 w-4 shrink-0 ${ui.suave}`} aria-hidden="true" />
 
-            <h4 className="text-base font-bold text-slate-800 dark:text-slate-100 truncate pr-1 font-display" title={list.title}>
-              {list.title}
-            </h4>
-
-            <div className="mt-3.5 flex items-center gap-3">
-              <div className="flex-1 h-1.5 bg-slate-100 dark:bg-slate-800/80 rounded-full overflow-hidden">
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  className={`h-full rounded-full ${progress === 100 ? 'bg-emerald-500' : 'bg-indigo-500'}`}
-                />
-              </div>
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-tighter shrink-0">
-                {progress}%
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-0.5 shrink-0">
-            <button
-              onClick={() => setIsEditing(true)}
-              className="p-2 text-slate-400 hover:text-indigo-500 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition-all cursor-pointer"
-              title="Editar lista"
-            >
-              <Edit2 className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => onDelete(list.id)}
-              className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-800/20 rounded-xl transition-all cursor-pointer"
-              title="Excluir lista"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
+        <div className="min-w-0 flex-1">
+          <h3 className={`${ui.displayMd} break-words`}>{list.title}</h3>
+          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+            <span className={ui.chip}>
+              <IconeTipo className="h-3 w-3 shrink-0" />
+              {rotulo}
+            </span>
+            <span className={`${ui.monoNum} ${ui.fraco}`}>
+              {marcavel ? `${feitos}/${total}` : `${total} itens`} · {data}
+            </span>
           </div>
         </div>
 
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden"
-            >
-              <div className="mt-5 pt-5 border-t border-slate-50 dark:border-slate-800 space-y-3">
-                {list.items.map((item, index) => (
-                  <div key={item.id} className="flex items-start gap-3 group">
-                    <button
-                      onClick={() => (list.type === "checklist" || list.type === "mixed") && toggleItem(item.id)}
-                      disabled={list.type === "numbered"}
-                      className={`mt-0.5 shrink-0 transition-colors ${
-                        list.type === "numbered" 
-                          ? "w-5 h-5 flex items-center justify-center text-[10px] font-bold text-slate-400 bg-slate-50 dark:bg-slate-800 rounded" 
-                          : "hover:scale-110 active:scale-95"
-                      }`}
-                    >
-                      {list.type === "numbered" ? (
-                        index + 1
-                      ) : item.completed ? (
-                        <CheckCircle2 className="w-5 h-5 text-emerald-500 fill-emerald-50 dark:fill-emerald-500/10" />
-                      ) : (
-                        <Square className="w-5 h-5 text-slate-300 dark:text-slate-600" />
-                      )}
-                    </button>
-                    
-                    <div className="flex-1 flex items-center gap-2">
-                      {list.type === "mixed" && (
-                        <span className="text-[10px] font-bold text-slate-300 dark:text-slate-600 mr-1 mt-0.5">
-                          {index + 1}.
-                        </span>
-                      )}
-                      <span className={`text-sm leading-tight transition-all ${
-                        item.completed 
-                          ? "text-slate-400 line-through decoration-slate-300 dark:decoration-slate-700" 
-                          : "text-slate-600 dark:text-slate-300"
-                      }`}>
-                        {item.text}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full mt-4 flex items-center justify-center gap-1.5 text-[10px] font-bold text-slate-400 hover:text-indigo-500 uppercase tracking-widest transition-all py-1.5 bg-slate-50/50 dark:bg-slate-950/20 rounded-lg"
-        >
-          {isExpanded ? (
-            <>
-              <ChevronUp className="w-3.5 h-3.5" />
-              Ver Menos
-            </>
-          ) : (
-            <>
-              <ChevronDown className="w-3.5 h-3.5" />
-              {list.items.length} itens • Ver Mais
-            </>
-          )}
-        </button>
+        <div className="flex shrink-0 items-center sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+          <button onClick={() => setIsEditing(true)} className={ui.btnIcone} title="Editar lista">
+            <Edit2 className="h-4 w-4" />
+          </button>
+          <button
+            onClick={() => onDelete(list.id)}
+            className={`${ui.btnIcone} hover:text-gravando dark:hover:text-gravando-clara`}
+            title="Excluir lista"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
       </div>
-    </motion.div>
+
+      {/* Progresso: só onde marcar faz sentido */}
+      {marcavel && total > 0 && (
+        <div
+          className="mt-2.5 h-[3px] w-full bg-pauta-baixa dark:bg-tinta-fundo"
+          role="progressbar"
+          aria-valuenow={feitos}
+          aria-valuemax={total}
+          aria-label={`${feitos} de ${total} concluídos`}
+        >
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${(feitos / total) * 100}%` }}
+            transition={{ duration: 0.25 }}
+            className="h-full bg-fita dark:bg-fita-clara"
+          />
+        </div>
+      )}
+
+      <ol className="mt-3 space-y-0.5 border-l border-linha pl-4 dark:border-tinta-linha">
+        {list.items.map((item, index) => (
+          <li key={item.id} className="flex items-start gap-2">
+            {numerada && (
+              <span className={`w-5 shrink-0 pt-0.5 text-right ${ui.monoNum} ${ui.fraco}`}>
+                {index + 1}
+              </span>
+            )}
+
+            {marcavel ? (
+              <button
+                onClick={() => alternar(item.id)}
+                aria-pressed={item.completed}
+                aria-label={item.text}
+                className={`grid h-11 w-11 shrink-0 place-items-center rounded-pauta cursor-pointer sm:h-6 sm:w-6 ${ui.foco}`}
+              >
+                <span
+                  className={`grid h-4 w-4 place-items-center rounded-[2px] border transition-colors ${
+                    item.completed
+                      ? "border-fita bg-fita text-pauta-alta dark:border-fita-clara dark:bg-fita-clara dark:text-tinta"
+                      : "border-linha dark:border-tinta-linha"
+                  }`}
+                >
+                  {item.completed && <Check className="h-2.5 w-2.5 stroke-[3]" />}
+                </span>
+              </button>
+            ) : null}
+
+            <span
+              className={`flex-1 py-0.5 ${ui.corpo} ${
+                item.completed ? `line-through ${ui.fraco}` : ""
+              }`}
+            >
+              {item.text}
+            </span>
+          </li>
+        ))}
+      </ol>
+    </motion.section>
   );
-}
+};
