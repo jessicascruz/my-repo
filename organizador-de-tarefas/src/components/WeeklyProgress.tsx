@@ -10,8 +10,9 @@ import {
   ReferenceLine,
   Cell,
 } from "recharts";
-import { CalendarRange, CheckCircle2, Flame, Award, TrendingUp, Info, FileDown } from "lucide-react";
+import { FileDown } from "lucide-react";
 import { Task } from "../types";
+import * as ui from "../lib/ui";
 import { getLocalDateString, getLocalDateStringFromISO } from "../lib/dateUtils";
 import { jsPDF } from "jspdf";
 
@@ -383,219 +384,135 @@ export function WeeklyProgress({ tasks }: WeeklyProgressProps) {
     }
   }
 
-  // Custom tooltips to match index.css visual guidelines
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      const isTodayText = data.isToday ? " (Hoje)" : "";
-      const goalDifference = data.completas - currentDailyGoal;
-      let statusText = "";
-      if (data.completas >= currentDailyGoal) {
-        statusText = "🏆 Meta atingida!";
-      } else {
-        statusText = `Faltaram ${Math.abs(goalDifference)} para a meta`;
-      }
-
-      return (
-        <div className="bg-slate-900 text-white p-3 rounded-xl shadow-lg border border-slate-800 text-xs space-y-1.5 min-w-[150px]">
-          <p className="font-bold text-slate-300 select-none">
-            {data.dayLabel} - {data.dateLabel}{isTodayText}
-          </p>
-          <div className="flex items-center gap-1.5 font-sans font-semibold pt-0.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-            <span className="text-emerald-400">
-              {data.completas} {data.completas === 1 ? "tarefa" : "tarefas"}
-            </span>
-          </div>
-          <p className="text-[10px] text-slate-400 border-t border-slate-800 pt-1">
-            {statusText}
-          </p>
-        </div>
-      );
-    }
-    return null;
+  const DicaDoGrafico = ({ active, payload }: any) => {
+    if (!active || !payload?.length) return null;
+    const data = payload[0].payload;
+    const bateu = data.completas >= currentDailyGoal;
+    return (
+      <div className={`${ui.superficie} min-w-36 px-3 py-2`}>
+        <p className={ui.corpoSm}>
+          {data.dayLabel}, {data.dateLabel}
+          {data.isToday ? " (hoje)" : ""}
+        </p>
+        <p className={`${ui.monoNum} ${ui.suave}`}>
+          {data.completas} {data.completas === 1 ? "concluída" : "concluídas"}
+        </p>
+        <p className={`${ui.monoNum} ${ui.fraco}`}>
+          {bateu
+            ? "meta batida"
+            : `faltaram ${currentDailyGoal - data.completas} para a meta`}
+        </p>
+      </div>
+    );
   };
 
   return (
-    <div
-      id="weekly-progress-card"
-      className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-2xl p-5 shadow-xs transition-all flex flex-col gap-5"
-    >
-      {/* Header Info */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/40 rounded-xl text-indigo-600 dark:text-indigo-400">
-            <CalendarRange className="w-5 h-5" />
-          </div>
-          <div>
-            <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100 font-display">
-              Progresso nos Últimos 7 Dias
-            </h4>
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-              Comparação da sua produtividade recente com a meta atual de{" "}
-              <strong className="text-indigo-600 dark:text-indigo-400">
-                {currentDailyGoal} {currentDailyGoal === 1 ? "tarefa" : "tarefas"}
-              </strong>
-            </p>
-          </div>
-        </div>
-
-        {/* Dynamic Quick Stats Badges */}
-        <div className="flex flex-wrap items-center gap-3 self-start sm:self-center">
-          {currentStreak > 0 && (
-            <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold font-mono bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 animate-pulse">
-              <Flame className="w-3.5 h-3.5 fill-amber-500 stroke-none" />
-              <span>{currentStreak}D STREAK</span>
-            </div>
-          )}
-
-          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold font-mono bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900/30 text-emerald-600 dark:text-emerald-400">
-            <Award className="w-3.5 h-3.5" />
-            <span>{daysGoalMet}/7 METAS</span>
-          </div>
-
-          <button
-            onClick={generatePDFReport}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-all cursor-pointer active:scale-95"
-            title="Baixar Relatório Semanal em PDF"
-          >
-            <FileDown className="w-4 h-4" />
-            <span>Relatório PDF</span>
+    <div id="weekly-progress-card" className={`${ui.superficie} p-5`}>
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <span className={ui.rotulo}>últimos sete dias</span>
+        <div className="flex flex-wrap items-center gap-3">
+          <span className={`${ui.monoNum} ${ui.suave}`}>
+            {currentStreak > 0 && `${currentStreak}d seguidos · `}
+            {daysGoalMet}/7 metas
+          </span>
+          <button onClick={generatePDFReport} className={ui.btnFantasma}>
+            <FileDown className="h-4 w-4" />
+            Relatório PDF
           </button>
         </div>
       </div>
 
-      {/* Grid of Mini Stats Cards prior to Chart */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="p-3 rounded-xl bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100/60 dark:border-slate-900/40 flex items-center justify-between">
-          <div>
-            <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              Total Concluído (7d)
-            </span>
-            <span className="text-xl font-extrabold text-slate-800 dark:text-slate-100 font-sans">
-              {totalCompletedLast7Days}
-            </span>
-          </div>
-          <CheckCircle2 className="w-5 h-5 text-indigo-500/80" />
+      <dl className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div>
+          <dt className={ui.rotulo}>concluídas em 7 dias</dt>
+          <dd className="mt-0.5 font-display text-[32px] font-extrabold leading-none tracking-[-0.03em]">
+            {totalCompletedLast7Days}
+          </dd>
         </div>
-
-        <div className="p-3 rounded-xl bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100/60 dark:border-slate-900/40 flex items-center justify-between">
-          <div>
-            <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              Média Diária
-            </span>
-            <span className="text-xl font-extrabold text-slate-800 dark:text-slate-100 font-sans">
-              {averageCompleted}{" "}
-              <span className="text-[10px] font-normal text-slate-400">/dia</span>
-            </span>
-          </div>
-          <TrendingUp className="w-5 h-5 text-emerald-500/80" />
+        <div className="sm:border-l sm:border-linha sm:pl-4 sm:dark:border-tinta-linha">
+          <dt className={ui.rotulo}>por dia, na média</dt>
+          <dd className="mt-0.5 font-display text-[32px] font-extrabold leading-none tracking-[-0.03em]">
+            {averageCompleted}
+          </dd>
         </div>
+      </dl>
 
-        <div className="p-3 rounded-xl bg-slate-50/50 dark:bg-slate-950/20 border border-slate-100/60 dark:border-slate-900/40 flex items-center">
-          <div className="flex items-start gap-2">
-            <Info className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-normal">
-              {completedTodayCount >= currentDailyGoal ? (
-                <span><strong>Excelente!</strong> Você atingiu ou superou a meta diária hoje! Mantendo esse foco, você maximiza seu progresso.</span>
-              ) : (
-                <span>Faltam <strong>{Math.max(0, currentDailyGoal - completedTodayCount)}</strong> concluir hoje para bater sua meta diária de <strong>{currentDailyGoal}</strong> na Fila de Atividades.</span>
-              )}
-            </span>
-          </div>
-        </div>
-      </div>
+      <p className={`mt-3 ${ui.corpoSm} ${ui.suave}`}>
+        {completedTodayCount >= currentDailyGoal
+          ? `Meta de hoje batida: ${currentDailyGoal} ${
+              currentDailyGoal === 1 ? "tarefa" : "tarefas"
+            }.`
+          : `Faltam ${Math.max(
+              0,
+              currentDailyGoal - completedTodayCount
+            )} para a meta de hoje, que é ${currentDailyGoal}.`}
+      </p>
 
-      {/* Recharts BarChart */}
-      <div className="w-full h-56 min-h-[220px]">
+      <div className="mt-4 h-56 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={chartData}
-            margin={{ top: 15, right: 10, left: -25, bottom: 0 }}
-          >
-            <CartesianGrid
-              strokeDasharray="3 3"
-              vertical={false}
-              stroke="rgba(148, 163, 184, 0.15)"
-            />
+          <BarChart data={chartData} margin={{ top: 16, right: 8, left: -22, bottom: 0 }}>
+            <CartesianGrid vertical={false} stroke={ui.CORES_GRAFICO.linha} strokeOpacity={0.5} />
             <XAxis
               dataKey="dayLabel"
               tickLine={false}
               axisLine={false}
-              stroke="#94A3B8"
-              fontSize={10}
-              fontWeight={600}
-              dy={10}
+              tick={{ fontFamily: "DM Mono, monospace", fontSize: 11, fill: "currentColor" }}
+              className={ui.fraco}
+              dy={8}
             />
             <YAxis
               tickLine={false}
               axisLine={false}
-              stroke="#94A3B8"
-              fontSize={10}
-              fontWeight={600}
               allowDecimals={false}
-              dx={-5}
+              tick={{ fontFamily: "DM Mono, monospace", fontSize: 11, fill: "currentColor" }}
+              className={ui.fraco}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(99, 102, 241, 0.04)" }} />
-            
-            {/* Horizontal Line displaying the Daily Goal target */}
+            <Tooltip content={<DicaDoGrafico />} cursor={{ fill: "transparent" }} />
+
             <ReferenceLine
               y={currentDailyGoal}
-              stroke="#ef4444"
+              stroke={ui.CORES_GRAFICO.dial}
               strokeDasharray="4 4"
               strokeWidth={1.5}
               label={{
-                value: `Meta: ${currentDailyGoal}`,
+                value: `meta ${currentDailyGoal}`,
                 position: "top",
-                fill: "#f43f5e",
-                fontSize: 9,
-                fontWeight: "bold",
-                style: { letterSpacing: "0.05em" }
+                fill: ui.CORES_GRAFICO.dial,
+                fontSize: 11,
+                fontFamily: "DM Mono, monospace",
               }}
             />
 
-            <Bar
-              dataKey="completas"
-              radius={[6, 6, 0, 0]}
-              maxBarSize={32}
-            >
-              {chartData.map((entry, index) => {
-                // Determine highlight color if it is today
-                const fill = entry.isToday
-                  ? entry.completas >= currentDailyGoal
-                    ? "#10b981" // Emerald today if goal is hit
-                    : "#6366f1" // Indigo today if active
-                  : entry.completas >= currentDailyGoal
-                  ? "#818cf8" // Lighter indigo for successful past days
-                  : "#94a3b8"; // Slate for general days below meta
-
-                return (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={fill}
-                    className="transition-colors duration-250 cursor-pointer"
-                  />
-                );
-              })}
+            <Bar dataKey="completas" maxBarSize={28} isAnimationActive={false}>
+              {chartData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={
+                    entry.completas >= currentDailyGoal
+                      ? ui.CORES_GRAFICO.fita
+                      : ui.CORES_GRAFICO.fitaClara
+                  }
+                  fillOpacity={entry.isToday ? 1 : 0.55}
+                />
+              ))}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
 
-      {/* Visual map legend helper */}
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[10px] text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-50 dark:border-slate-800">
-        <div className="flex items-center gap-1.5 font-medium">
-          <div className="w-2.5 h-2.5 rounded bg-emerald-500" />
-          <span>Meta diária atingida</span>
-        </div>
-        <div className="flex items-center gap-1.5 font-medium">
-          <div className="w-2.5 h-2.5 rounded bg-indigo-500" />
-          <span>Hoje (abaixo da meta)</span>
-        </div>
-        <div className="flex items-center gap-1.5 font-medium">
-          <div className="w-2.5 h-2.5 rounded bg-slate-400" />
-          <span>Dias anteriores (abaixo da meta)</span>
-        </div>
+      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 border-t border-linha pt-3 dark:border-tinta-linha">
+        <span className={`flex items-center gap-1.5 ${ui.monoRot} ${ui.fraco}`}>
+          <span className="h-2 w-2 bg-fita" />
+          meta batida
+        </span>
+        <span className={`flex items-center gap-1.5 ${ui.monoRot} ${ui.fraco}`}>
+          <span className="h-2 w-2 bg-fita-clara opacity-55" />
+          abaixo da meta
+        </span>
+        <span className={`flex items-center gap-1.5 ${ui.monoRot} ${ui.fraco}`}>
+          <span className="h-2 w-2 border border-dial border-dashed" />
+          meta do dia
+        </span>
       </div>
     </div>
   );

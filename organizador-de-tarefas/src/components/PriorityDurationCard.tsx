@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "motion/react";
-import { AlertCircle, Clock, Info } from "lucide-react";
 import { Task } from "../types";
+import * as ui from "../lib/ui";
 import { getLocalDateString, getLocalDateStringFromISO } from "../lib/dateUtils";
 
 interface PriorityDurationCardProps {
@@ -55,60 +55,39 @@ export function PriorityDurationCard({ tasks }: PriorityDurationCardProps) {
   if (todayTasks.length === 0) return null;
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="p-2 bg-rose-50 dark:bg-rose-900/20 rounded-lg">
-            <AlertCircle className="w-5 h-5 text-rose-500" />
-          </div>
-          <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100">
-            Foco em Alta Prioridade
-          </h4>
-        </div>
-        <div className="group relative">
-          <Info className="w-4 h-4 text-slate-300 dark:text-slate-600 cursor-help" />
-          <div className="absolute right-0 bottom-full mb-2 w-48 p-2 bg-slate-800 text-[10px] text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 shadow-xl">
-            Tempo total acumulado desde a criação até a conclusão (ou agora, se ativa).
-          </div>
-        </div>
+    <div className={`${ui.superficie} p-5`}>
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <span className={ui.rotulo}>tempo em alta prioridade</span>
+        <span className={`${ui.monoNum} ${ui.suave}`}>{Math.round(highPercentage)}% do total</span>
       </div>
 
-      <div className="space-y-3">
-        <div className="flex justify-between items-end">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Distribuição</span>
-          <span className="text-[10px] font-bold text-rose-500 font-mono">{Math.round(highPercentage)}% Crítico</span>
-        </div>
-        
-        <div className="h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex">
-          <motion.div 
-            initial={{ width: 0 }}
-            animate={{ width: `${highPercentage}%` }}
-            className="h-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.4)]"
-          />
-          <motion.div 
-            initial={{ width: 0 }}
-            animate={{ width: `${100 - highPercentage}%` }}
-            className="h-full bg-slate-200 dark:bg-slate-700"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 pt-2">
-          <div className="space-y-1">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Alta Prioridade</p>
-            <div className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-rose-500" />
-              <p className="text-sm font-bold text-slate-700 dark:text-slate-200 font-sans">{formatDuration(highPriorityTime)}</p>
-            </div>
-          </div>
-          <div className="space-y-1 border-l border-slate-100 dark:border-slate-800 pl-4">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Outros</p>
-            <div className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5 text-slate-400" />
-              <p className="text-sm font-bold text-slate-700 dark:text-slate-200 font-sans">{formatDuration(otherTime)}</p>
-            </div>
-          </div>
-        </div>
+      <div
+        className="mt-3 flex h-[3px] w-full bg-pauta-baixa dark:bg-tinta-fundo"
+        role="img"
+        aria-label={`${Math.round(highPercentage)} por cento do tempo em tarefas de prioridade Alta`}
+      >
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${highPercentage}%` }}
+          transition={{ duration: 0.4 }}
+          className="h-full bg-gravando"
+        />
       </div>
+
+      <dl className="mt-4 grid grid-cols-2 gap-4">
+        <div>
+          <dt className={ui.rotulo}>alta</dt>
+          <dd className={`mt-0.5 ${ui.monoNumLg}`}>{formatDuration(highPriorityTime)}</dd>
+        </div>
+        <div className="border-l border-linha pl-4 dark:border-tinta-linha">
+          <dt className={ui.rotulo}>o resto</dt>
+          <dd className={`mt-0.5 ${ui.monoNumLg}`}>{formatDuration(otherTime)}</dd>
+        </div>
+      </dl>
+
+      <p className={`mt-3 ${ui.corpoSm} ${ui.suave}`}>
+        Tempo acumulado da criação até a conclusão — ou até agora, quando a tarefa segue na fila.
+      </p>
     </div>
   );
 }

@@ -77,6 +77,50 @@ export const corIconePrioridade = {
   Baixa: "text-fita dark:text-fita-clara",
 } as const;
 
+/**
+ * Rampa de categorias para os gráficos. As categorias são dados do usuário e
+ * podem crescer, então em vez de oito cores inventadas há uma rampa derivada
+ * de `fita`, variando luminosidade e saturação. Os passos alternam claro e
+ * escuro de propósito: vizinhos na rosca ficam distinguíveis mesmo com doze
+ * categorias. A luminosidade fica entre 38% e 80% para funcionar tanto sobre
+ * papel quanto sobre tinta — uma rampa só, nos dois temas.
+ *
+ * Cor não é o rótulo: o rótulo é o rótulo, sempre escrito.
+ */
+const PASSOS_RAMPA: [number, number, number][] = [
+  [167, 62, 40],
+  [164, 42, 72],
+  [170, 55, 50],
+  [162, 38, 80],
+  [168, 68, 44],
+  [165, 45, 66],
+  [172, 58, 56],
+  [158, 32, 76],
+  [166, 72, 38],
+  [163, 40, 70],
+  [169, 50, 60],
+  [174, 36, 78],
+];
+
+/** `dial` fica reservado para "Outros". */
+export const COR_OUTROS = "#f0a828";
+
+export function corDaCategoria(nome: string, indice: number): string {
+  if (nome === "Outros") return COR_OUTROS;
+  const [h, s, l] = PASSOS_RAMPA[indice % PASSOS_RAMPA.length];
+  return `hsl(${h} ${s}% ${l}%)`;
+}
+
+/** Cores fixas dos gráficos, iguais aos tokens do @theme. */
+export const CORES_GRAFICO = {
+  fita: "#0e5c4a",
+  fitaClara: "#34a98b",
+  dial: "#f0a828",
+  gravando: "#e2453a",
+  linha: "#c6c1b3",
+  linhaEscura: "#2a2e35",
+} as const;
+
 export const fundoPrioridade = {
   Alta: "bg-gravando",
   Média: "bg-dial",

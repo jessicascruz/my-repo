@@ -8,7 +8,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { LineChart, CheckCircle2, TrendingUp } from "lucide-react";
+import * as ui from "../lib/ui";
 
 interface ProgressChartProps {
   completedGroupedByDate: Record<string, number>;
@@ -56,121 +56,59 @@ export function ProgressChart({ completedGroupedByDate }: ProgressChartProps) {
     ? Math.max(...sortedData.map(d => d.quantidade))
     : 0;
 
-  // Custom polished tooltip to match index.css visual guidelines (Indigo/Slate themes)
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="bg-slate-900 text-white p-3 rounded-xl shadow-lg border border-slate-800 text-xs space-y-1">
-          <p className="font-bold text-slate-300 select-none capitalize">
-            {data.fullLabel}
-          </p>
-          <div className="flex items-center gap-1.5 font-sans font-semibold pt-0.5 text-xs">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-            <span className="text-emerald-400">
-              {data.quantidade} {data.quantidade === 1 ? "tarefa concluída" : "tarefas concluídas"}
-            </span>
-          </div>
-        </div>
-      );
-    }
-    return null;
+  const DicaDoGrafico = ({ active, payload }: any) => {
+    if (!active || !payload?.length) return null;
+    const data = payload[0].payload;
+    return (
+      <div className={`${ui.superficie} px-3 py-2`}>
+        <p className={`${ui.corpoSm} capitalize`}>{data.fullLabel}</p>
+        <p className={`${ui.monoNum} ${ui.suave}`}>
+          {data.quantidade} {data.quantidade === 1 ? "concluída" : "concluídas"}
+        </p>
+      </div>
+    );
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-5 shadow-xs space-y-5">
-      {/* Chart Header Info */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="space-y-1">
-          <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-            <LineChart className="w-4 h-4 text-indigo-500" />
-            Estatísticas de Desempenho Diário
-          </h4>
-          <p className="text-xs text-slate-400">
-            Acompanhe o ritmo de tarefas concluídas ao longo dos últimos dias de produtividade
-          </p>
-        </div>
-
-        {/* Quick totals summary pill */}
-        <div className="flex gap-4 items-center self-start sm:self-center">
-          <div className="bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-800 px-3 py-1 rounded-xl text-center">
-            <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest">Concluídas</span>
-            <span className="text-sm font-extrabold text-slate-800 dark:text-slate-100">{totalTasksCompleted}</span>
-          </div>
-          <div className="bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/40 px-3 py-1 rounded-xl text-center">
-            <span className="block text-[9px] font-bold text-indigo-400 uppercase tracking-widest">Recorde Diário</span>
-            <span className="text-sm font-extrabold text-indigo-600 dark:text-indigo-400 flex items-center justify-center gap-0.5">
-              <TrendingUp className="w-3 h-3 text-indigo-500 inline shrink-0" />
-              {maxCompletedInOneDay}
-            </span>
-          </div>
-        </div>
+    <div className={`${ui.superficie} p-5`}>
+      <div className="flex flex-wrap items-baseline justify-between gap-4">
+        <span className={ui.rotulo}>concluídas por dia</span>
+        <span className={`${ui.monoNum} ${ui.suave}`}>
+          {totalTasksCompleted} no total · recorde {maxCompletedInOneDay} num dia
+        </span>
       </div>
 
-      {/* Recharts Render Container */}
-      <div className="w-full h-56 min-h-[220px]">
+      <div className="mt-4 h-56 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
-            data={displayData}
-            margin={{ top: 10, right: 10, left: -25, bottom: 0 }}
-          >
-            <defs>
-              <linearGradient id="colorGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.2} />
-                <stop offset="95%" stopColor="#4f46e5" stopOpacity={0.0} />
-              </linearGradient>
-            </defs>
-            
-            <CartesianGrid
-              strokeDasharray="3 3"
-              vertical={false}
-              stroke="rgba(148, 163, 184, 0.15)"
-            />
-            
+          <AreaChart data={displayData} margin={{ top: 8, right: 8, left: -22, bottom: 0 }}>
+            <CartesianGrid vertical={false} stroke={ui.CORES_GRAFICO.linha} strokeOpacity={0.5} />
             <XAxis
               dataKey="label"
               tickLine={false}
               axisLine={false}
-              stroke="#94A3B8"
-              fontSize={10}
-              fontWeight={600}
-              dy={10}
+              tick={{ fontFamily: "DM Mono, monospace", fontSize: 11, fill: "currentColor" }}
+              className={ui.fraco}
+              dy={8}
             />
-            
             <YAxis
               tickLine={false}
               axisLine={false}
-              stroke="#94A3B8"
-              fontSize={10}
-              fontWeight={600}
               allowDecimals={false}
-              dx={-5}
+              tick={{ fontFamily: "DM Mono, monospace", fontSize: 11, fill: "currentColor" }}
+              className={ui.fraco}
             />
-            
-            <Tooltip content={<CustomTooltip />} />
-            
+            <Tooltip content={<DicaDoGrafico />} />
             <Area
               type="monotone"
               dataKey="quantidade"
-              stroke="#4f46e5"
-              strokeWidth={3}
-              fillOpacity={1}
-              fill="url(#colorGrad)"
-              activeDot={{ r: 6, stroke: "#ffffff", strokeWidth: 2, fill: "#4f46e5" }}
+              stroke={ui.CORES_GRAFICO.fitaClara}
+              strokeWidth={2}
+              fill={ui.CORES_GRAFICO.fitaClara}
+              fillOpacity={0.12}
+              activeDot={{ r: 4, fill: ui.CORES_GRAFICO.fitaClara, stroke: "none" }}
             />
           </AreaChart>
         </ResponsiveContainer>
-      </div>
-
-      {/* Visual spark legend details */}
-      <div className="flex items-center gap-6 text-[10px] text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-50 dark:border-slate-800">
-        <div className="flex items-center gap-1.5 font-medium">
-          <div className="w-2.5 h-2.5 rounded bg-indigo-600" />
-          <span>Atividades concluídas no dia</span>
-        </div>
-        <span className="font-mono text-slate-400 dark:text-slate-500">
-          *Os dados refletem o histórico de finalização de suas tarefas
-        </span>
       </div>
     </div>
   );

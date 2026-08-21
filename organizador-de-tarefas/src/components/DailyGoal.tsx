@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "motion/react";
-import { Target, CheckCircle2, ListTodo } from "lucide-react";
 import { Task } from "../types";
+import * as ui from "../lib/ui";
 import { getLocalDateString, getLocalDateStringFromISO } from "../lib/dateUtils";
 
 interface DailyGoalProps {
@@ -29,78 +29,63 @@ export function DailyGoal({ tasks }: DailyGoalProps) {
   const dailyGoalPercentage =
     totalTasksToday > 0 ? (completedTodayCount / totalTasksToday) * 100 : 0;
 
-  // Dynamic motivational quote in Portuguese based on progress
+  // Uma frase por faixa de progresso. Voz ativa, sem exclamação — a única
+  // permitida é a comemoração do dia 100%, uma por dia.
   let motivationalMessage = "";
   if (totalTasksToday === 0) {
-    motivationalMessage = "Nenhuma tarefa para hoje ainda. Comece criando algo incrível! 🎯";
+    motivationalMessage = "Pauta vazia. Toque em gravar e fale o seu dia.";
   } else if (dailyGoalPercentage === 100) {
-    motivationalMessage = "Meta atingida! Dia extraordinário concluído com sucesso! 🏆✨";
+    motivationalMessage = "Dia fechado. Tudo o que entrou na pauta saiu!";
   } else if (dailyGoalPercentage >= 75) {
-    motivationalMessage = "Quase lá! Só mais um último sprint para fechar com chave de ouro! 💪";
+    motivationalMessage = "Falta pouco para fechar o dia.";
   } else if (dailyGoalPercentage >= 50) {
-    motivationalMessage = "Metade do caminho superada! Mantenha a consistência! 🚀";
+    motivationalMessage = "Metade do dia resolvida.";
   } else if (dailyGoalPercentage > 0) {
-    motivationalMessage = "Excelente começo! Cada pequena vitória te aproxima da meta! 📈";
+    motivationalMessage = "A primeira já saiu. O resto vem no mesmo ritmo.";
   } else {
-    motivationalMessage = "Foco total hoje! Complete sua primeira tarefa para virar a chave! 🔥";
+    motivationalMessage = "Nada concluído ainda. Comece pela primeira da fila.";
   }
 
+  const restam = totalTasksToday - completedTodayCount;
+
   return (
-    <div id="daily-goal-card" className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-2xl p-5 shadow-xs transition-all relative overflow-hidden">
-      {/* Dynamic light ambient glow inside card in high-completion state */}
-      {dailyGoalPercentage === 100 && (
-        <div className="absolute inset-0 bg-emerald-500/5 pointer-events-none transition-all animate-pulse" />
-      )}
-
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2.5 bg-indigo-50 dark:bg-indigo-950/40 rounded-xl text-indigo-600 dark:text-indigo-400">
-            <Target className="w-5 h-5 animate-pulse" />
-          </div>
-          <div>
-            <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100 font-display">
-              Meta Diária • Daily Goal
-            </h4>
-            <div className="flex items-center gap-3 mt-0.5">
-              <span className="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                {completedTodayCount} concluídas hoje
-              </span>
-              <span className="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
-                <ListTodo className="w-3 h-3 text-indigo-400" />
-                {activeTodayCount} pendentes
-              </span>
-            </div>
-          </div>
+    <div id="daily-goal-card" className={`${ui.superficie} p-5`}>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <span className={ui.rotulo}>meta do dia</span>
+          <p className="mt-1 flex items-baseline gap-2">
+            <span className="font-display text-[44px] font-extrabold leading-none tracking-[-0.03em]">
+              {completedTodayCount}
+            </span>
+            <span className={`${ui.monoNumLg} ${ui.suave}`}>de {totalTasksToday}</span>
+          </p>
         </div>
-
-        <div className="flex items-center gap-2 sm:self-center">
-          <span className="text-xs font-bold font-mono text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-950/50 px-3 py-1 rounded-full leading-none">
-            {completedTodayCount} / {totalTasksToday} tarefas ({Math.round(dailyGoalPercentage)}%)
-          </span>
-        </div>
+        <span className={`${ui.monoNumLg} ${ui.suave}`}>
+          {Math.round(dailyGoalPercentage)}%
+        </span>
       </div>
 
-      {/* Modern, high contrast progress bar */}
-      <div className="w-full bg-slate-100 dark:bg-slate-800/70 h-3 rounded-full overflow-hidden relative">
+      <div
+        className="mt-4 h-[3px] w-full bg-pauta-baixa dark:bg-tinta-fundo"
+        role="progressbar"
+        aria-valuenow={completedTodayCount}
+        aria-valuemax={totalTasksToday}
+        aria-label={`${completedTodayCount} de ${totalTasksToday} concluídas`}
+      >
         <motion.div
-          className="bg-gradient-to-r from-indigo-500 via-indigo-600 to-emerald-500 h-full rounded-full"
+          className="h-full bg-fita dark:bg-fita-clara"
           initial={{ width: 0 }}
           animate={{ width: `${dailyGoalPercentage}%` }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
         />
       </div>
 
-      <div className="flex justify-between items-center mt-3 gap-2">
-        <span className="text-xs text-slate-600 dark:text-slate-400 font-medium">
-          {motivationalMessage}
-        </span>
-        {totalTasksToday > 0 && dailyGoalPercentage < 100 && (
-          <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono shrink-0 select-none">
-            Faltam {(totalTasksToday - completedTodayCount)}
-          </span>
+      <p className={`mt-3 ${ui.corpoSm} ${ui.suave}`}>
+        {motivationalMessage}
+        {restam > 0 && totalTasksToday > 0 && (
+          <span className={ui.monoNum}> · faltam {restam}</span>
         )}
-      </div>
+      </p>
     </div>
   );
 }

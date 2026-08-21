@@ -1,7 +1,6 @@
 import React from "react";
-import { motion } from "motion/react";
-import { Clock, Zap, TrendingUp, BarChart2 } from "lucide-react";
 import { Task } from "../types";
+import * as ui from "../lib/ui";
 
 interface ProductivitySummaryProps {
   tasks: Task[];
@@ -73,153 +72,85 @@ export function ProductivitySummary({ tasks }: ProductivitySummaryProps) {
     return `${seconds}s`;
   };
 
-  // Select dynamic productivity level details
-  let levelTitle = "Sem dados";
-  let levelColor = "text-slate-400 bg-slate-100 dark:bg-slate-800/80";
-  let message = "Complete tarefas para ativar a análise de tempo médio de conclusão!";
+  // Uma leitura por faixa de tempo médio. Sem emoji, sem exclamação.
+  let levelTitle = "sem dados";
+  let message = "Conclua tarefas para o app medir o tempo entre criar e concluir.";
 
   if (count > 0) {
     const mins = avgDurationMs / 60000;
     if (mins < 15) {
-      levelTitle = "Ultra Sônico";
-      levelColor = "text-amber-600 bg-amber-50 dark:bg-amber-950/30 border border-amber-200/50";
-      message = "Você está voando! Conclusão quase instantânea das atividades. ⚡";
+      levelTitle = "quase imediato";
+      message = "Você resolve o que entra na pauta quase na hora.";
     } else if (mins < 120) {
-      levelTitle = "Foco Produtivo";
-      levelColor = "text-emerald-700 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/50";
-      message = "Excelente ritmo de execução! Resolução dinâmica de pendências. 🚀";
+      levelTitle = "no mesmo dia";
+      message = "Ritmo bom: a tarefa não fica esperando.";
     } else if (mins < 720) {
-      levelTitle = "Consistente";
-      levelColor = "text-indigo-650 bg-indigo-50/50 dark:bg-indigo-950/40 border border-indigo-200/40";
-      message = "Bom fluxo de trabalho. Tarefas sendo entregues com qualidade e constância. 🎯";
+      levelTitle = "algumas horas";
+      message = "Fluxo constante, com folga entre criar e concluir.";
     } else {
-      levelTitle = "Longo Prazo";
-      levelColor = "text-slate-700 bg-slate-100 dark:bg-slate-800 border border-slate-200/50";
-      message = "Projetos de maior escopo e duração. Lembre-se de usar subtarefas se necessário! 📊";
+      levelTitle = "de escopo longo";
+      message = "As tarefas duram mais de meio dia. Quebrar em subtarefas ajuda a ver o avanço.";
     }
   }
 
   return (
-    <div id="productivity-summary-card" className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-2xl p-5 shadow-xs transition-all flex flex-col gap-4">
-      {/* Header element */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl text-emerald-600 dark:text-emerald-400">
-            <BarChart2 className="w-5 h-5" />
-          </div>
-          <div>
-            <h4 className="font-bold text-sm text-slate-800 dark:text-slate-100 font-display">
-              Resumo de Produtividade
-            </h4>
-            <span className="text-[10px] text-slate-400 dark:text-slate-500 font-mono">
-              Com base no intervalo entre criação e finalização
-            </span>
-          </div>
-        </div>
-
-        {count > 0 && (
-          <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${levelColor} select-none uppercase tracking-wider`}>
-            {levelTitle}
-          </span>
-        )}
+    <div id="productivity-summary-card" className={`${ui.superficie} p-5`}>
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <span className={ui.rotulo}>tempo entre criar e concluir</span>
+        {count > 0 && <span className={`${ui.monoRot} ${ui.suave}`}>{levelTitle}</span>}
       </div>
 
       {count === 0 ? (
-        <div className="py-4 text-center border border-dashed border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/40 dark:bg-slate-950/30">
-          <Clock className="w-8 h-8 text-slate-400 dark:text-slate-600 mx-auto mb-2 stroke-[1.5]" />
-          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium px-4">
-            {message}
-          </p>
-        </div>
+        <p className={`mt-3 ${ui.corpoSm} ${ui.suave}`}>{message}</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          {/* Average Duration Box */}
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/45 border border-slate-100/60 dark:border-slate-900/40 flex flex-col justify-between">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1 mb-2">
-              <Clock className="w-3.5 h-3.5 text-indigo-500" />
-              Tempo Médio
-            </span>
-            <div>
-              <p className="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 font-sans tracking-tight leading-none mb-1">
-                {formatDurationReadable(avgDurationMs)}
-              </p>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500">
-                Média calculada sobre {count} {count === 1 ? "tarefa" : "tarefas"}
-              </p>
-            </div>
-          </div>
+        <>
+          {/* O número grande se justifica aqui: ele é o conteúdo. */}
+          <p className="mt-2 font-display text-[clamp(30px,6vw,44px)] font-extrabold leading-none tracking-[-0.03em]">
+            {formatDurationReadable(avgDurationMs)}
+          </p>
+          <p className={`mt-1 ${ui.corpoSm} ${ui.suave}`}>
+            média de {count} {count === 1 ? "tarefa" : "tarefas"} · {message}
+          </p>
 
-          {/* Fastest Completion Box */}
-          {fastestTask && (
-            <div className="p-4 rounded-xl bg-indigo-50/20 dark:bg-indigo-950/15 border border-indigo-100/30 dark:border-indigo-900/10 flex flex-col justify-between">
-              <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest flex items-center gap-1 mb-2">
-                <Zap className="w-3.5 h-3.5 text-amber-500" />
-                Conclusão Mais Rápida
-              </span>
-              <div>
-                <p className="text-xs font-bold text-slate-700 dark:text-slate-200 leading-tight mb-1 line-clamp-1">
-                  &ldquo;{fastestTask.task.title}&rdquo;
-                </p>
-                <p className="text-[11px] font-mono font-bold text-emerald-700 dark:text-emerald-400">
-                  Resolvido em {formatDurationReadable(fastestTask.duration)}
-                </p>
+          <dl className="mt-4 grid gap-4 border-t border-linha pt-4 dark:border-tinta-linha sm:grid-cols-2">
+            {fastestTask && (
+              <div className="min-w-0">
+                <dt className={ui.rotulo}>a mais rápida</dt>
+                <dd className={`mt-0.5 truncate ${ui.corpoSm}`}>{fastestTask.task.title}</dd>
+                <dd className={`${ui.monoNum} ${ui.suave}`}>
+                  {formatDurationReadable(fastestTask.duration)}
+                </dd>
               </div>
-            </div>
-          )}
-        </div>
-      )}
+            )}
+            {slowestTask && (
+              <div className="min-w-0 sm:border-l sm:border-linha sm:pl-4 sm:dark:border-tinta-linha">
+                <dt className={ui.rotulo}>a mais demorada</dt>
+                <dd className={`mt-0.5 truncate ${ui.corpoSm}`}>{slowestTask.task.title}</dd>
+                <dd className={`${ui.monoNum} ${ui.suave}`}>
+                  {formatDurationReadable(slowestTask.duration)}
+                </dd>
+              </div>
+            )}
+          </dl>
 
-      {/* Priority Comparison Card */}
-      {count > 0 && (
-        <div className="bg-slate-50 dark:bg-slate-950/40 border border-slate-100/60 dark:border-slate-800/60 rounded-xl p-4">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
-              <Zap className="w-3.5 h-3.5 text-indigo-500" />
-              Foco em Alta Prioridade
-            </span>
-            <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2 py-0.5 rounded">
-              {highPercent}% do tempo total
-            </span>
-          </div>
-          
-          <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="flex-1 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden flex">
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${highPercent}%` }}
-                  className="h-full bg-indigo-500"
-                />
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${100 - highPercent}%` }}
-                  className="h-full bg-slate-300 dark:bg-slate-700"
-                />
-              </div>
+          <div className="mt-4 border-t border-linha pt-4 dark:border-tinta-linha">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <span className={ui.rotulo}>fatia em alta prioridade</span>
+              <span className={`${ui.monoNum} ${ui.suave}`}>{highPercent}% do tempo</span>
             </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mb-0.5">Alta Prioridade</p>
-                <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{formatDurationReadable(totalHighMs)}</p>
-                <p className="text-[9px] text-slate-400">{highCount} {highCount === 1 ? "tarefa" : "tarefas"}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight mb-0.5">Outras</p>
-                <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{formatDurationReadable(totalOtherMs)}</p>
-                <p className="text-[9px] text-slate-400">{otherCount} {otherCount === 1 ? "tarefa" : "tarefas"}</p>
-              </div>
+            <div
+              className="mt-2 h-[3px] w-full bg-pauta-baixa dark:bg-tinta-fundo"
+              role="img"
+              aria-label={`${highPercent} por cento do tempo em prioridade Alta`}
+            >
+              <div className="h-full bg-gravando" style={{ width: `${highPercent}%` }} />
             </div>
+            <p className={`mt-2 ${ui.monoNum} ${ui.suave}`}>
+              {highCount} {highCount === 1 ? "Alta" : "Altas"} · {otherCount}{" "}
+              {otherCount === 1 ? "outra" : "outras"}
+            </p>
           </div>
-        </div>
-      )}
-
-      {/* Motivational / Hint Bar */}
-      {count > 0 && (
-        <div className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-950/25 p-3 rounded-xl border border-slate-100/40 dark:border-slate-900/20">
-          <TrendingUp className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-          <span>{message}</span>
-        </div>
+        </>
       )}
     </div>
   );
