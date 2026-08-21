@@ -107,10 +107,10 @@ export const ListItem: React.FC<ListItemProps> = ({ list, onDelete, onUpdate }) 
       transition={{ duration: 0.18 }}
       className={`group ${ui.superficie} px-4 py-3.5`}
     >
-      <div className="flex items-start gap-3">
+      <div className="flex flex-wrap items-start gap-3">
         <IconeLista className={`mt-1 h-4 w-4 shrink-0 ${ui.suave}`} aria-hidden="true" />
 
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 basis-40">
           <h3 className={`${ui.displayMd} break-words`}>{list.title}</h3>
           <div className="mt-1 flex flex-wrap items-center gap-1.5">
             <span className={ui.chip}>
@@ -123,7 +123,7 @@ export const ListItem: React.FC<ListItemProps> = ({ list, onDelete, onUpdate }) 
           </div>
         </div>
 
-        <div className="flex shrink-0 items-center sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+        <div className="flex w-full items-center justify-end sm:w-auto sm:shrink-0 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
           <button onClick={() => setIsEditing(true)} className={ui.btnIcone} title="Editar lista">
             <Edit2 className="h-4 w-4" />
           </button>

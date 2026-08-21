@@ -4,9 +4,16 @@
 //
 // Ao mudar um valor aqui, ele muda em toda a interface. É de propósito.
 
-/** Obrigatório em tudo que é clicável ou focável. */
+/**
+ * Obrigatório em tudo que é clicável ou focável.
+ *
+ * Sem `focus:outline-none` aqui: `:focus` casa junto com `:focus-visible` e,
+ * com a mesma especificidade, o `outline-style: none` ganhava pela ordem no
+ * CSS e apagava o anel inteiro. O navegador moderno já só desenha o outline
+ * no focus-visible, então o reset não era necessário — era o bug.
+ */
 export const foco =
-  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fita dark:focus-visible:outline-fita-clara focus:outline-none";
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-fita dark:focus-visible:outline-fita-clara";
 
 /** Superfície elevada: card, painel, linha de lista. Borda separa, não sombra. */
 export const superficie =
@@ -23,8 +30,12 @@ export const btnPrimario = `${btnBase} bg-fita text-pauta-alta hover:bg-fita/88 
 /** Ação secundária. Borda em vez de preenchimento. */
 export const btnFantasma = `${btnBase} border border-linha dark:border-tinta-linha text-tinta dark:text-pauta hover:bg-pauta-baixa dark:hover:bg-tinta-linha`;
 
-/** Destrutivo: excluir, limpar tudo. */
-export const btnPerigo = `${btnBase} border border-gravando/45 text-gravando dark:text-gravando-clara hover:bg-gravando hover:text-pauta-alta hover:border-gravando dark:hover:bg-gravando-clara dark:hover:text-tinta`;
+/**
+ * Destrutivo: excluir, limpar tudo. O texto fica neutro e a borda carrega o
+ * aviso — `gravando` como cor de texto dá 3,65:1 sobre papel, e preenchido
+ * com texto claro dá o mesmo. Quem avisa é a borda, não a legibilidade.
+ */
+export const btnPerigo = `${btnBase} border border-gravando text-tinta dark:text-pauta hover:bg-gravando/12 dark:hover:bg-gravando-clara/15`;
 
 /** Botão só de ícone — alvo de 44px no mobile, 36px no desktop. */
 export const btnIcone = `inline-flex items-center justify-center h-11 w-11 sm:h-9 sm:w-9 rounded-pauta text-tinta/70 dark:text-pauta/70 hover:bg-pauta-baixa dark:hover:bg-tinta-linha cursor-pointer transition-colors ${foco}`;
@@ -38,7 +49,7 @@ export const campo = `w-full rounded-pauta border border-linha dark:border-tinta
 
 /** Rótulo de campo ou de seção, sempre em caixa alta e mono. */
 export const rotulo =
-  "block font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-tinta/55 dark:text-pauta/55";
+  "block font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-tinta/70 dark:text-pauta/70";
 
 /** Casca de modal: overlay + painel. Sombra só aqui e no console. */
 export const cascaModalOverlay =
@@ -60,22 +71,13 @@ export const monoRot = "font-mono text-[11px] font-medium uppercase tracking-[0.
 export const monoNum = "font-mono text-[13px] tabular-nums";
 export const monoNumLg = "font-mono text-[15px] tabular-nums";
 
-/** Texto de apoio. */
-export const suave = "text-tinta/70 dark:text-pauta/70";
-export const fraco = "text-tinta/45 dark:text-pauta/45";
-
 /**
- * Marca de prioridade — mesma gramática na pauta, na lista e no calendário.
- * A cor vive no preenchimento e na borda, nunca no texto: `dial` sobre papel
- * dá ~1,9:1 e `gravando` ~4,0:1, então rótulo de prioridade é sempre neutro
- * (`suave`) e quem carrega a cor é o ponto ou o filete de 3px.
- * `corIconePrioridade` só para ícone ou texto de 18px ou mais.
+ * Texto de apoio. Os dois passam em 4,5:1 nos dois temas — medido no app com
+ * o pixel achatado, não estimado. `fraco` a 45% dava 3,8:1 e `rotulo` a 55%
+ * dava 3,7:1. Não desça daqui.
  */
-export const corIconePrioridade = {
-  Alta: "text-gravando dark:text-gravando-clara",
-  Média: "text-tinta dark:text-dial-clara",
-  Baixa: "text-fita dark:text-fita-clara",
-} as const;
+export const suave = "text-tinta/70 dark:text-pauta/70";
+export const fraco = "text-tinta/65 dark:text-pauta/65";
 
 /**
  * Rampa de categorias para os gráficos. As categorias são dados do usuário e
@@ -121,6 +123,12 @@ export const CORES_GRAFICO = {
   linhaEscura: "#2a2e35",
 } as const;
 
+/**
+ * Marca de prioridade — mesma gramática na pauta, na lista e no calendário.
+ * A cor vive no preenchimento, nunca no texto: `dial` sobre papel dá 1,8:1 e
+ * `gravando` 3,65:1. O rótulo de prioridade é sempre neutro e quem carrega a
+ * cor é o ponto ou o filete de 3px.
+ */
 export const fundoPrioridade = {
   Alta: "bg-gravando",
   Média: "bg-dial",

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm install
-npm run dev      # tsx server.ts → Express + Vite middleware na porta 3000 (API e front no mesmo host)
+npm run dev      # tsx server.ts → Express + Vite middleware na porta 3000 (API e front no mesmo host; PORT muda a porta)
 npm run lint     # tsc --noEmit (única verificação automatizada do projeto — não há testes)
 npm run build    # vite build + esbuild bundle de server.ts → dist/server.cjs
 npm run test:db  # check do backend SQLite local (tsx server-db.test.ts)
@@ -48,7 +48,9 @@ O contrato comum é a interface `DataStore` em `src/types.ts`; qualquer novo cam
 - O doc do usuário é criado com defaults na primeira leitura, se não existir.
 - Auth só via popup Google (`loginWithGoogle`); `App.tsx` renderiza `<Login />` quando `user` é null.
 
-**3. `src/App.tsx` (~2600 linhas)** — monolito que concentra estado de UI, todos os `handleX`, filtros, abas (`diarias | calendario | historico | arquivadas | notas | listas`), export (PDF/CSV/JSON), import de backup e drag-and-drop de reordenação. Os componentes em `src/components/` são apresentacionais e recebem callbacks.
+**3. `src/App.tsx` (~1800 linhas)** — monolito que concentra estado de UI, todos os `handleX`, filtros, abas e export (PDF/CSV/JSON), import de backup e drag-and-drop de reordenação. Os componentes em `src/components/` são apresentacionais e recebem callbacks.
+
+Quatro abas: `diarias | notas | listas | arquivo`. `arquivo` é um destino só, com um sub-modo em `arquivoModo` (`concluidas | arquivadas | calendario`) e filtro de período em `historyDate` — foi ali que histórico, arquivadas e calendário se juntaram. As ações de uma-vez-por-mês (planner, resumo, backup, CSV, importar) moram num menu na barra de topo; não há mais sidebar.
 
 Preferências (`categories`, `dndSettings`, `visibleCards`, `darkMode`) **não têm state local**: `App.tsx` define wrappers `setCategories`/`setDndSettings`/`setVisibleCards`/`setDarkMode` que escrevem direto em `updateUserPrefs` e leem de `userPrefs` com fallback de default. Persistência é imediata.
 
@@ -58,7 +60,13 @@ Preferências (`categories`, `dndSettings`, `visibleCards`, `darkMode`) **não t
 
 **Recorrência** — não há scheduler. Ao concluir uma task com `isRecurring`, `handleToggleComplete` cria uma **nova** task cópia imediatamente (`recurrence` é só metadado descritivo).
 
-**Dark mode / Tailwind v4** — sem `tailwind.config`. Plugin `@tailwindcss/vite`, tokens em `@theme` dentro de `src/index.css`, e a variante dark é custom: `@variant dark (&:where(.dark, .dark *))`. A classe `dark` é aplicada a um **div** raiz em `App.tsx`, não no `<html>` — por isso a regra `html.dark body` em `index.css` nunca dispara. Cuidado também com classes inexistentes espalhadas pelo JSX (`slate-655`, `indigo-550`, `slate-850`, …): apenas `--color-indigo-650` está definido em `@theme`; as outras não geram CSS e falham em silêncio.
+**Dark mode / Tailwind v4** — sem `tailwind.config`. Plugin `@tailwindcss/vite`, tokens em `@theme` dentro de `src/index.css`, e a variante dark é custom: `@variant dark (&:where(.dark, .dark *))`. A classe `dark` fica no `<html>`, aplicada por um `useEffect` em `App.tsx` a partir de `userPrefs.darkMode` — é o que faz `html.dark body` valer e habilita `color-scheme` nativo.
+
+**Paleta e tokens** — nada de `slate`/`indigo`/`rose` da escala do Tailwind. Os tokens são em português e vêm do domínio: `pauta`/`pauta-alta`/`pauta-baixa`/`linha` (papel), `tinta`/`tinta-fundo`/`tinta-alta`/`tinta-linha` (texto no claro, fundo no escuro) e os acentos `fita`, `dial`, `gravando`, cada um com variante `-clara` para o escuro. Raio único: `rounded-pauta` (3px). Fontes: Bricolage Grotesque (display), Instrument Sans (corpo), DM Mono (medida).
+
+**Três regras de contraste, medidas e não estimadas** — `dial` sobre papel dá **1,8:1** e `gravando` **3,65:1**, então nenhum dos dois é cor de texto: a cor vive no preenchimento (o ponto, o filete de 3px) e o rótulo é neutro. `fita` sobre papel dá 7,1:1 e é o único acento livre. Em `src/lib/ui.ts`, `suave` (70%) e `fraco` (65%) são o piso — abaixo disso o texto de apoio cai de 4,5:1.
+
+**`src/lib/ui.ts`** — o vocabulário visual é um arquivo de strings de classe, não uma biblioteca de componentes: `foco`, `superficie`, `btnPrimario`, `btnFantasma`, `btnPerigo`, `btnIcone`, `chip`, `campo`, `rotulo`, a escala de tipo e a rampa de categorias dos gráficos. Mudar um valor ali muda a interface inteira. **Nunca ponha `focus:outline-none` junto do `focus-visible:outline-2`**: `:focus` casa ao mesmo tempo, e com a mesma especificidade o `outline-style: none` apaga o anel de foco inteiro.
 
 **Alias `@`** aponta para a **raiz do projeto** (não `src/`), configurado em `vite.config.ts` e `tsconfig.json`. Usado em `import firebaseConfig from '@/firebase-applet-config.json'`.
 
@@ -66,14 +74,22 @@ Preferências (`categories`, `dndSettings`, `visibleCards`, `darkMode`) **não t
 
 **Idioma é parte do domínio** — categorias (`Trabalho`, `Saúde`, `Finanças`, …) e prioridades (`Alta`, `Média`, `Baixa`) são strings pt-BR **persistidas no Firestore** e comparadas literalmente no código. Acentos importam. Toda UI e mensagem de erro é pt-BR.
 
-**Sobras da migração para Firestore** — `LOCAL_STORAGE_KEY` / `LOCAL_STORAGE_CATEGORIES_KEY` em `App.tsx` são legado e não são mais lidos. O `localStorage` só é usado de verdade em `useBackupScheduler` (`backup_schedule`, `last_backup_downloaded`).
+**Sobras da migração para Firestore** — `LOCAL_STORAGE_KEY` / `LOCAL_STORAGE_CATEGORIES_KEY` em `App.tsx` são legado e não são mais lidos. O `localStorage` só é usado de verdade em `useBackupScheduler` (`backup_schedule`, `last_backup_downloaded`) e no `SettingsModal` (agendamento do backup).
+
+**A Pauta** — `src/components/Pauta.tsx` é o elemento assinatura: três faixas (Alta, Média, Baixa), régua de horas, cursor do agora e bandeja de tarefas sem `reminderTime`. É HTML posicionado, não SVG, porque **cada ponto precisa ser um `<button>` real** — alcançável por Tab, com `aria-label` completo e foco visível. O cursor é alimentado pelo minuto que `App.tsx` calcula dentro do `setInterval` de 1s dos lembretes: **não crie um timer novo**. A janela é 06:00–24:00, esticada quando há tarefa fora dela, com 2% de folga nas pontas para o ponto não sair pela borda — régua, marcas, faixa de silêncio e pontos usam a mesma função `fracao()`.
+
+**Modais em `<dialog>` nativo** — `src/components/Modal.tsx` existe pelo comportamento, não pelo estilo: o elemento entrega fechar no Esc, foco preso, fundo inerte e foco devolvido ao gatilho, sem biblioteca. O `onCancel` precisa de `preventDefault()` porque o navegador fecharia o `<dialog>` sem avisar o React.
+
+**Movimento** — `prefers-reduced-motion` é honrado em dois lugares: `MotionConfig reducedMotion="user"` em `src/main.tsx` para o `motion`, e um bloco em `index.css` para as animações em CSS. O confete só dispara no dia 100% concluído.
+
+**Planner impresso** — `generatePlannerImage` em `App.tsx` desenha num `<canvas>` com **cores em hex literal**, fora do alcance do `@theme` e de qualquer grep por nome de cor. Se a paleta mudar, esse trecho precisa mudar à mão.
 
 ## Fallback sem Gemini
 
 Sem `GEMINI_API_KEY` (ou com o valor placeholder `MY_GEMINI_API_KEY`):
 - `analyze-text` cai no parser heurístico local `fallbackParseText` em `server.ts` — regex pt-BR que infere categoria, prioridade e horário — e responde `isLocalFallback: true`, que a UI sinaliza ao usuário.
 - Endpoints de áudio retornam `403` com `error: "GEMINI_API_KEY_NOT_CONFIGURED"`.
-- `AudioRecorder.tsx` tem um segundo nível de fallback: se o upload de áudio falha e o `SpeechRecognition` do browser capturou texto, ele reenvia esse texto para `analyze-text`.
+- `AudioRecorder.tsx` (o console de voz ancorado no rodapé) tem um segundo nível de fallback: se o upload de áudio falha e o `SpeechRecognition` do browser capturou texto, ele reenvia esse texto para `analyze-text`.
 
 ## Ao adicionar uma coleção Firestore
 

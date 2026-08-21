@@ -131,15 +131,15 @@ export function TaskItem({
       } else {
         const text = await response.text();
         console.error("Resposta do servidor não-JSON:", text);
-        throw new Error("Resposta inválida do servidor. Verifique se a chave da API (GEMINI_API_KEY) está configurada corretamente.");
+        throw new Error("Sem chave do Gemini configurada, não há como sugerir subtarefas.");
       }
       
       if (!response.ok) {
-        throw new Error(data.error || data.message || "Falha ao sugerir subtarefas");
+        throw new Error(data.error || data.message || "As subtarefas não foram geradas.");
       }
       
       if (!data.subtasks || !Array.isArray(data.subtasks)) {
-        throw new Error("Formato de resposta inválido do Gemini (lista de subtarefas ausente).");
+        throw new Error("O Gemini respondeu sem a lista de subtarefas.");
       }
       
       const newSubtasks = data.subtasks.map((title: string) => ({
@@ -156,7 +156,7 @@ export function TaskItem({
       if (!isExpanded) setIsExpanded(true);
     } catch (err: any) {
       console.error(err);
-      setSubtaskError(err.message || "Erro ao sugerir subtarefas.");
+      setSubtaskError(err.message || "As subtarefas não foram geradas. Tente de novo.");
     } finally {
       setIsSuggesting(false);
     }
@@ -614,7 +614,9 @@ export function TaskItem({
         />
       ) : (
         <div className="flex flex-col">
-          <div className="flex items-start gap-2">
+          {/* flex-wrap: no mobile as ações caem para a linha de baixo em vez de
+              esmagar o título até uma letra por linha. */}
+          <div className="flex flex-wrap items-start gap-2">
             {!task.completed && isDraggable && (
               <span
                 title="Arraste por aqui para reordenar"
@@ -656,7 +658,7 @@ export function TaskItem({
 
             <div
               onClick={() => setIsExpanded(!isExpanded)}
-              className="min-w-0 flex-1 cursor-pointer select-none"
+              className="min-w-0 flex-1 basis-40 cursor-pointer select-none"
             >
               {isEditingTitleInline ? (
                 <input
@@ -711,16 +713,19 @@ export function TaskItem({
                   </span>
                 )}
 
+                {/* Etiqueta neutra com ponto colorido: `gravando` a 11px não
+                    passa em 4,5:1 nem como texto nem como preenchimento, então
+                    quem carrega a cor é o ponto. */}
                 {!task.completed && isOverdue && (
-                  <span
-                    className={`${ui.monoRot} rounded-pauta bg-gravando px-2 py-0.5 text-pauta-alta`}
-                  >
+                  <span className={ui.chip}>
+                    <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-gravando" />
                     atrasada
                   </span>
                 )}
 
                 {!task.completed && isDueSoon && (
-                  <span className={`${ui.monoRot} rounded-pauta bg-dial px-2 py-0.5 text-tinta`}>
+                  <span className={ui.chip}>
+                    <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-dial" />
                     em menos de 1h
                   </span>
                 )}
@@ -759,7 +764,7 @@ export function TaskItem({
             </div>
 
             {/* Ações: sempre visíveis no toque, reveladas no hover no desktop */}
-            <div className="flex shrink-0 items-center gap-0.5 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+            <div className="flex w-full items-center justify-end gap-0.5 sm:w-auto sm:shrink-0 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
               {!task.completed && (
                 <button
                   onClick={(e) => {
@@ -814,7 +819,9 @@ export function TaskItem({
                       onToggleFocus(task.id);
                     }}
                     aria-pressed={isFocused}
-                    className={`${ui.btnIcone} ${isFocused ? "text-dial-clara" : ""}`}
+                    className={`${ui.btnIcone} ${
+                      isFocused ? "bg-dial text-tinta hover:bg-dial" : ""
+                    }`}
                     title={isFocused ? "Sair do foco" : "Focar nesta tarefa"}
                   >
                     <Target className="h-4 w-4" />

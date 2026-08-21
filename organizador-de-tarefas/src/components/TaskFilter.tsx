@@ -246,10 +246,12 @@ export function TaskFilter({
         >
           carregar exemplos
         </button>
+        {/* Rótulo neutro: `gravando` a 11px sobre papel dá 3,3:1. O perigo
+            aparece no hover, onde o preenchimento carrega a cor. */}
         <button
           onClick={onClearAll}
           disabled={totalCount === 0}
-          className={`${ui.monoRot} cursor-pointer rounded-pauta px-2 py-1 text-gravando disabled:pointer-events-none disabled:opacity-40 dark:text-gravando-clara hover:bg-pauta-baixa dark:hover:bg-tinta-linha ${ui.foco}`}
+          className={`${ui.monoRot} ${ui.suave} cursor-pointer rounded-pauta px-2 py-1 disabled:pointer-events-none disabled:opacity-40 hover:bg-gravando hover:text-pauta-alta dark:hover:bg-gravando-clara dark:hover:text-tinta ${ui.foco}`}
         >
           limpar as tarefas
         </button>

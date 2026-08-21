@@ -116,7 +116,7 @@ export function AudioRecorder({
     } catch (err: any) {
       console.error("Error accessing microphone:", err);
       onError(
-        "Não foi possível acessar seu microfone. Certifique-se de dar permissões de áudio no seu navegador ou use a entrada de texto abaixo!"
+        "O microfone não abriu. Libere o áudio nas permissões do navegador, ou use o modo digitar."
       );
     }
   };
@@ -169,22 +169,22 @@ export function AudioRecorder({
       try {
         result = JSON.parse(responseText);
       } catch (jsonErrEvent) {
-        throw new Error(`Resposta do servidor de texto na recuperação por voz inválida (Status: ${response.status}).`);
+        throw new Error(`O servidor respondeu algo que não deu para ler (status ${response.status}).`);
       }
 
       if (!response.ok) {
-        throw new Error((result && result.error) || "Erro ao processar o relato em texto.");
+        throw new Error((result && result.error) || "O relato não pôde ser processado.");
       }
 
       if (result.tasks) {
         onTasksExtracted(result.tasks, transcriptText, result.isLocalFallback);
         deleteRecording(); // Clear state
       } else {
-        throw new Error("Nenhuma tarefa pôde ser identificada no seu relato de voz.");
+        throw new Error("Não deu para identificar tarefas no que você falou.");
       }
     } catch (fallbackErr: any) {
       throw new Error(
-        `Falha ao processar voz localmente: ${fallbackErr.message || fallbackErr}. Digite sua tarefa na aba 'Digitar'!`
+        `A voz não pôde ser processada: ${fallbackErr.message || fallbackErr}. Use o modo digitar.`
       );
     }
   };
@@ -235,18 +235,18 @@ export function AudioRecorder({
 
           const isTooLarge = response.status === 413 || responseText.includes("413") || responseText.toLowerCase().includes("too large");
           if (isTooLarge) {
-            throw new Error("O áudio gravado excedeu o limite de tamanho permitido. Por favor, grave uma mensagem mais curta de até 15-25 segundos!");
+            throw new Error("O áudio passou do limite de tamanho. Grave até uns 20 segundos.");
           }
 
           if (response.status === 403) {
-            throw new Error("Não foi possível processar o áudio por inteligência artificial (Erro 403 - Chave Gemini não configurada ou restrição de tamanho no proxy). Como seu microfone não capturou transcrição local, tente novamente mais curto ou digite na aba 'Digitar'!");
+            throw new Error("Sem chave do Gemini, o áudio não pode ser transcrito. Use o modo digitar.");
           }
 
           const isHtml = responseText.includes("<!doctype html") || responseText.includes("<html");
           throw new Error(
             isHtml
-              ? `O servidor de áudio está se inicializando ou terminou de reiniciar (Status: ${response.status}). Por favor, aguarde de 5 a 10 segundos e tente novamente! Você também pode usar a aba 'Digitar' para criar tarefas instantaneamente.`
-              : `Resposta inválida do servidor (Status: ${response.status}): ` + (responseText.slice(0, 100) || "Corpo vazio")
+              ? `O servidor está subindo (status ${response.status}). Espere uns dez segundos e envie de novo.`
+              : `O servidor respondeu algo que não deu para ler (status ${response.status}): ` + (responseText.slice(0, 100) || "resposta vazia")
           );
         }
 
@@ -258,23 +258,23 @@ export function AudioRecorder({
           }
 
           if (result && result.error === "GEMINI_API_KEY_NOT_CONFIGURED") {
-            throw new Error("Não foi possível transcrever áudio por inteligência artificial (Erro 403 - GEMINI_API_KEY não configurada). Configure sua chave nas Configurações do AI Studio, ou use a aba 'Digitar' que funciona de forma local!");
+            throw new Error("Sem chave do Gemini, o áudio não pode ser transcrito. Use o modo digitar, que funciona local.");
           }
-          throw new Error((result && result.error) || `Erro ao processar áudio (Status: ${response.status}).`);
+          throw new Error((result && result.error) || `O áudio não pôde ser processado (status ${response.status}).`);
         }
 
         if (result.tasks) {
           onTasksExtracted(result.tasks, result.transcription, result.isLocalFallback);
           deleteRecording(); // Clear on success
         } else {
-          throw new Error("Resposta inesperada do servidor.");
+          throw new Error("O servidor respondeu algo inesperado.");
         }
       };
 
       await runAudioUpload();
     } catch (err: any) {
       console.error(err);
-      onError(err.message || "Erro de conexão ou faturamento da API.");
+      onError(err.message || "Não deu para enviar. Confira a conexão e tente de novo.");
     } finally {
       setIsProcessing(false);
     }
@@ -299,32 +299,32 @@ export function AudioRecorder({
         result = JSON.parse(responseText);
       } catch (jsonErrEvent) {
         if (response.status === 403) {
-          throw new Error("Erro de permissão no processamento de texto (Status: 403). Para corrigir, verifique se a sua chave do Gemini está ativa nas Configurações, ou continue usando o app que possui processamento local!");
+          throw new Error("Sem permissão para processar o texto (403). Confira a chave do Gemini nos Ajustes.");
         }
 
         const isTooLarge = response.status === 413 || responseText.includes("413") || responseText.toLowerCase().includes("too large");
         throw new Error(
           isTooLarge
-            ? "O texto inserido excedeu o limite de tamanho permitido. Por favor, digite um texto mais curto!"
+            ? "O texto passou do limite de tamanho. Escreva um relato mais curto."
             : responseText.includes("<!doctype html") || responseText.includes("<html")
-            ? `O servidor de processamento de texto está se inicializando ou terminou de reiniciar (Status: ${response.status}). Por favor, aguarde de 5 a 10 segundos e tente novamente!`
-            : `Resposta inválida do servidor (Status: ${response.status}): ` + (responseText.slice(0, 100) || "Corpo vazio")
+            ? `O servidor está subindo (status ${response.status}). Espere uns dez segundos e envie de novo.`
+            : `O servidor respondeu algo que não deu para ler (status ${response.status}): ` + (responseText.slice(0, 100) || "resposta vazia")
         );
       }
 
       if (!response.ok) {
-        throw new Error((result && result.error) || `Erro ao processar seu texto (Status: ${response.status}).`);
+        throw new Error((result && result.error) || `O texto não pôde ser processado (status ${response.status}).`);
       }
 
       if (result.tasks) {
         onTasksExtracted(result.tasks, undefined, result.isLocalFallback);
         setManualText(""); // Clear on success
       } else {
-        throw new Error("Nenhuma tarefa pôde ser identificada no seu relato.");
+        throw new Error("Não deu para identificar tarefas no relato.");
       }
     } catch (err: any) {
       console.error(err);
-      onError(err.message || "Erro ao registrar tarefas por texto.");
+      onError(err.message || "As tarefas não foram criadas. Tente de novo.");
     } finally {
       setIsProcessing(false);
     }
@@ -429,7 +429,8 @@ export function AudioRecorder({
               <span className="font-mono text-[22px] tabular-nums leading-none">
                 {formatTime(recordingDuration)}
               </span>
-              <span className={`${ui.monoRot} text-gravando dark:text-gravando-clara`}>
+              <span className={`${ui.monoRot} ${ui.suave} flex items-center gap-1.5`}>
+                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-gravando" />
                 gravando
               </span>
             </div>
@@ -452,9 +453,13 @@ export function AudioRecorder({
               </button>
             </div>
           ) : inputMode === "audio" ? (
-            <p className={`${ui.corpoSm} ${ui.suave}`}>Fale as suas tarefas do dia.</p>
+            /* No mobile o convite sai: o microfone já diz o que fazer e a
+               largura vai toda para as abas gravar/digitar. */
+            <p className={`hidden sm:block ${ui.corpoSm} ${ui.suave}`}>
+              Fale as suas tarefas do dia.
+            </p>
           ) : (
-            <p className={`${ui.corpoSm} ${ui.suave}`}>
+            <p className={`hidden sm:block ${ui.corpoSm} ${ui.suave}`}>
               Escreva o dia num parágrafo corrido, com horários.
             </p>
           )}

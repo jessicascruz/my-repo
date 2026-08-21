@@ -209,7 +209,8 @@ export function NoteForm({ onAddNote, onCancel }: NoteFormProps) {
                 <span className="font-mono text-[22px] tabular-nums leading-none">
                   {formatTime(recordingDuration)}
                 </span>
-                <span className={`${ui.monoRot} text-gravando dark:text-gravando-clara`}>
+                <span className={`${ui.monoRot} ${ui.suave} flex items-center gap-1.5`}>
+                  <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-gravando" />
                   gravando
                 </span>
               </div>
