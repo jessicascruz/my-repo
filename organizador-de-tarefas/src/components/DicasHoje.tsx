@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Lightbulb, ChevronRight, ChevronLeft, Sparkles, CheckCircle2, TrendingUp, AlertCircle, RefreshCw } from "lucide-react";
+import { ChevronRight, ChevronLeft, RefreshCw } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Task } from "../types";
+import * as ui from "../lib/ui";
 
 interface TipItem {
   id: number;
@@ -50,35 +51,22 @@ export function DicasHoje({ tasks }: DicasHojeProps) {
   const completedCount = activeList.filter((t) => t.completed).length;
   const completionRate = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
-  // Determine current tier
+  // Faixa de progresso do dia: muda o conjunto de dicas e o rótulo.
   let currentTips = NO_TASKS_TIPS;
-  let statusLabel = "Nenhuma Atividade";
-  let statusColor = "text-slate-500 bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800";
-  let statusIcon = <AlertCircle className="w-3.5 h-3.5" />;
-  let progressColor = "bg-slate-300 dark:bg-slate-700";
+  let statusLabel = "sem atividade";
 
   if (totalCount > 0) {
     if (completionRate < 35) {
       currentTips = LOW_COMPLETION_TIPS;
-      statusLabel = "Foco Inicial";
-      statusColor = "text-amber-700 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900/40";
-      statusIcon = <AlertCircle className="w-3.5 h-3.5" />;
-      progressColor = "bg-amber-500";
+      statusLabel = "começando";
     } else if (completionRate < 75) {
       currentTips = MEDIUM_COMPLETION_TIPS;
-      statusLabel = "Tração Saudável";
-      statusColor = "text-indigo-600 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-950/20 border-indigo-100 dark:border-indigo-900/40";
-      statusIcon = <TrendingUp className="w-3.5 h-3.5" />;
-      progressColor = "bg-indigo-650 dark:bg-indigo-500";
+      statusLabel = "em ritmo";
     } else {
       currentTips = HIGH_COMPLETION_TIPS;
-      statusLabel = "Super Produtivo";
-      statusColor = "text-emerald-700 dark:text-emerald-400 bg-emerald-50/55 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-950/50";
-      statusIcon = <CheckCircle2 className="w-3.5 h-3.5" />;
-      progressColor = "bg-emerald-500";
+      statusLabel = "quase fechando";
     }
   }
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0); // -1 for left, 1 for right
 
@@ -128,68 +116,26 @@ export function DicasHoje({ tasks }: DicasHojeProps) {
   };
 
   return (
-    <div
-      id="dicas-hoje-container"
-      className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 p-5 shadow-xs transition-all relative overflow-hidden"
-    >
-      {/* Decorative ambient subtle lightbulb backdrop glow for nice mood */}
-      <div className="absolute right-0 top-0 w-32 h-32 bg-indigo-500/5 dark:bg-indigo-400/5 rounded-full blur-2xl pointer-events-none" />
-
-      {/* Top Bar inside Card */}
-      <div className="flex items-center justify-between gap-2 mb-3.5 pb-2.5 border-b border-slate-50 dark:border-slate-900">
-        <div className="flex items-center space-x-2">
-          <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 shrink-0">
-            <Lightbulb className="w-4 h-4 animate-pulse [animation-duration:3s]" />
-          </div>
-          <div>
-            <h3 className="font-bold text-slate-800 dark:text-slate-100 text-sm font-display flex items-center gap-1.5">
-              Dicas de Hoje
-              <span className="hidden sm:inline text-slate-300 dark:text-slate-700">|</span>
-              <Sparkles className="w-3.5 h-3.5 text-indigo-500 shrink-0 hidden sm:block" />
-            </h3>
-          </div>
-        </div>
-
-        {/* Action Controls and Status Badges */}
-        <div className="flex items-center space-x-2">
-          {/* Completion tier badge */}
-          <div className={`flex items-center gap-1 px-2.5 py-0.5 rounded-full border text-[10px] font-bold ${statusColor}`}>
-            {statusIcon}
-            <span>{statusLabel}</span>
-          </div>
-
-          {/* Navigation Controls */}
-          <div className="flex items-center space-x-1 border border-slate-200 dark:border-slate-800 rounded-lg p-0.5 bg-slate-50/50 dark:bg-slate-950/30">
-            <button
-              onClick={handlePrev}
-              title="Dica Anterior"
-              type="button"
-              className="p-1 rounded-md text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-slate-800 dark:hover:text-slate-200 transition-all cursor-pointer"
-            >
-              <ChevronLeft className="w-3.5 h-3.5" />
+    <div id="dicas-hoje-container" className={`${ui.superficie} p-5`}>
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <span className={ui.rotulo}>dica de hoje</span>
+        <div className="flex items-center gap-2">
+          <span className={`${ui.monoRot} ${ui.suave}`}>{statusLabel}</span>
+          <span className="flex items-center">
+            <button onClick={handlePrev} title="Dica anterior" type="button" className={ui.btnIcone}>
+              <ChevronLeft className="h-4 w-4" />
             </button>
-            <button
-              onClick={handleShuffle}
-              title="Outra sugestão"
-              type="button"
-              className="p-1 rounded-md text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-slate-800 dark:hover:text-slate-200 transition-all cursor-pointer"
-            >
-              <RefreshCw className="w-3 h-3" />
+            <button onClick={handleShuffle} title="Sortear" type="button" className={ui.btnIcone}>
+              <RefreshCw className="h-3.5 w-3.5" />
             </button>
-            <button
-              onClick={handleNext}
-              title="Próxima Dica"
-              type="button"
-              className="p-1 rounded-md text-slate-500 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 hover:text-slate-800 dark:hover:text-slate-200 transition-all cursor-pointer"
-            >
-              <ChevronRight className="w-3.5 h-3.5" />
+            <button onClick={handleNext} title="Próxima dica" type="button" className={ui.btnIcone}>
+              <ChevronRight className="h-4 w-4" />
             </button>
-          </div>
+          </span>
         </div>
       </div>
 
-      {/* Tip Text Area with elegant transitions */}
-      <div className="min-h-[52px] flex flex-col justify-center relative px-1 py-0.5">
+      <div className="mt-2 min-h-14">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={currentTip?.id || "empty"}
@@ -199,40 +145,28 @@ export function DicasHoje({ tasks }: DicasHojeProps) {
             animate="center"
             exit="exit"
             transition={{ duration: 0.18, ease: "easeInOut" }}
-            className="space-y-2"
           >
             {currentTip && (
               <>
-                <div className="flex items-center space-x-2">
-                  <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-mono tracking-wider">
-                    {currentTip.tag}
-                  </span>
-                  {totalCount > 0 && (
-                    <span className="text-[10px] text-slate-400 font-mono">
-                      Progresso diário: {Math.round(completionRate)}%
-                    </span>
-                  )}
-                </div>
-                <p className="text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-medium leading-relaxed">
-                  "{currentTip.text}"
-                </p>
+                <span className={`${ui.monoRot} ${ui.fraco}`}>
+                  {currentTip.tag}
+                  {totalCount > 0 && ` · ${Math.round(completionRate)}% do dia`}
+                </span>
+                <p className={`mt-1 ${ui.corpo}`}>{currentTip.text}</p>
               </>
             )}
           </motion.div>
         </AnimatePresence>
       </div>
 
-      {/* Mini stateful progression bar at bottom */}
       {totalCount > 0 && (
-        <div className="mt-3.5">
-          <div className="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${completionRate}%` }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-              className={`h-full rounded-full ${progressColor}`}
-            />
-          </div>
+        <div className="mt-4 h-[3px] w-full bg-pauta-baixa dark:bg-tinta-fundo">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${completionRate}%` }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="h-full bg-fita dark:bg-fita-clara"
+          />
         </div>
       )}
     </div>

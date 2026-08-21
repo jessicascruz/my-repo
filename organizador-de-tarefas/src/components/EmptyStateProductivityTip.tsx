@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Sparkles, Timer, ClipboardCheck, ArrowRight, RefreshCw, Zap, Lightbulb } from "lucide-react";
+import { RefreshCw } from "lucide-react";
+import * as ui from "../lib/ui";
 
 interface Tip {
   title: string;
@@ -78,91 +79,37 @@ export function EmptyStateProductivityTip() {
     setCurrentTip(randomTip);
   }, []);
 
-  const getMethodologyBadgeColor = (methodology: string) => {
-    switch (methodology) {
-      case "Pomodoro":
-        return "bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-900/50";
-      case "GTD":
-        return "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 border-indigo-100 dark:border-indigo-900/50";
-      case "Eisenhower":
-        return "bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border-amber-100 dark:border-amber-900/50";
-      case "Time Blocking":
-        return "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/50";
-      default:
-        return "bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700";
-    }
-  };
-
-  const getMethodologyIcon = (methodology: string) => {
-    switch (methodology) {
-      case "Pomodoro":
-        return <Timer className="w-4 h-4 text-rose-500" />;
-      case "GTD":
-        return <ClipboardCheck className="w-4 h-4 text-indigo-500" />;
-      case "Eisenhower":
-        return <Zap className="w-4 h-4 text-amber-500" />;
-      default:
-        return <Lightbulb className="w-4 h-4 text-emerald-500" />;
-    }
-  };
-
   return (
-    <div className="bg-slate-50/55 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-900 rounded-2xl p-6 md:p-8 flex flex-col items-center justify-center text-center max-w-xl mx-auto my-6 shadow-sm">
-      <div className="relative mb-5 flex items-center justify-center">
-        <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 opacity-20 blur-md animate-pulse duration-3000" />
-        <div className="relative p-3 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-full shadow-sm text-indigo-500">
-          <Sparkles className="w-6 h-6 animate-bounce [animation-duration:4s]" />
-        </div>
+    <div className={`${ui.superficie} p-6`}>
+      <span className={ui.rotulo}>fila vazia</span>
+      <h3 className={`${ui.displayMd} mt-1`}>Nada pendente hoje.</h3>
+      <p className={`mt-1 ${ui.corpoSm} ${ui.suave}`}>
+        Toque em gravar e fale o seu dia, ou leia uma ideia de método enquanto pensa.
+      </p>
+
+      <div className="mt-5 border-l-[3px] border-l-dial pl-4">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={animateKey}
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+          >
+            <span className={`${ui.monoRot} ${ui.fraco}`}>{currentTip.methodology}</span>
+            <p className={`mt-0.5 ${ui.corpo} font-medium`}>{currentTip.title}</p>
+            <p className={`mt-0.5 ${ui.corpoSm} ${ui.suave}`}>{currentTip.text}</p>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-      <div className="space-y-1.5 mb-2">
-        <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Parabéns! Fila Organizada</span>
-        <h3 className="font-bold text-slate-800 dark:text-slate-100 text-base font-display">
-          Você não tem tarefas pendentes hoje!
-        </h3>
-        <p className="text-xs text-slate-400 dark:text-slate-500 max-w-sm mx-auto leading-relaxed">
-          Que tal aproveitar o momento de clareza mental para se inspirar com uma dica de produtividade?
-        </p>
-      </div>
-
-      <div className="w-full my-4 border-t border-dashed border-slate-200 dark:border-slate-800" />
-
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={animateKey}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
-          className="w-full space-y-3.5"
-        >
-          <div className="flex items-center justify-center gap-1.5">
-            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-semibold ${getMethodologyBadgeColor(currentTip.methodology)}`}>
-              {getMethodologyIcon(currentTip.methodology)}
-              <span>{currentTip.methodology}</span>
-            </span>
-          </div>
-
-          <div className="space-y-1 bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-100 dark:border-slate-900 shadow-xs max-w-md mx-auto">
-            <h4 className="font-bold text-sm text-slate-800 dark:text-slate-300 flex items-center justify-center gap-1.5">
-              <span>{currentTip.title}</span>
-            </h4>
-            <p className="text-xs text-slate-600 dark:text-slate-400 italic leading-relaxed">
-              "{currentTip.text}"
-            </p>
-          </div>
-        </motion.div>
-      </AnimatePresence>
-
-      <div className="flex items-center justify-center gap-3 mt-6">
-        <button
-          onClick={selectRandomTip}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 font-bold text-xs rounded-xl transition-all shadow-xs cursor-pointer"
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-          <span>Outra Dica</span>
-        </button>
-      </div>
+      <button
+        onClick={selectRandomTip}
+        className={`${ui.monoRot} ${ui.suave} mt-4 flex cursor-pointer items-center gap-1.5 rounded-pauta px-2 py-1 hover:bg-pauta-baixa dark:hover:bg-tinta-linha ${ui.foco}`}
+      >
+        <RefreshCw className="h-3.5 w-3.5" />
+        outra ideia
+      </button>
     </div>
   );
 }

@@ -131,14 +131,14 @@ async function startServer() {
       const { audioData, mimeType } = req.body;
 
       if (!audioData) {
-        return res.status(400).json({ error: "Dados de áudio não fornecidos." });
+        return res.status(400).json({ error: "O áudio não chegou. Grave de novo." });
       }
 
       const apiKey = process.env.GEMINI_API_KEY;
       if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey.trim() === "") {
         return res.status(403).json({
           error: "GEMINI_API_KEY_NOT_CONFIGURED",
-          message: "Chave do Gemini API não configurada no servidor (GEMINI_API_KEY). Para poder transcrever áudio diretamente, configure sua chave de API do Gemini nas Configurações do AI Studio.",
+          message: "Sem chave do Gemini no servidor: o áudio não pode ser transcrito. Digite o seu dia que as tarefas saem do texto.",
         });
       }
 
@@ -259,7 +259,7 @@ Retorne a resposta final na estrutura especificada no JSON Schema. Certifique-se
     } catch (error: any) {
       console.error("Erro na análise de áudio:", error);
       res.status(500).json({
-        error: "Falha ao analisar o áudio. Por favor, tente falar de forma clara ou testar com entrada de texto: " + error.message,
+        error: "O áudio não pôde ser analisado. Grave de novo, mais curto, ou use o modo digitar. Detalhe: " + error.message,
       });
     }
   });
@@ -270,14 +270,14 @@ Retorne a resposta final na estrutura especificada no JSON Schema. Certifique-se
       const { audioData, mimeType } = req.body;
 
       if (!audioData) {
-        return res.status(400).json({ error: "Dados de áudio não fornecidos." });
+        return res.status(400).json({ error: "O áudio não chegou. Grave de novo." });
       }
 
       const apiKey = process.env.GEMINI_API_KEY;
       if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey.trim() === "") {
         return res.status(403).json({
           error: "GEMINI_API_KEY_NOT_CONFIGURED",
-          message: "Chave do Gemini API não configurada no servidor (GEMINI_API_KEY).",
+          message: "Sem chave do Gemini no servidor. Configure GEMINI_API_KEY para usar áudio.",
         });
       }
 
@@ -315,7 +315,7 @@ Retorne APENAS a transcrição pura do áudio, de forma natural, sem cabeçalhos
     } catch (error: any) {
       console.error("Erro na transcrição de áudio:", error);
       res.status(500).json({
-        error: "Falha ao transcrever o áudio: " + error.message,
+        error: "O áudio não pôde ser transcrito. Grave de novo, mais curto. Detalhe: " + error.message,
       });
     }
   });
@@ -326,7 +326,7 @@ Retorne APENAS a transcrição pura do áudio, de forma natural, sem cabeçalhos
       const { text } = req.body;
 
       if (!text || !text.trim()) {
-        return res.status(400).json({ error: "Texto não fornecido." });
+        return res.status(400).json({ error: "O texto não chegou. Escreva o seu dia e envie de novo." });
       }
 
       const apiKey = process.env.GEMINI_API_KEY;
@@ -438,7 +438,7 @@ Retorne a resposta final de acordo com a especificação do JSON Schema.`;
     } catch (error: any) {
       console.error("Erro na análise de texto:", error);
       res.status(500).json({
-        error: "Falha ao analisar o texto. Certifique-se de descrever tarefas em português: " + error.message,
+        error: "O texto não pôde ser analisado. Descreva as tarefas em português, com verbo e hora. Detalhe: " + error.message,
       });
     }
   });
@@ -449,14 +449,14 @@ Retorne a resposta final de acordo com a especificação do JSON Schema.`;
       const { taskTitle } = req.body;
 
       if (!taskTitle || !taskTitle.trim()) {
-        return res.status(400).json({ error: "Título da tarefa não fornecido." });
+        return res.status(400).json({ error: "O título da tarefa não chegou." });
       }
 
       const apiKey = process.env.GEMINI_API_KEY;
       if (!apiKey || apiKey === "MY_GEMINI_API_KEY" || apiKey.trim() === "") {
         return res.status(403).json({
           error: "GEMINI_API_KEY_NOT_CONFIGURED",
-          message: "Chave do Gemini API não configurada no servidor (GEMINI_API_KEY).",
+          message: "Sem chave do Gemini no servidor. Configure GEMINI_API_KEY para usar áudio.",
         });
       }
 
@@ -497,7 +497,7 @@ Retorne a resposta final de acordo com a especificação do JSON Schema.`;
     } catch (error: any) {
       console.error("Erro ao sugerir subtarefas:", error);
       res.status(500).json({
-        error: "Falha ao sugerir subtarefas: " + error.message,
+        error: "As subtarefas não foram geradas. Tente de novo em alguns segundos. Detalhe: " + error.message,
       });
     }
   });

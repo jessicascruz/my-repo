@@ -16,14 +16,14 @@ interface ConfettiEffectProps {
   onComplete: () => void;
 }
 
+// A comemoração usa a paleta da casa: fita, dial e gravando.
 const COLORS = [
-  "#FF007F", // hot pink
-  "#3B82F6", // azul indigo
-  "#10B981", // esmeralda
-  "#F59E0B", // âmbar
-  "#8B5CF6", // roxo violeta
-  "#EC4899", // rosa
-  "#06B6D4", // ciano
+  "#0e5c4a", // fita
+  "#34a98b", // fita-clara
+  "#f0a828", // dial
+  "#f5be55", // dial-clara
+  "#e2453a", // gravando
+  "#c6c1b3", // linha
 ];
 
 export function ConfettiEffect({ active, onComplete }: ConfettiEffectProps) {

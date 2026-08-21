@@ -14,7 +14,8 @@ interface PautaProps {
   /** Arrastar da bandeja para a pauta grava o reminderTime. */
   onDefinirHorario: (id: string, hhmm: string) => void;
   recolhida: boolean;
-  onAlternarRecolhida: () => void;
+  /** Ausente esconde o botão de recolher — usado na tela de entrada. */
+  onAlternarRecolhida?: () => void;
 }
 
 const FAIXAS: { prioridade: Priority; rotulo: string }[] = [
@@ -183,14 +184,20 @@ export function Pauta({
         <h2 id="pauta-titulo" className={`${ui.monoRot} ${ui.suave}`}>
           a pauta do dia
         </h2>
-        <button
-          onClick={onAlternarRecolhida}
-          aria-expanded={!recolhida}
-          className={`${ui.monoRot} ${ui.suave} flex cursor-pointer items-center gap-1 rounded-pauta px-2 py-1 hover:bg-pauta-baixa dark:hover:bg-tinta-linha ${ui.foco}`}
-        >
-          {recolhida ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronUp className="h-3.5 w-3.5" />}
-          <span>{recolhida ? "abrir" : "recolher"}</span>
-        </button>
+        {onAlternarRecolhida && (
+          <button
+            onClick={onAlternarRecolhida}
+            aria-expanded={!recolhida}
+            className={`${ui.monoRot} ${ui.suave} flex cursor-pointer items-center gap-1 rounded-pauta px-2 py-1 hover:bg-pauta-baixa dark:hover:bg-tinta-linha ${ui.foco}`}
+          >
+            {recolhida ? (
+              <ChevronDown className="h-3.5 w-3.5" />
+            ) : (
+              <ChevronUp className="h-3.5 w-3.5" />
+            )}
+            <span>{recolhida ? "abrir" : "recolher"}</span>
+          </button>
+        )}
       </div>
 
       {!recolhida && (

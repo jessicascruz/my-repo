@@ -28,9 +28,6 @@
 
   /* Quase reto: um raio para toda a interface */
   --radius-pauta: 3px;
-
-  /* Alias temporário da paleta antiga — removido na F7 */
-  --color-indigo-650: #493fdf;
 }
 
 @variant dark (&:where(.dark, .dark *));

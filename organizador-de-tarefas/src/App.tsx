@@ -256,7 +256,7 @@ export default function App() {
           if (inputEl) {
             inputEl.scrollIntoView({ behavior: "smooth", block: "center" });
             (inputEl as HTMLInputElement).focus();
-            triggerBanner("Atalho Ctrl+N: Novo Título de Tarefa focado!", "info");
+            triggerBanner("Campo de título pronto.", "info");
           }
         }, 150);
       }
@@ -405,7 +405,7 @@ export default function App() {
       let currentY = y;
       for (let n = 0; n < words.length; n++) {
         const testLine = line + words[n] + " ";
-        ctx.font = "bold 19px system-ui, -apple-system, sans-serif";
+        ctx.font = "bold 19px 'Instrument Sans', system-ui, sans-serif";
         const metrics = ctx.measureText(testLine);
         const testWidth = metrics.width;
         if (testWidth > maxWidth && n > 0) {
@@ -425,7 +425,7 @@ export default function App() {
       const words = text.split(" ");
       let line = "";
       let linesCount = 1;
-      ctx.font = "bold 19px system-ui, -apple-system, sans-serif";
+      ctx.font = "bold 19px 'Instrument Sans', system-ui, sans-serif";
       for (let n = 0; n < words.length; n++) {
         const testLine = line + words[n] + " ";
         const testWidth = ctx.measureText(testLine).width;
@@ -440,7 +440,7 @@ export default function App() {
     };
 
     // 1. Fill base clean background
-    ctx.fillStyle = "#FFFFFF";
+    ctx.fillStyle = "#F4F2EC";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Dynamic dotted bullet-journal grid background
@@ -454,7 +454,7 @@ export default function App() {
     }
 
     // 2. Double Decorative Border
-    ctx.strokeStyle = "#475569"; // slate-600 border
+    ctx.strokeStyle = "#4A4E57"; // slate-600 border
     ctx.lineWidth = 3;
     ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
 
@@ -464,9 +464,9 @@ export default function App() {
 
     // 3. Main Header Banner with Indigo-to-Violet Linear Gradient
     const gradient = ctx.createLinearGradient(55, 55, canvas.width - 55, 55);
-    gradient.addColorStop(0, "#1E1B4B");
-    gradient.addColorStop(0.5, "#312E81");
-    gradient.addColorStop(1, "#4F46E5");
+    gradient.addColorStop(0, "#0A4438");
+    gradient.addColorStop(0.5, "#0E5C4A");
+    gradient.addColorStop(1, "#0E5C4A");
     drawRoundRect(55, 55, canvas.width - 110, 180, 20, gradient as any);
 
     // Sound waves graphic representing the audio helper
@@ -477,16 +477,16 @@ export default function App() {
     });
 
     // Brand and logo markup
-    ctx.fillStyle = "#FFFFFF";
-    ctx.font = "bold 36px system-ui, -apple-system, sans-serif";
-    ctx.fillText("EchoPlan 🎙️", 225, 120);
+    ctx.fillStyle = "#F4F2EC";
+    ctx.font = "bold 36px 'Instrument Sans', system-ui, sans-serif";
+    ctx.fillText("EchoPlan", 225, 120);
 
-    ctx.fillStyle = "#A5B4FC";
-    ctx.font = "bold 13px system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "#8AD4C0";
+    ctx.font = "bold 13px 'Instrument Sans', system-ui, sans-serif";
     ctx.fillText("ORGANIZAÇÃO DIÁRIA INTEGRADA POR ÁUDIO", 225, 150);
 
-    ctx.fillStyle = "#E2E8F0";
-    ctx.font = "italic 11px system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "#DCD8CC";
+    ctx.font = "italic 11px 'Instrument Sans', system-ui, sans-serif";
     ctx.fillText("Acompanhe fisicamente sua jornada diária riscada no papel", 225, 175);
 
     // Right header metadata card
@@ -494,8 +494,8 @@ export default function App() {
     const metaBoxX = canvas.width - metaBoxW - 80;
     drawRoundRect(metaBoxX, 75, metaBoxW, 140, 12, "rgba(255, 255, 255, 0.08)", "rgba(255, 255, 255, 0.15)", 1);
 
-    ctx.fillStyle = "#FFFFFF";
-    ctx.font = "bold 13px system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "#F4F2EC";
+    ctx.font = "bold 13px 'Instrument Sans', system-ui, sans-serif";
     const todayStr = new Date().toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
@@ -507,25 +507,25 @@ export default function App() {
     });
     ctx.fillText(`📅 EMISSÃO: ${todayStr} às ${timeStr}`, metaBoxX + 20, 105);
 
-    ctx.fillStyle = "#C7D2FE";
-    ctx.font = "bold 11px system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "#B5E3D6";
+    ctx.font = "bold 11px 'Instrument Sans', system-ui, sans-serif";
     ctx.fillText(`🏷️ CATEGORIA: ${selectedCategory.toUpperCase()}`, metaBoxX + 20, 135);
-    ctx.fillText(`⚡ PRIORIDADE: ${selectedPriority.toUpperCase()}`, metaBoxX + 20, 155);
+    ctx.fillText(`PRIORIDADE: ${selectedPriority.toUpperCase()}`, metaBoxX + 20, 155);
 
-    ctx.fillStyle = "#818CF8";
+    ctx.fillStyle = "#34A98B";
     ctx.fillText(`🔍 TAREFAS FILTRADAS: ${filteredTasks.length}`, metaBoxX + 20, 185);
 
     // 4. Section Title
-    ctx.fillStyle = "#1E293B";
-    ctx.font = "bold 23px system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "#16181D";
+    ctx.font = "bold 23px 'Instrument Sans', system-ui, sans-serif";
     ctx.fillText("📋 SEUS COMPROMISSOS EM ANDAMENTO", 75, 280);
 
-    ctx.fillStyle = "#64748B";
-    ctx.font = "italic 13px system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "#767A84";
+    ctx.font = "italic 13px 'Instrument Sans', system-ui, sans-serif";
     ctx.fillText("Foque nas tarefas digitais enviadas para esta folha. Risque à medida que realiza!", 75, 305);
 
     // Decorative line
-    ctx.strokeStyle = "#4F46E5";
+    ctx.strokeStyle = "#0E5C4A";
     ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.moveTo(75, 318);
@@ -537,12 +537,12 @@ export default function App() {
     const cardW = canvas.width - 150;
 
     if (filteredTasks.length === 0) {
-      drawRoundRect(75, currentY, cardW, 150, 16, "#F8FAFC", "#E2E8F0", 1);
-      ctx.fillStyle = "#475569";
-      ctx.font = "bold 17px system-ui, -apple-system, sans-serif";
+      drawRoundRect(75, currentY, cardW, 150, 16, "#F4F2EC", "#DCD8CC", 1);
+      ctx.fillStyle = "#4A4E57";
+      ctx.font = "bold 17px 'Instrument Sans', system-ui, sans-serif";
       ctx.fillText("Nenhuma tarefa ativa neste filtro!", 120, currentY + 65);
-      ctx.font = "14px system-ui, -apple-system, sans-serif";
-      ctx.fillStyle = "#94A3B8";
+      ctx.font = "14px 'Instrument Sans', system-ui, sans-serif";
+      ctx.fillStyle = "#C6C1B3";
       ctx.fillText("Utilize a seção pautada abaixo para planejar manualmente com sua melhor caligrafia.", 120, currentY + 95);
       currentY += 180;
     } else {
@@ -572,47 +572,47 @@ export default function App() {
         }
 
         // Highlight Priority Colors elegantly
-        const bCol = task.priority === "Alta" ? "#FECDD3" : task.priority === "Média" ? "#FDE68A" : "#E2E8F0";
-        const bgCol = task.priority === "Alta" ? "#FFF9FA" : task.priority === "Média" ? "#FFFCF5" : "#FFFFFF";
+        const bCol = task.priority === "Alta" ? "#F3B9B4" : task.priority === "Média" ? "#F8DCA6" : "#DCD8CC";
+        const bgCol = task.priority === "Alta" ? "#FBF1F0" : task.priority === "Média" ? "#FBF6EA" : "#F4F2EC";
         drawRoundRect(75, currentY, cardW, cardH, 16, bgCol, bCol, 1.5);
 
         // Solid accent strip
-        const accentCol = task.priority === "Alta" ? "#F43F5E" : task.priority === "Média" ? "#F59E0B" : "#4F46E5";
+        const accentCol = task.priority === "Alta" ? "#E2453A" : task.priority === "Média" ? "#F0A828" : "#0E5C4A";
         ctx.fillStyle = accentCol;
         drawRoundRect(77, currentY + 10, 6, cardH - 20, 3, accentCol);
 
         // Checkbox circle - perfectly aligned with the priority colors and vertically centered to the first text line
         ctx.strokeStyle = accentCol;
         ctx.lineWidth = 2.5;
-        ctx.fillStyle = "#FFFFFF";
+        ctx.fillStyle = "#F4F2EC";
         ctx.beginPath();
         ctx.arc(120, currentY + 34, 14, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
 
         // Title and notes wrapping
-        ctx.fillStyle = "#0F172A";
-        ctx.font = "bold 19px system-ui, -apple-system, sans-serif";
+        ctx.fillStyle = "#16181D";
+        ctx.font = "bold 19px 'Instrument Sans', system-ui, sans-serif";
         const titleEndY = wrapText(task.title, 160, currentY + 42, 680, 26);
 
         // Pills rendered securely on the right-hand margin preventing any card or layout overflow
         const pillY = currentY + 22;
 
         // Priority pill
-        const prioBg = task.priority === "Alta" ? "#FEF2F2" : task.priority === "Média" ? "#FFFBEB" : "#F0FDF4";
-        const prioText = task.priority === "Alta" ? "#EF4444" : task.priority === "Média" ? "#D97706" : "#16A34A";
+        const prioBg = task.priority === "Alta" ? "#FBF1F0" : task.priority === "Média" ? "#FBF6EA" : "#EAF5F1";
+        const prioText = task.priority === "Alta" ? "#E2453A" : task.priority === "Média" ? "#B87A12" : "#0E5C4A";
         drawRoundRect(990, pillY, 110, 26, 6, prioBg);
         
         ctx.fillStyle = prioText;
-        ctx.font = "bold 11px system-ui, -apple-system, sans-serif";
+        ctx.font = "bold 11px 'Instrument Sans', system-ui, sans-serif";
         ctx.textAlign = "center";
         ctx.fillText(`Prio: ${task.priority}`, 990 + 55, pillY + 17);
         ctx.textAlign = "left"; // reset
 
         // Category pill
-        drawRoundRect(860, pillY, 120, 26, 6, "#F1F5F9");
-        ctx.fillStyle = "#475569";
-        ctx.font = "bold 11px system-ui, -apple-system, sans-serif";
+        drawRoundRect(860, pillY, 120, 26, 6, "#DCD8CC");
+        ctx.fillStyle = "#4A4E57";
+        ctx.font = "bold 11px 'Instrument Sans', system-ui, sans-serif";
         ctx.textAlign = "center";
         ctx.fillText(task.category.substring(0, 14), 860 + 60, pillY + 17);
         ctx.textAlign = "left"; // reset
@@ -620,9 +620,9 @@ export default function App() {
         // Reminder Time pill if useful
         if (task.reminderTime) {
           const remY = currentY + 54;
-          drawRoundRect(990, remY, 110, 22, 6, "#EEF2FF");
-          ctx.fillStyle = "#4F46E5";
-          ctx.font = "bold 10px system-ui, -apple-system, sans-serif";
+          drawRoundRect(990, remY, 110, 22, 6, "#E3F0EB");
+          ctx.fillStyle = "#0E5C4A";
+          ctx.font = "bold 10px 'Instrument Sans', system-ui, sans-serif";
           ctx.textAlign = "center";
           ctx.fillText(`⏰ ${task.reminderTime}`, 990 + 55, remY + 15);
           ctx.textAlign = "left"; // reset
@@ -631,9 +631,9 @@ export default function App() {
         // Draw description text (Notes)
         let itemY = Math.max(titleEndY + 23, currentY + 70);
         if (hasNotes) {
-          drawRoundRect(160, itemY - 14, 680, 26, 8, "#F8FAFC", "#E2E8F0", 1);
-          ctx.fillStyle = "#64748B";
-          ctx.font = "italic 11px system-ui, -apple-system, sans-serif";
+          drawRoundRect(160, itemY - 14, 680, 26, 8, "#F4F2EC", "#DCD8CC", 1);
+          ctx.fillStyle = "#767A84";
+          ctx.font = "italic 11px 'Instrument Sans', system-ui, sans-serif";
           const descVal = task.notes!.length > 95 ? task.notes!.substring(0, 92) + "..." : task.notes!;
           ctx.fillText(`Nota: "${descVal}"`, 178, itemY + 4);
           itemY += 32;
@@ -643,16 +643,16 @@ export default function App() {
         if (subtasksToDraw.length > 0) {
           subtasksToDraw.forEach((sub, sIdx) => {
             const subY = itemY + sIdx * 28;
-            ctx.strokeStyle = "#94A3B8";
+            ctx.strokeStyle = "#C6C1B3";
             ctx.lineWidth = 1.5;
-            ctx.fillStyle = "#FFFFFF";
+            ctx.fillStyle = "#F4F2EC";
             ctx.beginPath();
             ctx.arc(180, subY, 7, 0, Math.PI * 2);
             ctx.fill();
             ctx.stroke();
 
-            ctx.fillStyle = "#334155";
-            ctx.font = "14px system-ui, -apple-system, sans-serif";
+            ctx.fillStyle = "#4A4E57";
+            ctx.font = "14px 'Instrument Sans', system-ui, sans-serif";
             ctx.fillText(sub.title.substring(0, 85), 205, subY + 5);
           });
         }
@@ -661,17 +661,17 @@ export default function App() {
       });
 
       if (filteredTasks.length > 8) {
-        ctx.fillStyle = "#64748B";
-        ctx.font = "bold 13px system-ui, -apple-system, sans-serif";
+        ctx.fillStyle = "#767A84";
+        ctx.font = "bold 13px 'Instrument Sans', system-ui, sans-serif";
         ctx.fillText(`+ ${filteredTasks.length - 8} outras atividades listadas no dispositivo digital`, 75, currentY - 5);
       }
     }
 
     // 6. Dotted Line Pannels (Writing room)
     const writeSectY = Math.max(currentY + 10, 860);
-    drawRoundRect(75, writeSectY, cardW, 48, 10, "#F1F5F9");
-    ctx.fillStyle = "#1E293B";
-    ctx.font = "bold 13px system-ui, -apple-system, sans-serif";
+    drawRoundRect(75, writeSectY, cardW, 48, 10, "#DCD8CC");
+    ctx.fillStyle = "#16181D";
+    ctx.font = "bold 13px 'Instrument Sans', system-ui, sans-serif";
     ctx.fillText("📝 COMPROMISSOS EXTRAS (ESCREVA COM SUA CANETA OU ADICIONE IDEIAS)", 100, writeSectY + 29);
 
     let drawingLinesY = writeSectY + 74;
@@ -679,14 +679,14 @@ export default function App() {
     
     while (drawingLinesY < canvasLimitY) {
       // Small manual checkbox
-      ctx.strokeStyle = "#94A3B8";
+      ctx.strokeStyle = "#C6C1B3";
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.arc(120, drawingLinesY - 6, 11, 0, Math.PI * 2);
       ctx.stroke();
 
       // Dotted line
-      ctx.strokeStyle = "#CBD5E1";
+      ctx.strokeStyle = "#C6C1B3";
       ctx.setLineDash([2, 4]);
       ctx.beginPath();
       ctx.moveTo(150, drawingLinesY);
@@ -699,23 +699,23 @@ export default function App() {
 
     // 7. Footer metadata
     const bSeparationY = canvas.height - 90;
-    ctx.strokeStyle = "#E2E8F0";
+    ctx.strokeStyle = "#DCD8CC";
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(55, bSeparationY);
     ctx.lineTo(canvas.width - 55, bSeparationY);
     ctx.stroke();
 
-    ctx.fillStyle = "#64748B";
-    ctx.font = "bold 12px system-ui, -apple-system, sans-serif";
+    ctx.fillStyle = "#767A84";
+    ctx.font = "bold 12px 'Instrument Sans', system-ui, sans-serif";
     ctx.fillText("EchoPlan 🎙️", 75, bSeparationY + 35);
     
-    ctx.font = "11px system-ui, -apple-system, sans-serif";
-    ctx.fillText("Planner inteligente offline para impressão. Mantenha os olhos fora das telas e risque com foco.", 75, bSeparationY + 54);
+    ctx.font = "11px 'Instrument Sans', system-ui, sans-serif";
+    ctx.fillText("A pauta do dia no papel. Risque à mão.", 75, bSeparationY + 54);
 
-    ctx.fillStyle = "#4F46E5";
-    ctx.font = "bold 11px system-ui, -apple-system, sans-serif";
-    ctx.fillText("SUGIRA: COLOQUE ESTE CARD IMPRESSO EM SEU CAMPO DE VISÃO! 📌", canvas.width - 450, bSeparationY + 45);
+    ctx.fillStyle = "#0E5C4A";
+    ctx.font = "bold 11px 'Instrument Sans', system-ui, sans-serif";
+    ctx.fillText("Deixe esta folha no seu campo de visão.", canvas.width - 450, bSeparationY + 45);
 
     // 8. Trigger PNG browser download
     try {
@@ -727,10 +727,10 @@ export default function App() {
       downLink.click();
       document.body.removeChild(downLink);
 
-      triggerBanner("Planilha de papel baixada com sucesso! Pronta para imprimir! 🖨️🎯", "success");
+      triggerBanner("Planner baixado, pronto para imprimir.", "success");
     } catch (e) {
       console.error(e);
-      triggerBanner("Incapaz de gerar a imagem devido a restrições no navegador.", "error");
+      triggerBanner("O navegador não deixou gerar a imagem. Tente em outra aba ou navegador.", "error");
     }
   };
 
@@ -741,7 +741,7 @@ export default function App() {
       completed: false,
       reminderTriggered: false,
     });
-    triggerBanner("Tarefa adicionada com sucesso!", "success");
+    triggerBanner("Tarefa na pauta.", "success");
   };
 
   const handleToggleComplete = async (id: string) => {
@@ -758,8 +758,8 @@ export default function App() {
     await updateTask(id, { completed: isNowCompleted });
 
     if (isNowCompleted && target.title) {
-      triggerBanner(`Parabéns! Você concluiu a tarefa: "${target.title}". Ela foi enviada para o histórico! 🎉`, "success");
-      
+      triggerBanner(`"${target.title}" foi para o histórico.`, "success");
+
       // Haptic feedback using browser's Vibration API for mobile devices
       if (typeof navigator !== "undefined" && navigator.vibrate) {
         if (isAltaPriority) {
@@ -771,7 +771,13 @@ export default function App() {
         }
       }
 
-      if (isAltaPriority) {
+      // Confete só no dia 100% concluído. Comemoração que acontece sempre não
+      // é comemoração. O estado ainda não chegou do banco, então a conta é
+      // feita descontando esta tarefa das pendentes.
+      const aindaPendentes = firestoreTasks.filter(
+        (t) => t.id !== id && !t.completed && !t.archived
+      ).length;
+      if (aindaPendentes === 0 && !target.isRecurring) {
         setIsConfettiActive(true);
       }
       if (target.isRecurring) {
@@ -788,10 +794,10 @@ export default function App() {
           completed: false,
           reminderTriggered: false,
         });
-        triggerBanner(`Tarefa recorrente criada para o próximo ciclo! 🔁`, "info");
+        triggerBanner("A próxima repetição já está na fila.", "info");
       }
     } else if (!isNowCompleted && target.title) {
-      triggerBanner(`Tarefa "${target.title}" reativada e movida de volta para a fila!`, "info");
+      triggerBanner(`"${target.title}" voltou para a fila.`, "info");
     }
   };
 
@@ -801,7 +807,7 @@ export default function App() {
     }
     await deleteTask(id);
     setActiveReminders((prev) => prev.filter((task) => task.id !== id));
-    triggerBanner("Tarefa removida.", "info");
+    triggerBanner("Tarefa excluída.", "info");
   };
 
   const handleToggleArchive = async (id: string) => {
@@ -816,9 +822,9 @@ export default function App() {
     await updateTask(id, { archived: newArchived });
 
     if (newArchived) {
-      triggerBanner(`Tarefa "${target.title}" arquivada no Banco de Tarefas!`, "success");
+      triggerBanner(`"${target.title}" foi arquivada.`, "success");
     } else {
-      triggerBanner(`Tarefa "${target.title}" movida de volta para a fila ativa!`, "info");
+      triggerBanner(`"${target.title}" voltou para a fila.`, "info");
     }
   };
 
@@ -829,7 +835,7 @@ export default function App() {
   // Categories custom configurations
   const handleAddCategory = (name: string) => {
     setCategories([...categories, name]);
-    triggerBanner(`Categoria "${name}" adicionada!`, "success");
+    triggerBanner(`Categoria "${name}" criada.`, "success");
   };
 
   const handleRenameCategory = (oldName: string, newName: string) => {
@@ -843,7 +849,7 @@ export default function App() {
     if (selectedCategory === oldName) {
       setSelectedCategory(newName);
     }
-    triggerBanner("Categoria e tarefas associadas atualizadas!", "success");
+    triggerBanner("Categoria renomeada. As tarefas acompanharam.", "success");
   };
 
   const handleDeleteCategory = (name: string) => {
@@ -857,7 +863,7 @@ export default function App() {
     if (selectedCategory === name) {
       setSelectedCategory("Todas");
     }
-    triggerBanner(`Categoria excluída. Tarefas migradas para "Geral".`, "info");
+    triggerBanner(`Categoria excluída. As tarefas dela passaram para Geral.`, "info");
   };
 
   // Handle audio/text extraction response from server
@@ -868,7 +874,7 @@ export default function App() {
   ) => {
     if (extractedTasks.length === 0) {
       triggerBanner(
-        "O assistente não conseguiu identificar tarefas no seu relato. Diga ou digite ações claras como 'fazer atividade às 15h'!",
+        "Não deu para identificar tarefas no relato. Diga ações com verbo e hora, como \"fechar a planilha às 15h\".",
         "error"
       );
       return;
@@ -903,12 +909,12 @@ export default function App() {
 
     if (isLocalFallback) {
       triggerBanner(
-        `Sucesso extra-heurístico! Criamos ${extractedTasks.length} tarefa(s) localmente. Configure a GEMINI_API_KEY no menu Settings para transição inteligente por Áudio!`,
+        `Sem chave do Gemini: ${extractedTasks.length === 1 ? "1 tarefa saiu" : `${extractedTasks.length} tarefas saíram`} do texto, sem áudio.`,
         "info"
       );
     } else {
       triggerBanner(
-        `Sucesso! Extraímos ${extractedTasks.length} tarefa(s) inteligente(s) para o seu dia via Gemini Pro.`,
+        `${extractedTasks.length === 1 ? "1 tarefa" : `${extractedTasks.length} tarefas`} na pauta.`,
         "success"
       );
     }
@@ -922,7 +928,7 @@ export default function App() {
   const handleCompleteReminder = (taskId: string) => {
     handleToggleComplete(taskId);
     setActiveReminders((prev) => prev.filter((t) => t.id !== taskId));
-    triggerBanner("Tarefa marcada como concluída!", "success");
+    triggerBanner("Tarefa concluída.", "success");
   };
 
   const handleSnoozeReminder = (taskId: string, minutes: number) => {
@@ -939,7 +945,7 @@ export default function App() {
         reminderTriggered: false, // Reset trigger flag to fire again!
       });
 
-      triggerBanner(`Adiado em ${minutes} minutos. Novo alarme às ${snoozedTime}.`, "info");
+      triggerBanner(`Adiado para as ${snoozedTime}.`, "info");
     }
     setActiveReminders((prev) => prev.filter((t) => t.id !== taskId));
   };
@@ -965,7 +971,7 @@ export default function App() {
         reminderTriggered: false,
       });
     });
-    triggerBanner("Carregado um conjunto de tarefas exemplo!", "success");
+    triggerBanner("Exemplos carregados.", "success");
   };
 
   const handleImportBackup = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -984,12 +990,12 @@ export default function App() {
             addTask(fields);
           });
           setCategories(content.categories);
-          triggerBanner("Backup importado com sucesso!", "success");
+          triggerBanner("Backup importado.", "success");
         } else {
-          triggerBanner("Formato de backup inválido.", "error");
+          triggerBanner("Esse arquivo não é um backup do EchoPlan. Escolha o JSON exportado pelo app.", "error");
         }
       } catch (err) {
-        triggerBanner("Erro ao processar o arquivo de backup.", "error");
+        triggerBanner("O arquivo não pôde ser lido. Confira se é o JSON exportado pelo app.", "error");
       }
     };
     reader.readAsText(file);
@@ -1015,9 +1021,9 @@ export default function App() {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      triggerBanner("Backup baixado com sucesso!", "success");
+      triggerBanner("Backup baixado.", "success");
     } catch (err) {
-      triggerBanner("Erro ao exportar o backup de tarefas.", "error");
+      triggerBanner("O backup não foi gerado. Tente de novo em alguns segundos.", "error");
     }
   };
 
@@ -1025,7 +1031,7 @@ export default function App() {
     try {
       const completedTasks = tasks.filter((t) => t.completed);
       if (completedTasks.length === 0) {
-        triggerBanner("Não há tarefas concluídas no histórico para exportar.", "info");
+        triggerBanner("Nada concluído no histórico para exportar.", "info");
         return;
       }
 
@@ -1082,10 +1088,10 @@ export default function App() {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
       
-      triggerBanner("Histórico de tarefas concluídas em CSV baixado!", "success");
+      triggerBanner("Histórico baixado em CSV.", "success");
     } catch (err) {
       console.error(err);
-      triggerBanner("Erro ao exportar o histórico de tarefas em CSV.", "error");
+      triggerBanner("O CSV não foi gerado. Tente de novo em alguns segundos.", "error");
     }
   };
 
@@ -1099,7 +1105,7 @@ export default function App() {
       });
       setRecentTranscription(null);
       setActiveReminders([]);
-      triggerBanner("Todas as tarefas de hoje foram limpas.", "info");
+      triggerBanner("Tarefas de hoje apagadas.", "info");
     }
   };
 
@@ -1139,7 +1145,7 @@ export default function App() {
     // Firestore doesn't have a built-in reorder for random IDs without a position field.
     // For now, we'll just trigger a banner informing that reordering is local-only or limited.
     // To support reordering properly, we'd need a 'position' field.
-    triggerBanner("Ordenação manual no Banco de Dados requer campo de posição (não implementado).", "info");
+    triggerBanner("Reordenar ainda não guarda a ordem entre sessões.", "info");
   };
 
   // Computed Values for filtration
@@ -1287,14 +1293,14 @@ export default function App() {
           (t) => t.completed && getLocalDateStringFromISO(t.updatedAt || t.createdAt) === today
         );
         if (completedTasksToday.length === 0) {
-          triggerBanner("Nenhuma tarefa concluída hoje para resumir.", "info");
+          triggerBanner("Nada concluído hoje para resumir.", "info");
           return;
         }
         const summary =
           `Tarefas concluídas — ${today}\n\n` +
           completedTasksToday.map((t) => `- ${t.title}`).join("\n");
         navigator.clipboard.writeText(summary);
-        triggerBanner("Resumo copiado para a área de transferência.", "success");
+        triggerBanner("Resumo copiado.", "success");
       },
     },
     { rotulo: "Exportar backup (JSON)", Icone: Download, onClick: handleExportBackup },
@@ -1758,10 +1764,15 @@ export default function App() {
                         {listaDeTarefas(completedHistoryFiltered, false)}
                       </AnimatePresence>
                       {completedHistoryFiltered.length === 0 &&
-                        vazio(
-                          "Nada nesta data",
-                          "Escolha outro dia ou toque em Tudo para ver o histórico inteiro."
-                        )}
+                        (historyDate
+                          ? vazio(
+                              "Nada nesta data",
+                              "Escolha outro dia ou toque em Tudo para ver o histórico inteiro."
+                            )
+                          : vazio(
+                              "Histórico vazio",
+                              "O que você concluir na aba diárias aparece aqui, dia por dia."
+                            ))}
                     </div>
                   </div>
                 </section>

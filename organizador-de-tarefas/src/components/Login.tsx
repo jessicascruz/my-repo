@@ -1,10 +1,29 @@
-import React from 'react';
-import { motion } from 'motion/react';
-import { LogIn, Sparkles, Mic } from 'lucide-react';
-import { login } from '../lib/session';
+import React, { useEffect, useState } from "react";
+import { LogIn, Mic } from "lucide-react";
+import { login } from "../lib/session";
+import { Pauta } from "./Pauta";
+import * as ui from "../lib/ui";
 
+/**
+ * A tela de entrada mostra o que o app faz: uma pauta vazia com o cursor
+ * andando com o relógio, o console de voz desabilitado e o convite. Sem card
+ * centralizado com brilho em gradiente.
+ */
 export const Login: React.FC = () => {
-  const handleLogin = async () => {
+  const [minutoAtual, setMinutoAtual] = useState(() => {
+    const agora = new Date();
+    return agora.getHours() * 60 + agora.getMinutes();
+  });
+
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      const agora = new Date();
+      setMinutoAtual(agora.getHours() * 60 + agora.getMinutes());
+    }, 1000);
+    return () => clearInterval(intervalo);
+  }, []);
+
+  const entrar = async () => {
     try {
       await login();
     } catch (error) {
@@ -13,53 +32,60 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-4 font-sans">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full bg-white dark:bg-slate-900 rounded-3xl shadow-2xl shadow-indigo-500/10 p-8 text-center border border-slate-200 dark:border-slate-800"
-      >
-        <div className="mb-8 flex justify-center">
-          <div className="relative">
-            <div className="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-full blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative bg-white dark:bg-slate-900 rounded-full p-6 border border-slate-100 dark:border-slate-800">
-              <Mic className="w-12 h-12 text-indigo-600 dark:text-indigo-400" />
-            </div>
-            <motion.div 
-              animate={{ 
-                scale: [1, 1.2, 1],
-                opacity: [0.5, 0.2, 0.5]
+    <div className="flex min-h-screen flex-col bg-pauta font-sans text-tinta dark:bg-tinta-fundo dark:text-pauta">
+      <header className="h-14 shrink-0 border-b border-linha dark:border-tinta-linha">
+        <div className="mx-auto flex h-full max-w-[76rem] items-center px-4 sm:px-6">
+          <span className="font-display text-[17px] font-extrabold tracking-[-0.02em]">
+            EchoPlan
+          </span>
+        </div>
+      </header>
+
+      <main className="mx-auto w-full max-w-[76rem] flex-1 px-4 pb-32 sm:px-6">
+        <div className="mx-auto max-w-[68rem] pt-12 sm:pt-20">
+          <h1 className={ui.displayXl}>
+            Fale.<br />O resto é com a gente.
+          </h1>
+          <p className={`mt-4 max-w-[54ch] ${ui.corpoLg} ${ui.suave}`}>
+            Diga em voz alta o que você tem para fazer hoje. O EchoPlan transcreve, separa por
+            prioridade e marca a hora de cada uma na pauta do dia.
+          </p>
+
+          <div className="mt-10">
+            <Pauta
+              tasks={[]}
+              minutoAtual={minutoAtual}
+              dndSettings={{
+                enabled: false,
+                startTime: "22:00",
+                endTime: "07:00",
+                muteLowPriority: false,
               }}
-              transition={{ 
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="absolute inset-0 rounded-full bg-indigo-500/20"
+              onAbrirTarefa={() => {}}
+              onDefinirHorario={() => {}}
+              recolhida={false}
             />
           </div>
+
+          <button onClick={entrar} className={`${ui.btnPrimario} mt-8`}>
+            <LogIn className="h-4 w-4" />
+            Entrar com Google
+          </button>
         </div>
+      </main>
 
-        <h1 className="text-3xl font-bold font-display text-slate-900 dark:text-white mb-3">
-          Organizador de Tarefas
-        </h1>
-        <p className="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
-          Grave um áudio com as suas tarefas do dia. O app transcreve, categoriza, define prioridades e configura lembretes de forma inteligente.
-        </p>
-
-        <button
-          onClick={handleLogin}
-          className="w-full flex items-center justify-center gap-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all shadow-lg shadow-indigo-600/20 active:scale-95 group"
-        >
-          <LogIn className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          Entrar com Google
-        </button>
-
-        <div className="mt-8 pt-8 border-t border-slate-100 dark:border-slate-800 flex items-center justify-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-          <Sparkles className="w-4 h-4 text-amber-500" />
-          <span>Potencializado por Gemini AI</span>
+      {/* O console, ainda desligado: dá para ver onde a voz vai morar. */}
+      <div className="fixed bottom-0 left-0 right-0 border-t border-linha bg-pauta-alta dark:border-tinta-linha dark:bg-tinta-alta">
+        <div className="mx-auto flex min-h-14 max-w-[68rem] items-center gap-3 px-4 py-3 sm:px-6">
+          <span
+            aria-hidden="true"
+            className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-gravando/45 text-pauta-alta"
+          >
+            <Mic className="h-5 w-5" />
+          </span>
+          <p className={`${ui.corpoSm} ${ui.suave}`}>Entre para começar a gravar.</p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };
