@@ -1330,7 +1330,6 @@ export default function App() {
                 onDrop: handleDrop,
                 isDraggedOver: draggedOverTaskId === task.id,
                 isFocused: focusedTaskId === task.id,
-                isAnyTaskFocused: focusedTaskId !== null,
                 onToggleFocus: (id: string) => setFocusedTaskId(focusedTaskId === id ? null : id),
               }
             : {})}

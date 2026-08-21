@@ -82,9 +82,3 @@ export const fundoPrioridade = {
   Média: "bg-dial",
   Baixa: "bg-fita dark:bg-fita-clara",
 } as const;
-
-export const bordaPrioridade = {
-  Alta: "border-l-[3px] border-l-gravando",
-  Média: "border-l-[3px] border-l-dial",
-  Baixa: "border-l-[3px] border-l-fita dark:border-l-fita-clara",
-} as const;
